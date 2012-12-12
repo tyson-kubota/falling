@@ -16,8 +16,8 @@ private var timeVar : float;
 static var Slowdown : int = 0;
 var speed = 10.0;
 static var isSlowing:boolean = false;
-static var landscapeFlipped:boolean = false;
-var flipMultiplier : int = 1;
+//static var landscapeFlipped:boolean = false;
+//var flipMultiplier : int = 1;
 
 var script : ScoreController;
 script = GetComponent("ScoreController");
@@ -31,12 +31,13 @@ function Start() {
 	// make landscape view
 	// iPhoneSettings.screenOrientation = iPhoneScreenOrientation.Landscape;
 	
-	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-	Screen.orientation = ScreenOrientation.LandscapeRight;
-	landscapeFlipped = true;
-	flipMultiplier = -1;
-	}
-	else {	Screen.orientation = ScreenOrientation.LandscapeLeft;}
+//  disabled 12-11-2012
+//	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+//	Screen.orientation = ScreenOrientation.LandscapeRight;
+//	landscapeFlipped = true;
+//	flipMultiplier = -1;
+//	}
+//	else {	Screen.orientation = ScreenOrientation.LandscapeLeft;}
 
 //	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeLeft;
 		
@@ -76,8 +77,8 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
-	dir.x = 2 * flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-	dir.z = 2 * flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
+	dir.x = 2 * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
+	dir.z = 2 * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
     dir *= Time.deltaTime;

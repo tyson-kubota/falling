@@ -29,7 +29,8 @@ var speed = 5.0;
 var target : Transform;
 var smooth = 2.0;
 var tiltAngle = 30.0;
-var flipMultiplier : int = 1;
+//var flipMultiplier : int = 1;
+//var flipMultiplier = FallingLaunch.flipMultiplier;
 
 var script : ScoreController;
 script = GetComponent("ScoreController");
@@ -37,9 +38,9 @@ script = GetComponent("ScoreController");
 static var isAlive : boolean;
 
 function Awake() {
-	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-	flipMultiplier = -1;
-}
+//	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+//	flipMultiplier = -1;
+//}
 }
 
 function Start() {
@@ -109,8 +110,8 @@ function changeLevelBackdrop () {
 	   		   	
 function Update () {
     var dir : Vector3 = Vector3.zero;
-	var tiltAroundZ = (flipMultiplier * (-Input.acceleration.y * tiltAngle));
-    var tiltAroundX = (flipMultiplier * (-Input.acceleration.x * tiltAngle));
+	var tiltAroundZ = (FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle));
+    var tiltAroundX = (FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle));
 
     var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
                 // Dampen towards the target rotation
