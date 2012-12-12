@@ -38,7 +38,7 @@ static var isAlive : boolean;
 
 function Awake() {
 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-//	flipMultiplier = -1;
+	flipMultiplier = -1;
 }
 }
 
@@ -50,12 +50,6 @@ function Start() {
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
- 
-// for Unity 4's autorotation  	 	
-  		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-//			flipMultiplier = -1;
-}
-	
 }
 
 
@@ -115,15 +109,8 @@ function changeLevelBackdrop () {
 	   		   	
 function Update () {
     var dir : Vector3 = Vector3.zero;
-
-// for unity 3.5.x
-//	var tiltAroundZ = (flipMultiplier * (-Input.acceleration.y * tiltAngle));
-//    var tiltAroundX = (flipMultiplier * (-Input.acceleration.x * tiltAngle));
-
-// a version for unity 4
-	var tiltAroundZ = (flipMultiplier * (Input.acceleration.x * tiltAngle));
-    var tiltAroundX = (flipMultiplier * (-Input.acceleration.y * tiltAngle));
-
+	var tiltAroundZ = (flipMultiplier * (-Input.acceleration.y * tiltAngle));
+    var tiltAroundX = (flipMultiplier * (-Input.acceleration.x * tiltAngle));
 
     var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
                 // Dampen towards the target rotation
