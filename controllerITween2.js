@@ -16,45 +16,28 @@ private var timeVar : float;
 static var Slowdown : int = 0;
 var speed = 10.0;
 static var isSlowing:boolean = false;
-static var landscapeFlipped:boolean = false;
-var flipMultiplier : int = 0;
-static var landscapeFlipCheck:boolean;
+//static var landscapeFlipped:boolean = false;
+//var flipMultiplier : int = 1;
 
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
 function Awake() {
 	myTransform = transform;
-	landscapeFlipCheck = false;
-	
-	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-//	Screen.orientation = ScreenOrientation.LandscapeRight;
-//	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeRight;
-//	landscapeFlipped = true;
-//	flipMultiplier = -1;
-	}
-	else {	
-//	Screen.orientation = ScreenOrientation.LandscapeLeft;
-//	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeLeft;
-	}	
 }
 
 
 function Start() {
-
-if (landscapeFlipCheck == false) {
-	landscapeFlipCheck = true;
-	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-	Screen.orientation = ScreenOrientation.LandscapeRight;
-	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeRight;
-	}
-	else {	
-	Screen.orientation = ScreenOrientation.LandscapeLeft;
-	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeLeft;
-	}	
-}	
 	// make landscape view
 	// iPhoneSettings.screenOrientation = iPhoneScreenOrientation.Landscape;
+	
+//  disabled 12-11-2012
+//	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+//	Screen.orientation = ScreenOrientation.LandscapeRight;
+//	landscapeFlipped = true;
+//	flipMultiplier = -1;
+//	}
+//	else {	Screen.orientation = ScreenOrientation.LandscapeLeft;}
 
 //	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeLeft;
 		
@@ -94,14 +77,8 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
-// for unity 3.5.x
-//	dir.x = 2 * flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-//	dir.z = 2 * flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
-
-// for unity 4
-	dir.x = 2 * flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
-	dir.z = 2 * flipMultiplier * ((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-
+	dir.x = 2 * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
+	dir.z = 2 * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
     dir *= Time.deltaTime;
