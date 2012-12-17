@@ -1,6 +1,10 @@
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
+var LifeFlashTexture : GameObject;
+var LifeFlashTextureScript : GUITextureLaunch;
+LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
+
 static var isAlive : boolean;
 
 function Start () {
@@ -41,21 +45,24 @@ function TickingAway (delay : float) {
 }
 
 
+function LifeFlashCheck (delay : float, score : int) {
+
+	if (script.currentScore < score) {
+	    //Camera.main.SendMessage("lifeFlashOut");
+		LifeFlashTextureScript.FadeFlash (delay, FadeDir.In);
+		yield WaitForSeconds(delay);
+//		Camera.main.SendMessage("lifeFlashUp");
+		LifeFlashTextureScript.FadeFlash (delay, FadeDir.Out);
+		yield WaitForSeconds((delay*3));		
+	}
+}
+
+// not being used currently, due to more versatile LifeFlashCheck in a separate coroutine.
 function LifeFlash (delay : float, score : int) {
 
 	if (script.currentScore < score) {
 	    Camera.main.SendMessage("lifeFlashOut");
 		yield WaitForSeconds(delay);
 		Camera.main.SendMessage("lifeFlashUp");
-	}
-}
-
-function LifeFlashCheck (delay : float, score : int) {
-
-	if (script.currentScore < score) {
-	    Camera.main.SendMessage("lifeFlashOut");
-		yield WaitForSeconds(delay);
-		Camera.main.SendMessage("lifeFlashUp");
-		yield WaitForSeconds((delay*3));		
 	}
 }

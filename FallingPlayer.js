@@ -14,6 +14,11 @@ var changeBackdrop : changeBackdrop;
 changeBackdrop = GetComponent("changeBackdrop");
 var levelChangeBackdrop : boolean = false;
 
+var ScoreFlashTexture : GameObject;
+
+var ScoreFlashTextureScript : GUITextureLaunch;
+ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
+
 public var force:float = 1.0;
 var dir : Vector3 = Vector3.zero;
 public var touchingSomething:boolean = false;
@@ -139,12 +144,13 @@ function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){
 
 //  Debug.Log("You scored!"); 
-    Camera.main.SendMessage("flashOut");
-	
+//    Camera.main.SendMessage("flashOut");
+	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
+
 	gameObject.SendMessage ("IncrementScore", 10);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
-  	Camera.main.SendMessage("flashUp");	  	
+//  	Camera.main.SendMessage("flashUp");	  	
 	}
 }
 			
