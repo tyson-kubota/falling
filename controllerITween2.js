@@ -77,6 +77,7 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
+if (FallingPlayer.isAlive == true) {
 	dir.x = 2 * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
 	dir.z = 2 * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
@@ -85,6 +86,7 @@ function FixedUpdate () {
         
     // Move object
     myTransform.Translate (dir * speed);
+}
 
 //    constantForce.relativeForce = (Vector3.down * Slowdown); 
 	Screen.sleepTimeout = 0.0f;

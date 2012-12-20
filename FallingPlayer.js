@@ -52,7 +52,7 @@ function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
 	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
-
+  	isAlive = true;
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
