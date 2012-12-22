@@ -121,6 +121,7 @@ function PauseGame() {
 }
 
 function UnPauseGame() {
+	FallingPlayer.isPausable = false;
     Time.timeScale = savedTimeScale;
     AudioListener.pause = false;
 	scriptName.GetComponent(FallingPlayer).FadeAudio (1.0, FadeDir.In);
@@ -134,6 +135,7 @@ function UnPauseGame() {
 	UI.firstToolkit.removeElement(rightArrow);
 	UI.firstToolkit.removeElement(leftArrow);
 	UI.firstToolkit.removeElement(loadNewLevelButton);
+	FallingPlayer.isPausable = true;	
     }
     
 function IsGamePaused() {
@@ -141,12 +143,15 @@ function IsGamePaused() {
 }
 
 function PauseGameCheck() {
-	if (Time.timeScale == 0) {
-//	if (AudioListener.pause == true) {
-		UnPauseGame();
+	if (FallingPlayer.isPausable == true) {
+		if (Time.timeScale == 0) {
+	//	if (AudioListener.pause == true) {
+			UnPauseGame();
+		}
+		else {
+			PauseGame();
+		}
 	}
-	else
-		PauseGame();
 }
 
 function RestartLevel() {

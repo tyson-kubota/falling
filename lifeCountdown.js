@@ -41,6 +41,7 @@ function TickingAway (delay : float) {
 		}
 		
 	   	else {isAlive = false;
+	   	FallingPlayer.isPausable = false;
 	   	GetComponent(FallingPlayer).DeathRespawn ();}
 }
 

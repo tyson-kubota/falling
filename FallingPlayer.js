@@ -41,6 +41,9 @@ var script : ScoreController;
 script = GetComponent("ScoreController");
 
 static var isAlive : boolean;
+isAlive = lifeCountdown.isAlive;
+
+static var isPausable : boolean = true;
 
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -75,6 +78,7 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 
 
 function DeathRespawn () {
+	isPausable = false;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
   	Camera.main.SendMessage("fadeOut");
   	isAlive = true;
@@ -95,6 +99,7 @@ function DeathRespawn () {
 	Camera.main.SendMessage("fadeIn");
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
+	isPausable = true;
  }   	
 
 function changeLevelBackdrop () {
