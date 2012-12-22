@@ -10,6 +10,10 @@ static var maxScore = 25f;
 // Keep track of the currently visible score
 static var visibleScore : float = 20f;
 
+function Start() {
+	currentScore = 20f;
+}
+
 // Animate score changes using iTween's ValueTo
 function AnimateVisibleScore () {
 

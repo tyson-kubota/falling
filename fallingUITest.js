@@ -113,7 +113,7 @@ function PauseGame() {
 	leftArrow.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	rightArrow.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);    
 	loadNewLevelButton.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);    	
-    savedTimeScale = Time.timeScale;
+    	savedTimeScale = Time.timeScale;
 	scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
     yield WaitForSeconds (.1);
     Time.timeScale = 0;
@@ -163,14 +163,16 @@ function RestartLevel() {
 }
 
 function LevelComplete() {
-	bgSprite.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	yield WaitForSeconds (.5);
+	bgSprite.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+//	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
     savedTimeScale = Time.timeScale;
-    yield WaitForSeconds (.01);
+    scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
+    yield WaitForSeconds (1);
     Time.timeScale = 0;
     AudioListener.pause = true;	
+    LoadNewLevel();
 }
 
 function LoadNewLevel() {

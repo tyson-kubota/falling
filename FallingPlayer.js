@@ -45,6 +45,8 @@ isAlive = lifeCountdown.isAlive;
 
 static var isPausable : boolean = true;
 
+var UIscriptName : GameObject;
+
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
@@ -59,6 +61,7 @@ function Start() {
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
+	isPausable = true;  	
 }
 
 
@@ -143,6 +146,7 @@ function OnCollisionEnter (collision : Collision) {
   if (collision.gameObject.CompareTag ("Death")) {
 	DeathRespawn ();
   }
+
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -157,6 +161,10 @@ function OnTriggerEnter (other : Collider) {
 	yield WaitForSeconds(.2);
 //  	Camera.main.SendMessage("flashUp");	  	
 	}
+	
+  if (other.gameObject.CompareTag ("LevelEnd")) {
+	UIscriptName.GetComponent(fallingUITest).LevelComplete();
+  }	
 }
 			
 @script AddComponentMenu("Scripts/FallingPlayer")
