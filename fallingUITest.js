@@ -120,7 +120,7 @@ function PauseGame() {
     AudioListener.pause = true;
 }
 
-function UnPauseGame() {
+function UnPauseGame(resume : boolean) {
 	FallingPlayer.isPausable = false;
     Time.timeScale = savedTimeScale;
     AudioListener.pause = false;
@@ -135,7 +135,7 @@ function UnPauseGame() {
 	UI.firstToolkit.removeElement(rightArrow);
 	UI.firstToolkit.removeElement(leftArrow);
 	UI.firstToolkit.removeElement(loadNewLevelButton);
-	FallingPlayer.isPausable = true;	
+	FallingPlayer.isPausable = resume;	
     }
     
 function IsGamePaused() {
@@ -146,7 +146,7 @@ function PauseGameCheck() {
 	if (FallingPlayer.isPausable == true) {
 		if (Time.timeScale == 0) {
 	//	if (AudioListener.pause == true) {
-			UnPauseGame();
+			UnPauseGame(true);
 		}
 		else {
 			PauseGame();
@@ -155,10 +155,11 @@ function PauseGameCheck() {
 }
 
 function RestartLevel() {
+	FallingPlayer.isPausable = false;	
 	Camera.main.SendMessage("fadeOut");
 	Respawn.currentRespawn = initialRespawn;
 	scriptName.GetComponent(FallingPlayer).DeathRespawn ();
-	UnPauseGame();
+	UnPauseGame(false);
 }
 
 function LevelComplete() {
