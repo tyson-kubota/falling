@@ -156,7 +156,7 @@ function OnTriggerEnter (other : Collider) {
 //    Camera.main.SendMessage("flashOut");
 	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
 
-	gameObject.SendMessage ("IncrementScore", 10);
+	gameObject.SendMessage ("IncrementScore", 7);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
 //  	Camera.main.SendMessage("flashUp");	  	
