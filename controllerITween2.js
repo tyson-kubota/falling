@@ -41,7 +41,10 @@ function Start() {
 
 //	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeLeft;
 		
-	Screen.sleepTimeout = 0.0f;
+//	Screen.sleepTimeout = 0.0f;
+//	deprecated, now should use NeverSleep
+
+	Screen.sleepTimeout = SleepTimeout.NeverSleep;
 //	startPoint = transform.position; 
     startTime = Time.time; 
 //    Edit yo FPS here, fool!
