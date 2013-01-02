@@ -2,7 +2,11 @@
 static var flipMultiplier : int = -1;
 static var landscapeFlipped:boolean = false;
 
+var targetFPS : int = 30;
+
 function Awake () {
+	Application.targetFrameRate = targetFPS;
+	
 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 		flipMultiplier = -1;
 		Screen.orientation = ScreenOrientation.LandscapeRight;
