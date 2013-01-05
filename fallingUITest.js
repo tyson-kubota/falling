@@ -163,12 +163,14 @@ function RestartLevel() {
 }
 
 function LevelComplete() {
+	FallingPlayer.isPausable = false;
 	bgSprite.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 //	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
     savedTimeScale = Time.timeScale;
     scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
+    scriptName.rigidbody.isKinematic = true;
     yield WaitForSeconds (1);
     Time.timeScale = 0;
     AudioListener.pause = true;	

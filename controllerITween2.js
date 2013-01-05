@@ -47,10 +47,7 @@ function Start() {
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
 //	startPoint = transform.position; 
     startTime = Time.time; 
-//    Edit yo FPS here, fool!
-//    Application.targetFrameRate = 60;
 
-//		Loop();
 //	Slowdown = 0;
 }
 
@@ -80,7 +77,7 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
-//if (FallingPlayer.isAlive == true) {
+if (FallingPlayer.isAlive == 1) {
 	dir.x = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
 	dir.z = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
@@ -89,14 +86,14 @@ function FixedUpdate () {
         
     // Move object
     myTransform.Translate (dir * speed);
-//}
+}
+else {dir = Vector3.zero;}
 
 //    constantForce.relativeForce = (Vector3.down * Slowdown); 
 }
 
-// Animate score changes using iTween's ValueTo
 function SmoothSlowdown () {
-//    Camera.main.SendMessage("speedLinesDown");   
+
 	isSlowing = true;    
     iTween.ValueTo ( gameObject,
         {
@@ -120,25 +117,6 @@ function ResumeSpeed () {
 isSlowing = false;
 }
 
-function DrainingAway (delay : float) {
-		if ((Slowdown > 17999) && (script.currentScore > 0) && (isSlowing == false)) {
-	   		gameObject.SendMessage ("DecrementScore", .4);
-	   		yield WaitForSeconds(delay);
-	   		}
-	   	else {
-	   		yield 0;
-	   		}
-		}
-	   	
- 	
-function Loop() {
-    while (true) {
-//        if ((Slowdown > 17999) && (isSlowing == false)){ 
-        yield DrainingAway(.1);
-    }
-}
-
-
 function Update () {
 	fallingSpeed();
 }
@@ -146,20 +124,26 @@ function Update () {
 function fallingSpeed () {
    
 fingerCount = 0;
-
-    for (touch in Input.touches) {
-    	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
-    		fingerCount++;
-    	}
+	
+	if (FallingPlayer.isAlive == 1) {
+	    for (touch in Input.touches) {
+	    	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
+	    		fingerCount++;
+	    	}
+		}
+			
+		if ((fingerCount > 1)) { 	
+			speedUp();
+		}
+	    else if (fingerCount < 2) {
+	//    	slowDown();
+			Slowdown = 0;
+	    }
 	}
-		
-	if (fingerCount > 1) { 	
-		speedUp();
+	else {
+	Slowdown = 0;
+	dir = Vector3.zero;
 	}
-    else if (fingerCount < 2) {
-//    	slowDown();
-		Slowdown = 0;
-    }
  
 //	Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 constantForce.relativeForce = (Vector3.down * Slowdown);

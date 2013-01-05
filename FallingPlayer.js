@@ -61,7 +61,8 @@ function Start() {
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
-	isPausable = true;  	
+	isPausable = true;  
+	rigidbody.isKinematic = false;	
 }
 
 
@@ -82,9 +83,10 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 
 function DeathRespawn () {
 	isPausable = false;
+	rigidbody.isKinematic = true;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
   	Camera.main.SendMessage("fadeOut");
-  	isAlive = 1;
+//  isAlive = 1;
 
 	if (levelChangeBackdrop == true) {
 		changeLevelBackdrop ();
@@ -103,7 +105,9 @@ function DeathRespawn () {
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
 	isPausable = true;
- }   	
+	rigidbody.isKinematic = false;
+   	isAlive = 1;
+}   	
 
 function changeLevelBackdrop () {
   	changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
@@ -144,6 +148,8 @@ function OnCollisionEnter (collision : Collision) {
 // Screen.sleepTimeout = 0.0f;
 
   if (collision.gameObject.CompareTag ("Death")) {
+  	isAlive = 0;
+  	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
 	DeathRespawn ();
   }
 

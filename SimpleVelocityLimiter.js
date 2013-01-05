@@ -38,7 +38,7 @@ function FixedUpdate() {
 	var v = rb.velocity;
 	// Clamp the velocity, if necessary
 	// Use sqrMagnitude instead of magnitude for performance reasons.
-	if(v.sqrMagnitude > sqrMaxVelocity){ // Equivalent to: rigidbody.velocity.magnitude > maxVelocity, but faster.
+	if ((v.sqrMagnitude > sqrMaxVelocity) && (rb.isKinematic == false)) { // Equivalent to: rigidbody.velocity.magnitude > maxVelocity, but faster.
 		// Vector3.normalized returns this vector with a magnitude
 		// of 1. This ensures that we're not messing with the
 		// direction of the vector, only its magnitude.

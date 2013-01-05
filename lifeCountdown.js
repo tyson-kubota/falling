@@ -2,7 +2,7 @@ var script : ScoreController;
 script = GetComponent("ScoreController");
 
 var LifeFlashTexture : GameObject;
-var LifeFlashTextureScript : GUITextureLaunch;
+static var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
 
 static var isAlive : int = 0;
@@ -42,6 +42,7 @@ function TickingAway (delay : float) {
 		
 	   	else {isAlive = 0;
 	   	FallingPlayer.isPausable = false;
+	   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
 	   	GetComponent(FallingPlayer).DeathRespawn ();}
 }
 
