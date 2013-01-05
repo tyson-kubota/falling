@@ -5,10 +5,10 @@ var LifeFlashTexture : GameObject;
 var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
 
-static var isAlive : boolean;
+static var isAlive : int = 0;
 
 function Start () {
-	   	isAlive = true;
+	   	isAlive = 1;
 	   	Loop ();
 	   	Loop2 ();
 }
@@ -40,7 +40,7 @@ function TickingAway (delay : float) {
 //			LifeFlash (.1, 6);	   		
 		}
 		
-	   	else {isAlive = false;
+	   	else {isAlive = 0;
 	   	FallingPlayer.isPausable = false;
 	   	GetComponent(FallingPlayer).DeathRespawn ();}
 }

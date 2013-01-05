@@ -80,19 +80,18 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
-if (FallingPlayer.isAlive == true) {
-	dir.x = 2 * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-	dir.z = 2 * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
+//if (FallingPlayer.isAlive == true) {
+	dir.x = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
+	dir.z = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
     dir *= Time.deltaTime;
         
     // Move object
     myTransform.Translate (dir * speed);
-}
+//}
 
 //    constantForce.relativeForce = (Vector3.down * Slowdown); 
-	Screen.sleepTimeout = 0.0f;
 }
 
 // Animate score changes using iTween's ValueTo

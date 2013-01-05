@@ -40,7 +40,7 @@ var tiltAngle = 30.0;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-static var isAlive : boolean;
+static var isAlive : int = 0;
 isAlive = lifeCountdown.isAlive;
 
 static var isPausable : boolean = true;
@@ -57,7 +57,7 @@ function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
 	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
-  	isAlive = true;
+  	isAlive = 1;
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
@@ -84,7 +84,7 @@ function DeathRespawn () {
 	isPausable = false;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
   	Camera.main.SendMessage("fadeOut");
-  	isAlive = true;
+  	isAlive = 1;
 
 	if (levelChangeBackdrop == true) {
 		changeLevelBackdrop ();
