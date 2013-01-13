@@ -10,6 +10,8 @@ var lifeBar : UIProgressBar;
 var rightArrow : UIButton;
 var leftArrow : UIButton;
 var loadNewLevelButton : UIButton;
+var loadLevelOne : UIButton;
+var BackToPauseMenuButton : UIButton;
 
 var buttonScaleFactor : float;
 var scriptName : GameObject;
@@ -35,7 +37,7 @@ function Start () {
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 1 );
 	bgSprite.positionCenter();
-	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
+	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 4), (Screen.height * 4), 1 ), Easing.Sinusoidal.easeOut);
 	bgSprite.alphaTo( 0.01f, 0.0f, Easing.Sinusoidal.easeOut);
 
 	pauseButton = UIButton.create("pauseWhite.png","pauseGray.png", 0, 0);
@@ -99,14 +101,14 @@ function PauseGame() {
 	loadNewLevelButton.positionFromBottomLeft(.05f, .05f);
 	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	loadNewLevelButton.onTouchUpInside += LoadNewLevel;
+	loadNewLevelButton.onTouchUpInside += LevelSelect;
 
 
 	leftArrow.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
 	rightArrow.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
 	loadNewLevelButton.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);    	
 		
-	bgSprite.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	bgSprite.alphaFromTo( 0.01f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	circleReticle.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
 	lifeBar.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
 	lifeBarOutline.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
@@ -125,7 +127,7 @@ function UnPauseGame(resume : boolean) {
     Time.timeScale = savedTimeScale;
     AudioListener.pause = false;
 	scriptName.GetComponent(FallingPlayer).FadeAudio (1.0, FadeDir.In);
-	bgSprite.alphaFromTo( 0.1f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);    
+	bgSprite.alphaFromTo( 0.1f, 0.8f, 0.0f, Easing.Sinusoidal.easeOut);    
 	circleReticle.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	lifeBar.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	lifeBarOutline.alphaFromTo( .01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
@@ -165,7 +167,7 @@ function RestartLevel() {
 function LevelComplete() {
 	FallingPlayer.isPausable = false;
 	controllerITween2.Slowdown = 0;
-	bgSprite.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	bgSprite.alphaFromTo( 1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 //	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
@@ -190,4 +192,39 @@ function LoadNewLevel() {
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 //    AudioListener.pause = false;
+}
+
+function LevelSelect() {
+	leftArrow.hidden = true;
+	rightArrow.hidden = true;
+	UI.firstToolkit.removeElement(loadNewLevelButton);
+	
+	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
+	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
+	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+		
+	loadLevelOne = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
+	loadLevelOne.positionFromTopRight(buttonScaleFactor,0.1f);
+	loadLevelOne.onTouchUpInside += LoadNewLevel;
+
+	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;
+}
+
+
+function BackToPauseMenu() {
+	
+	leftArrow.hidden = false;
+	rightArrow.hidden = false;    
+	loadLevelOne.hidden = true;
+
+	UI.firstToolkit.removeElement(loadLevelOne);
+	UI.firstToolkit.removeElement(BackToPauseMenuButton);
+	
+	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
+	loadNewLevelButton.positionFromBottomLeft(.05f, .05f);
+	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	loadNewLevelButton.onTouchUpInside += LevelSelect;
+	
 }
