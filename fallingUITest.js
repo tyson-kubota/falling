@@ -37,7 +37,7 @@ function Start () {
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 1 );
 	bgSprite.positionCenter();
-	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 4), (Screen.height * 4), 1 ), Easing.Sinusoidal.easeOut);
+	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
 	bgSprite.alphaTo( 0.01f, 0.0f, Easing.Sinusoidal.easeOut);
 
 	pauseButton = UIButton.create("pauseWhite.png","pauseGray.png", 0, 0);
@@ -177,15 +177,17 @@ function LevelComplete() {
     yield WaitForSeconds (1);
 //    Time.timeScale = 0;
     AudioListener.pause = true;	
-    LoadNewLevel();
+	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
+	loadNewLevelButton.positionFromCenter(0f, 0f);
+	
+	Application.LoadLevel(levelToLoad);
+	Time.timeScale = savedTimeScale;
 }
 
-function LoadNewLevel() {
-    //yield WaitForSeconds (.01);	
-	UI.firstToolkit.removeElement(rightArrow);
-	UI.firstToolkit.removeElement(leftArrow);
-	UI.firstToolkit.removeElement(loadNewLevelButton);	
-
+function LoadNewLevelViaMenu() {
+	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
+	UI.firstToolkit.removeElement(loadLevelOne);
+	
 	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
 	loadNewLevelButton.positionFromCenter(0f, 0f);
 	
@@ -197,6 +199,7 @@ function LoadNewLevel() {
 function LevelSelect() {
 	leftArrow.hidden = true;
 	rightArrow.hidden = true;
+	pauseButton.hidden = true;
 	UI.firstToolkit.removeElement(loadNewLevelButton);
 	
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
@@ -206,7 +209,7 @@ function LevelSelect() {
 		
 	loadLevelOne = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
 	loadLevelOne.positionFromTopRight(buttonScaleFactor,0.1f);
-	loadLevelOne.onTouchUpInside += LoadNewLevel;
+	loadLevelOne.onTouchUpInside += LoadNewLevelViaMenu;
 
 	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;
 }
@@ -215,7 +218,8 @@ function LevelSelect() {
 function BackToPauseMenu() {
 	
 	leftArrow.hidden = false;
-	rightArrow.hidden = false;    
+	rightArrow.hidden = false;
+	pauseButton.hidden = false;
 	loadLevelOne.hidden = true;
 
 	UI.firstToolkit.removeElement(loadLevelOne);
