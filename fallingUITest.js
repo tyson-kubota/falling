@@ -11,6 +11,9 @@ var rightArrow : UIButton;
 var leftArrow : UIButton;
 var loadNewLevelButton : UIButton;
 var loadLevelOne : UIButton;
+var loadLevelTwo : UIButton;
+var loadLevelThree : UIButton;
+var loadLevelFour : UIButton;
 var BackToPauseMenuButton : UIButton;
 
 var buttonScaleFactor : float;
@@ -19,6 +22,10 @@ var initialRespawn : Respawn;
 
 var levelToLoad : String = "";
 
+var level1 : String = "Falling-scene-tutorial";
+var level2 : String = "Falling-scene2";
+var level3 : String = "Falling-scene1-scale";
+var level4 : String = "Falling-scene3";
 
 private var savedTimeScale:float;
 //var x:float;
@@ -187,7 +194,10 @@ function LevelComplete() {
 function LoadNewLevelViaMenu() {
 	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
 	UI.firstToolkit.removeElement(loadLevelOne);
-	
+	UI.firstToolkit.removeElement(loadLevelTwo);
+	UI.firstToolkit.removeElement(loadLevelThree);
+	UI.firstToolkit.removeElement(loadLevelFour);
+		
 	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
 	loadNewLevelButton.positionFromCenter(0f, 0f);
 	
@@ -206,11 +216,35 @@ function LevelSelect() {
 	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-		
-	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);
-	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
-	loadLevelOne.onTouchUpInside += LoadNewLevelViaMenu;
 
+	if (level1 == Application.loadedLevelName) {
+	loadLevelOne = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
+	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
+	
+	if (level2 == Application.loadedLevelName) {
+	loadLevelTwo = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelTwo = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
+	loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
+	
+	if (level3 == Application.loadedLevelName) {
+	loadLevelThree = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelThree = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
+	loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
+	
+	if (level4 == Application.loadedLevelName) {
+	loadLevelFour = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelFour = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
+	loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;		
+	
 	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;
 }
 
@@ -223,6 +257,9 @@ function BackToPauseMenu() {
 	loadLevelOne.hidden = true;
 
 	UI.firstToolkit.removeElement(loadLevelOne);
+	UI.firstToolkit.removeElement(loadLevelTwo);
+	UI.firstToolkit.removeElement(loadLevelThree);
+	UI.firstToolkit.removeElement(loadLevelFour);	
 	UI.firstToolkit.removeElement(BackToPauseMenuButton);
 	
 	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
@@ -231,4 +268,65 @@ function BackToPauseMenu() {
 	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	
+}
+
+
+function LoadLevel1ViaMenu() {
+	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
+	UI.firstToolkit.removeElement(loadLevelOne);
+	UI.firstToolkit.removeElement(loadLevelTwo);
+	UI.firstToolkit.removeElement(loadLevelThree);
+	UI.firstToolkit.removeElement(loadLevelFour);
+		
+	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
+	loadNewLevelButton.positionFromCenter(0f, 0f);
+	
+	Application.LoadLevel(level1);
+	Time.timeScale = savedTimeScale;
+//    AudioListener.pause = false;
+}
+
+function LoadLevel2ViaMenu() {
+	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
+	UI.firstToolkit.removeElement(loadLevelOne);
+	UI.firstToolkit.removeElement(loadLevelTwo);
+	UI.firstToolkit.removeElement(loadLevelThree);
+	UI.firstToolkit.removeElement(loadLevelFour);
+		
+	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
+	loadNewLevelButton.positionFromCenter(0f, 0f);
+	
+	Application.LoadLevel(level2);
+	Time.timeScale = savedTimeScale;
+//    AudioListener.pause = false;
+}
+
+function LoadLevel3ViaMenu() {
+	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
+	UI.firstToolkit.removeElement(loadLevelOne);
+	UI.firstToolkit.removeElement(loadLevelTwo);
+	UI.firstToolkit.removeElement(loadLevelThree);
+	UI.firstToolkit.removeElement(loadLevelFour);
+		
+	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
+	loadNewLevelButton.positionFromCenter(0f, 0f);
+	
+	Application.LoadLevel(level3);
+	Time.timeScale = savedTimeScale;
+//    AudioListener.pause = false;
+}
+
+function LoadLevel4ViaMenu() {
+	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
+	UI.firstToolkit.removeElement(loadLevelOne);
+	UI.firstToolkit.removeElement(loadLevelTwo);
+	UI.firstToolkit.removeElement(loadLevelThree);
+	UI.firstToolkit.removeElement(loadLevelFour);
+		
+	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
+	loadNewLevelButton.positionFromCenter(0f, 0f);
+	
+	Application.LoadLevel(level4);
+	Time.timeScale = savedTimeScale;
+//    AudioListener.pause = false;
 }
