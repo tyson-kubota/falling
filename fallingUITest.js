@@ -207,8 +207,8 @@ function LevelSelect() {
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		
-	loadLevelOne = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
-	loadLevelOne.positionFromTopRight(buttonScaleFactor,0.1f);
+	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);
+	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadNewLevelViaMenu;
 
 	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;
