@@ -15,7 +15,7 @@ function Start () {
 	   	
 function Loop () {
     while (true) {
-        yield TickingAway(1);
+        yield TickingAway(.1);
 //        Debug.Log(script.currentScore);
     }
 }
@@ -29,15 +29,13 @@ function Loop2 () {
 	   	
 function TickingAway (delay : float) {
 		if ((script.currentScore > 0) && (controllerITween2.Slowdown < 18000)) {
-	   		gameObject.SendMessage ("DecrementScore", 1);
+	   		gameObject.SendMessage ("DecrementScore", delay);
 	   		yield WaitForSeconds(delay);
-//			LifeFlash (.2, 5);
 	   	}
 	   	
 		else if ((script.currentScore > 0) && (controllerITween2.Slowdown > 17999)) {
-			gameObject.SendMessage ("DecrementScoreNow", 1);
+			gameObject.SendMessage ("DecrementScoreNow", delay);
 	   		yield WaitForSeconds((delay/4));
-//			LifeFlash (.1, 6);	   		
 		}
 		
 	   	else {isAlive = 0;

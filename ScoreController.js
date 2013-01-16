@@ -11,7 +11,8 @@ static var maxScore = 25f;
 static var visibleScore : float = 20f;
 
 function Start() {
-	currentScore = 20f;
+	currentScore = 20;
+//	ResetScoreNow(0);
 }
 
 // Animate score changes using iTween's ValueTo
@@ -32,9 +33,9 @@ function AnimateVisibleScoreNow () {
 
     iTween.ValueTo ( gameObject,
         {
-            "from" : visibleScore,
-            "to" : currentScore,
-            "onupdate" : "ChangeVisibleScore",
+            "from" : currentScore,
+            "to" : visibleScore,
+            "onupdate" : "ChangeCurrentScore",
             "time" : 0.25
         }
     );
@@ -45,6 +46,17 @@ function AnimateVisibleScoreNow () {
 // visibleScore variable
 function ChangeVisibleScore ( i : float ) {
     visibleScore = i;
+}
+function ChangeCurrentScore ( i : float ) {
+    currentScore = i;
+}
+
+function LerpVisibleScore (){
+	visibleScore = Mathf.Lerp(visibleScore, currentScore, 1);
+}
+
+function LerpVisibleScoreNow (){
+	visibleScore = Mathf.Lerp(visibleScore, currentScore, .25);
 }
 
 // Increment Score
@@ -58,7 +70,7 @@ function IncrementScore ( i : float ) {
 
 // Increment Score immediately
 function IncrementScoreNow ( i : float ) {
-    currentScore += i;
+    visibleScore = (currentScore + i);
     if (currentScore > maxScore) {
     	currentScore = maxScore;
  	   	}    
@@ -68,13 +80,15 @@ function IncrementScoreNow ( i : float ) {
 // Decrement Score
 function DecrementScore ( i : float ) {
     currentScore -= i;
-	AnimateVisibleScore ();
+//	AnimateVisibleScore ();
+	LerpVisibleScore ();
 }
 
 // Decrement Score immediately
 function DecrementScoreNow ( i : float ) {
     currentScore -= i;
-	AnimateVisibleScoreNow ();
+//	AnimateVisibleScoreNow ();
+	LerpVisibleScoreNow ();
 }
 
 function ZeroScore ( i : float ) {
@@ -86,5 +100,11 @@ function ZeroScore ( i : float ) {
 function ResetScore ( i : float ) {
     currentScore = 20;
 //        currentScore = (currentScore - visibleScore);
-	AnimateVisibleScore ();
+//	AnimateVisibleScore ();
+}
+
+function ResetScoreNow ( i : float ) {
+    currentScore = 20;
+//        currentScore = (currentScore - visibleScore);
+//	AnimateVisibleScoreNow ();
 }
