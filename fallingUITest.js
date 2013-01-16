@@ -14,6 +14,7 @@ var loadLevelOne : UIButton;
 var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
+var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 
 var buttonScaleFactor : float;
@@ -45,8 +46,9 @@ function Start () {
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
-	bgSprite.alphaTo( 0.01f, 0.0f, Easing.Sinusoidal.easeOut);
-
+	bgSprite.alphaTo( 0.01f, 0.8f, Easing.Sinusoidal.easeOut);
+	bgSprite.hidden = true;
+	
 	pauseButton = UIButton.create("pauseWhite.png","pauseGray.png", 0, 0);
 	pauseButton.pixelsFromTopRight( 5, 5 );
 	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(30);
@@ -63,6 +65,69 @@ function Start () {
 	else {
 	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 	}
+
+	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
+	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
+	rightArrow.onTouchUpInside += PauseGameCheck;
+	
+	leftArrow = UIButton.create("restart.png","restartDown.png", 0, 0);
+	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
+	leftArrow.onTouchUpInside += RestartLevel;
+
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	
+	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
+	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
+	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+
+	if (level1 == Application.loadedLevelName) {
+	loadLevelOne = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
+	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
+	
+	if (level2 == Application.loadedLevelName) {
+	loadLevelTwo = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelTwo = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
+	loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
+	
+	if (level3 == Application.loadedLevelName) {
+	loadLevelThree = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelThree = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
+	loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
+	
+	if (level4 == Application.loadedLevelName) {
+	loadLevelFour = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	else {				
+	loadLevelFour = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
+	loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;		
+	
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+		
+	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;	
+	BackToPauseMenuButton.hidden = true;
+	
+	loadingLabel = UIButton.create("loading.png","loading.png", 20, 20);
+	loadingLabel.positionFromCenter(0f, 0f);
+	loadingLabel.hidden = true;
+	
+	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
+	loadNewLevelButton.positionFromBottomLeft(.05f, .05f);
+	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	loadNewLevelButton.onTouchUpInside += LevelSelect;
+	loadNewLevelButton.hidden = true;
 	
 	circleReticle = UIButton.create("circle-reticle.png","circle-reticle.png", 0, 0);
 	circleReticle.positionCenter();
@@ -93,40 +158,22 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 }
 
 function PauseGame() {
-//  Camera.main.SendMessage("fadeOutHalf");
-//  yield WaitForSeconds(1);
-	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
-	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
-	rightArrow.onTouchUpInside += PauseGameCheck;
-	
-	leftArrow = UIButton.create("restart.png","restartDown.png", 0, 0);
-	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
-	leftArrow.onTouchUpInside += RestartLevel;
-//	Debug.Log(buttonScaleFactor);
-
-	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
-	loadNewLevelButton.positionFromBottomLeft(.05f, .05f);
-	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	loadNewLevelButton.onTouchUpInside += LevelSelect;
-
-
-	leftArrow.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	rightArrow.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	loadNewLevelButton.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);    	
+	if (FallingPlayer.isPausable == true) {
+		rightArrow.hidden = false;
+		leftArrow.hidden = false;
+		loadNewLevelButton.hidden = false;
+		bgSprite.hidden = false;
 		
-	bgSprite.alphaFromTo( 0.01f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	circleReticle.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	lifeBar.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	lifeBarOutline.alphaFromTo( .01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	leftArrow.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	rightArrow.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);    
-	loadNewLevelButton.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);    	
-    	savedTimeScale = Time.timeScale;
-	scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
-    yield WaitForSeconds (.1);
-    Time.timeScale = 0;
-    AudioListener.pause = true;
+		circleReticle.hidden = true;
+		lifeBar.hidden = true;
+		lifeBarOutline.hidden = true;
+	    
+	    savedTimeScale = Time.timeScale;
+		scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
+	    yield WaitForSeconds (.1);
+	    Time.timeScale = 0;
+	    AudioListener.pause = true;
+    }
 }
 
 function UnPauseGame(resume : boolean) {
@@ -134,16 +181,14 @@ function UnPauseGame(resume : boolean) {
     Time.timeScale = savedTimeScale;
     AudioListener.pause = false;
 	scriptName.GetComponent(FallingPlayer).FadeAudio (1.0, FadeDir.In);
-	bgSprite.alphaFromTo( 0.1f, 0.8f, 0.0f, Easing.Sinusoidal.easeOut);    
-	circleReticle.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	lifeBar.alphaFromTo( 0.01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	lifeBarOutline.alphaFromTo( .01f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	leftArrow.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	rightArrow.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);  
-	loadNewLevelButton.alphaFromTo( 0.01f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);    	
-	UI.firstToolkit.removeElement(rightArrow);
-	UI.firstToolkit.removeElement(leftArrow);
-	UI.firstToolkit.removeElement(loadNewLevelButton);
+	circleReticle.hidden = false;
+	lifeBar.hidden = false;
+	lifeBarOutline.hidden = false;
+	
+	bgSprite.hidden = true;
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	loadNewLevelButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
     }
     
@@ -184,149 +229,95 @@ function LevelComplete() {
     yield WaitForSeconds (1);
 //    Time.timeScale = 0;
     AudioListener.pause = true;	
-	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
-	loadNewLevelButton.positionFromCenter(0f, 0f);
-	
+	loadingLabel.hidden = false;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 }
 
 function LoadNewLevelViaMenu() {
-	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
-	UI.firstToolkit.removeElement(loadLevelOne);
-	UI.firstToolkit.removeElement(loadLevelTwo);
-	UI.firstToolkit.removeElement(loadLevelThree);
-	UI.firstToolkit.removeElement(loadLevelFour);
-		
-	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
-	loadNewLevelButton.positionFromCenter(0f, 0f);
-	
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	loadingLabel.hidden = false;
+
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
-//    AudioListener.pause = false;
 }
 
 function LevelSelect() {
 	leftArrow.hidden = true;
 	rightArrow.hidden = true;
 	pauseButton.hidden = true;
-	UI.firstToolkit.removeElement(loadNewLevelButton);
 	
-	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
-	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
-	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-
-	if (level1 == Application.loadedLevelName) {
-	loadLevelOne = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);}
-	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
-	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
+	loadLevelOne.hidden = false;
+	loadLevelTwo.hidden = false;
+	loadLevelThree.hidden = false;
+	loadLevelFour.hidden = false;
 	
-	if (level2 == Application.loadedLevelName) {
-	loadLevelTwo = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelTwo = UIButton.create("level1.png","level1Down.png", 0, 0);}
-	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
-	loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
-	
-	if (level3 == Application.loadedLevelName) {
-	loadLevelThree = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelThree = UIButton.create("level1.png","level1Down.png", 0, 0);}
-	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
-	loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
-	
-	if (level4 == Application.loadedLevelName) {
-	loadLevelFour = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelFour = UIButton.create("level1.png","level1Down.png", 0, 0);}
-	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
-	loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;		
-	
-	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;
+	loadNewLevelButton.hidden = true;	
+	BackToPauseMenuButton.hidden = false;
 }
 
-
 function BackToPauseMenu() {
-	
 	leftArrow.hidden = false;
 	rightArrow.hidden = false;
 	pauseButton.hidden = false;
+	
 	loadLevelOne.hidden = true;
-
-	UI.firstToolkit.removeElement(loadLevelOne);
-	UI.firstToolkit.removeElement(loadLevelTwo);
-	UI.firstToolkit.removeElement(loadLevelThree);
-	UI.firstToolkit.removeElement(loadLevelFour);	
-	UI.firstToolkit.removeElement(BackToPauseMenuButton);
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
 	
-	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
-	loadNewLevelButton.positionFromBottomLeft(.05f, .05f);
-	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	loadNewLevelButton.onTouchUpInside += LevelSelect;
-	
+	loadNewLevelButton.hidden = false;
+	BackToPauseMenuButton.hidden = true;
 }
 
-
 function LoadLevel1ViaMenu() {
-	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
-	UI.firstToolkit.removeElement(loadLevelOne);
-	UI.firstToolkit.removeElement(loadLevelTwo);
-	UI.firstToolkit.removeElement(loadLevelThree);
-	UI.firstToolkit.removeElement(loadLevelFour);
-		
-	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
-	loadNewLevelButton.positionFromCenter(0f, 0f);
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level1);
 	Time.timeScale = savedTimeScale;
-//    AudioListener.pause = false;
 }
 
 function LoadLevel2ViaMenu() {
-	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
-	UI.firstToolkit.removeElement(loadLevelOne);
-	UI.firstToolkit.removeElement(loadLevelTwo);
-	UI.firstToolkit.removeElement(loadLevelThree);
-	UI.firstToolkit.removeElement(loadLevelFour);
-		
-	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
-	loadNewLevelButton.positionFromCenter(0f, 0f);
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	loadingLabel.hidden = false;	
 	
 	Application.LoadLevel(level2);
 	Time.timeScale = savedTimeScale;
-//    AudioListener.pause = false;
 }
 
 function LoadLevel3ViaMenu() {
-	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
-	UI.firstToolkit.removeElement(loadLevelOne);
-	UI.firstToolkit.removeElement(loadLevelTwo);
-	UI.firstToolkit.removeElement(loadLevelThree);
-	UI.firstToolkit.removeElement(loadLevelFour);
-		
-	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
-	loadNewLevelButton.positionFromCenter(0f, 0f);
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level3);
 	Time.timeScale = savedTimeScale;
-//    AudioListener.pause = false;
 }
 
 function LoadLevel4ViaMenu() {
-	UI.firstToolkit.removeElement(BackToPauseMenuButton);	
-	UI.firstToolkit.removeElement(loadLevelOne);
-	UI.firstToolkit.removeElement(loadLevelTwo);
-	UI.firstToolkit.removeElement(loadLevelThree);
-	UI.firstToolkit.removeElement(loadLevelFour);
-		
-	loadNewLevelButton = UIButton.create("loading.png","loading.png", 20, 20);
-	loadNewLevelButton.positionFromCenter(0f, 0f);
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level4);
 	Time.timeScale = savedTimeScale;
-//    AudioListener.pause = false;
 }
