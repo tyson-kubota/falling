@@ -42,7 +42,7 @@ function Start () {
 //    if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	Screen.orientation = ScreenOrientation.LandscapeRight;}
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
-    bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 1 );
+    bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
 	bgSprite.alphaTo( 0.01f, 0.0f, Easing.Sinusoidal.easeOut);
