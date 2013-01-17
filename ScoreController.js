@@ -51,15 +51,26 @@ function ChangeCurrentScore ( i : float ) {
     currentScore = i;
 }
 
-function LerpVisibleScore (){
-	visibleScore = Mathf.Lerp(visibleScore, currentScore, 1);
-}
+//function LerpVisibleScoreOld (){
+//	visibleScore = Mathf.Lerp(visibleScore, currentScore, 1);
+//}
 
 function LerpVisibleScoreNow (){
 	visibleScore = Mathf.Lerp(visibleScore, currentScore, .25);
 }
 
-// Increment Score
+function LerpVisibleScore (timer : float) {
+
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        visibleScore = Mathf.Lerp(visibleScore, currentScore, i);
+        yield;
+    }
+}
+
 function IncrementScore ( i : float ) {
     currentScore += i;
     if (currentScore > maxScore) {
@@ -68,27 +79,24 @@ function IncrementScore ( i : float ) {
 	AnimateVisibleScore ();
 }
 
-// Increment Score immediately
 function IncrementScoreNow ( i : float ) {
     visibleScore = (currentScore + i);
-    if (currentScore > maxScore) {
-    	currentScore = maxScore;
+    if (visibleScore > maxScore) {
+    	visibleScore = maxScore;
  	   	}    
 	AnimateVisibleScoreNow ();
 }
 
-// Decrement Score
 function DecrementScore ( i : float ) {
     currentScore -= i;
 //	AnimateVisibleScore ();
-	LerpVisibleScore ();
+	LerpVisibleScore(1);
 }
 
-// Decrement Score immediately
 function DecrementScoreNow ( i : float ) {
     currentScore -= i;
 //	AnimateVisibleScoreNow ();
-	LerpVisibleScoreNow ();
+	LerpVisibleScore(1);
 }
 
 function ZeroScore ( i : float ) {
@@ -101,10 +109,4 @@ function ResetScore ( i : float ) {
     currentScore = 20;
 //        currentScore = (currentScore - visibleScore);
 //	AnimateVisibleScore ();
-}
-
-function ResetScoreNow ( i : float ) {
-    currentScore = 20;
-//        currentScore = (currentScore - visibleScore);
-//	AnimateVisibleScoreNow ();
 }

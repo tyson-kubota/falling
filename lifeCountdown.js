@@ -6,6 +6,7 @@ static var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
 
 static var isAlive : int = 0;
+var UIscriptName : GameObject;
 
 function Start () {
 	   	isAlive = 1;
@@ -38,10 +39,15 @@ function TickingAway (delay : float) {
 	   		yield WaitForSeconds((delay/4));
 		}
 		
-	   	else {isAlive = 0;
-	   	FallingPlayer.isPausable = false;
-	   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-	   	GetComponent(FallingPlayer).DeathRespawn ();}
+	   	else {
+		   	isAlive = 0;
+		   	FallingPlayer.isPausable = false;
+		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+		   	
+		   	UIscriptName.GetComponent(fallingUITest).HideGUI();
+		   	yield GetComponent(FallingPlayer).DeathRespawn ();
+			UIscriptName.GetComponent(fallingUITest).UnhideGUI();
+		}
 }
 
 

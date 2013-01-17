@@ -149,7 +149,7 @@ function Start () {
 function animateProgressBar(lifeBar : UIProgressBar) {
 	while (true)
 	{
-	lifeBar.value = (parseFloat(ScoreController.currentScore)/parseFloat(ScoreController.maxScore));
+	lifeBar.value = (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore));
 //	Debug.Log(lifeBar.value + " is lifebar value");
 //	Debug.Log(ScoreController.currentScore + " is currentScore");
 //	yield WaitForSeconds (1);
@@ -320,4 +320,16 @@ function LoadLevel4ViaMenu() {
 	
 	Application.LoadLevel(level4);
 	Time.timeScale = savedTimeScale;
+}
+
+function HideGUI() {
+		circleReticle.hidden = true;
+		lifeBar.hidden = true;
+		lifeBarOutline.hidden = true;
+}
+
+function UnhideGUI() {
+		circleReticle.hidden = false;
+		lifeBar.hidden = false;
+		lifeBarOutline.hidden = false;
 }

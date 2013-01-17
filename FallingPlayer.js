@@ -150,7 +150,9 @@ function OnCollisionEnter (collision : Collision) {
   if (collision.gameObject.CompareTag ("Death")) {
   	isAlive = 0;
   	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-	DeathRespawn ();
+  	UIscriptName.GetComponent(fallingUITest).HideGUI();
+	yield DeathRespawn ();
+	UIscriptName.GetComponent(fallingUITest).UnhideGUI();
   }
 
 }
