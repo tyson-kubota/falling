@@ -323,16 +323,20 @@ function LoadLevel4ViaMenu() {
 }
 
 function HideGUI() {
+		pauseButton.hidden = true;
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
 		lifeBarOutline.hidden = true;
 }
 
 function UnhideGUI() {
+		pauseButton.hidden = false;
 		circleReticle.hidden = false;
 		lifeBar.hidden = false;
 		lifeBarOutline.hidden = false;
-		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);		
-		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);		
-		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Linear.easeIn);		
+		
+		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Linear.easeIn);
 }
