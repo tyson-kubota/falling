@@ -332,4 +332,7 @@ function UnhideGUI() {
 		circleReticle.hidden = false;
 		lifeBar.hidden = false;
 		lifeBarOutline.hidden = false;
+		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);		
+		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);		
+		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Linear.easeIn);		
 }

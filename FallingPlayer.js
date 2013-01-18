@@ -63,6 +63,7 @@ function Start() {
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
 	rigidbody.isKinematic = false;	
+	UIscriptName.GetComponent(fallingUITest).UnhideGUI();
 }
 
 
