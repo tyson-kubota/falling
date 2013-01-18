@@ -117,7 +117,7 @@ function changeLevelBackdrop () {
 	changeBackdrop.endSphereRenderer.enabled = false;
 
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
-	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
+//	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   	gameObject.Find("Camera").camera.farClipPlane = startingCameraFarClipPlane;
 	transform.Find("plane-close").renderer.materials = [origMat];
