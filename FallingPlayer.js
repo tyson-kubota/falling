@@ -150,6 +150,7 @@ function OnCollisionEnter (collision : Collision) {
 
   if (collision.gameObject.CompareTag ("Death")) {
   	isAlive = 0;
+  	isPausable = false;
   	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
   	UIscriptName.GetComponent(fallingUITest).HideGUI();
 	yield DeathRespawn ();
@@ -165,7 +166,7 @@ function OnTriggerEnter (other : Collider) {
 //    Camera.main.SendMessage("flashOut");
 	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
 
-	gameObject.SendMessage ("IncrementScoreNow", 7);
+	gameObject.SendMessage ("IncrementScore", 7);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
 //  	Camera.main.SendMessage("flashUp");	  	
