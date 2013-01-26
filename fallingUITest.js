@@ -14,6 +14,7 @@ var loadLevelOne : UIButton;
 var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
+var openSiteButton : UIButton;
 var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 
@@ -129,6 +130,11 @@ function Start () {
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
 	
+	openSiteButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
+	openSiteButton.positionFromBottomRight(.05f, .05f);	
+	openSiteButton.onTouchUpInside += OpenSite;
+	openSiteButton.hidden = true;
+	
 	circleReticle = UIButton.create("circle-reticle.png","circle-reticle.png", 0, 0);
 	circleReticle.positionCenter();
 	
@@ -163,6 +169,7 @@ function PauseGame() {
 		leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
+		openSiteButton.hidden = false;
 		
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
@@ -189,6 +196,7 @@ function UnPauseGame(resume : boolean) {
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	loadNewLevelButton.hidden = true;
+	openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
     }
     
@@ -321,6 +329,10 @@ function LoadLevel4ViaMenu() {
 	
 	Application.LoadLevel(level4);
 	Time.timeScale = savedTimeScale;
+}
+
+function OpenSite() {
+	Application.OpenURL ("http://tyson-kubota.github.com/");
 }
 
 function HideGUI() {
