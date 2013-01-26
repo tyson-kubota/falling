@@ -4,9 +4,6 @@ var player : GameObject;
 var value : float = 0.5f;
 var bgSprite : UISprite;
 var pauseButton : UIButton;
-var circleReticle: UIButton;
-var lifeBarOutline : UIProgressBar;
-var lifeBar : UIProgressBar;
 var rightArrow : UIButton;
 var leftArrow : UIButton;
 var loadNewLevelButton : UIButton;
@@ -30,9 +27,6 @@ var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
 private var savedTimeScale:float;
-//var x:float;
-//var y:float;
-// private var lifeBar = UIProgressBar.create( "lifeBarRedTest.png", 0, 0 );
 
 function Start () {
 //  yield WaitForSeconds(0.5f);
@@ -55,11 +49,6 @@ function Start () {
 	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(30);
 	pauseButton.onTouchUpInside += PauseGameCheck;
 
-//	var resumeButton = UIButton.create("pauseGray.png","pauseWhite.png", 0, 0 );
-//	resumeButton.pixelsFromBottomRight( 10, 10 );
-//    savedTimeScale = Time.timeScale;
-//	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(20);
-//	resumeButton.onTouchUpInside += UnPauseGame;
 	if (UI.isHD == true) {
 	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
 	}
@@ -73,7 +62,7 @@ function Start () {
 	
 	leftArrow = UIButton.create("restart.png","restartDown.png", 0, 0);
 	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
-	leftArrow.onTouchUpInside += RestartLevel;
+	leftArrow.onTouchUpInside += LevelSelect;
 
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
@@ -134,34 +123,8 @@ function Start () {
 	openSiteButton.positionFromBottomRight(.05f, .05f);	
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
-	
-	circleReticle = UIButton.create("circle-reticle.png","circle-reticle.png", 0, 0);
-	circleReticle.positionCenter();
-	
-	lifeBarOutline = UIProgressBar.create( "lifeBarOutline.png", 0, 0 );
-	lifeBarOutline.pixelsFromTopLeft ( 8, 8 );
-	lifeBarOutline.value = 1f;
-	lifeBarOutline.resizeTextureOnChange = false;
-				
-	lifeBar = UIProgressBar.create( "lifeBarRed.png", 0, 0 );
-	lifeBar.pixelsFromTopLeft ( 10, 10 );
-	lifeBar.resizeTextureOnChange = true;
-	lifeBar.value = 0.67f;	
-	animateProgressBar (lifeBar);
-//	Loop ();
 
 	}
-
-function animateProgressBar(lifeBar : UIProgressBar) {
-	while (true)
-	{
-	lifeBar.value = (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore));
-//	Debug.Log(lifeBar.value + " is lifebar value");
-//	Debug.Log(ScoreController.currentScore + " is currentScore");
-//	yield WaitForSeconds (1);
-	yield 0;
-	}
-}
 
 function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
@@ -170,13 +133,9 @@ function PauseGame() {
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
 		openSiteButton.hidden = false;
-		
-		circleReticle.hidden = true;
-		lifeBar.hidden = true;
-		lifeBarOutline.hidden = true;
-	    
+			    
 	    savedTimeScale = Time.timeScale;
-		scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
+//		scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
 	    yield WaitForSeconds (.1);
 	    Time.timeScale = 0;
 	    AudioListener.pause = true;
@@ -187,11 +146,8 @@ function UnPauseGame(resume : boolean) {
 	FallingPlayer.isPausable = false;
     Time.timeScale = savedTimeScale;
     AudioListener.pause = false;
-	scriptName.GetComponent(FallingPlayer).FadeAudio (1.0, FadeDir.In);
-	circleReticle.hidden = false;
-	lifeBar.hidden = false;
-	lifeBarOutline.hidden = false;
-	
+//	scriptName.GetComponent(FallingPlayer).FadeAudio (1.0, FadeDir.In);
+
 	bgSprite.hidden = true;
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
@@ -214,14 +170,6 @@ function PauseGameCheck() {
 			PauseGame();
 		}
 	}
-}
-
-function RestartLevel() {
-	FallingPlayer.isPausable = false;	
-	Camera.main.SendMessage("fadeOut");
-	Respawn.currentRespawn = initialRespawn;
-	scriptName.GetComponent(FallingPlayer).DeathRespawn ();
-	UnPauseGame(false);
 }
 
 function LevelComplete() {
@@ -337,19 +285,9 @@ function OpenSite() {
 
 function HideGUI() {
 		pauseButton.hidden = true;
-		circleReticle.hidden = true;
-		lifeBar.hidden = true;
-		lifeBarOutline.hidden = true;
 }
 
 function UnhideGUI() {
 		pauseButton.hidden = false;
-		circleReticle.hidden = false;
-		lifeBar.hidden = false;
-		lifeBarOutline.hidden = false;
-		
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Linear.easeIn);
 }
