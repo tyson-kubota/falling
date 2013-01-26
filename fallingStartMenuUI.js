@@ -3,6 +3,7 @@
 var player : GameObject;
 var value : float = 0.5f;
 var bgSprite : UISprite;
+var bgSpriteStart : UISprite;
 var pauseButton : UIButton;
 var rightArrow : UIButton;
 var leftArrow : UIButton;
@@ -38,7 +39,13 @@ function Start () {
 //    if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	Screen.orientation = ScreenOrientation.LandscapeRight;}
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
-    bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
+	Camera.main.SendMessage("fadeIn");
+    bgSpriteStart = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
+	bgSpriteStart.positionCenter();
+	bgSpriteStart.scaleTo( 0.0001f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
+	bgSpriteStart.alphaTo( 0.0001f, 0.3f, Easing.Sinusoidal.easeOut);
+
+	bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
 	bgSprite.alphaTo( 0.01f, 0.94f, Easing.Sinusoidal.easeOut);
