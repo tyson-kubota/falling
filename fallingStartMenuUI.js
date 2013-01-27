@@ -281,14 +281,14 @@ function LevelSelect() {
 function BackToPauseMenu() {
 	leftArrow.hidden = false;
 	rightArrow.hidden = false;
-	pauseButton.hidden = false;
+//	pauseButton.hidden = false;
 	
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	
-	loadNewLevelButton.hidden = false;
+//	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
 }
 
