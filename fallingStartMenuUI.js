@@ -93,28 +93,28 @@ function Start () {
 	else {				
 	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);}
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
-	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
+	loadLevelOne.onTouchUpInside += LoadLevel1ViaStart;
 	
 	if (level2 == Application.loadedLevelName) {
 	loadLevelTwo = UIButton.create("level1Down.png","level1.png", 0, 0);}
 	else {				
 	loadLevelTwo = UIButton.create("level1.png","level1Down.png", 0, 0);}
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
-	loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
+	loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
 	
 	if (level3 == Application.loadedLevelName) {
 	loadLevelThree = UIButton.create("level1Down.png","level1.png", 0, 0);}
 	else {				
 	loadLevelThree = UIButton.create("level1.png","level1Down.png", 0, 0);}
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
-	loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
+	loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
 	
 	if (level4 == Application.loadedLevelName) {
 	loadLevelFour = UIButton.create("level1Down.png","level1.png", 0, 0);}
 	else {				
 	loadLevelFour = UIButton.create("level1.png","level1Down.png", 0, 0);}
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
-	loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;		
+	loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;		
 	
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
@@ -292,6 +292,7 @@ function BackToPauseMenu() {
 	BackToPauseMenuButton.hidden = true;
 }
 
+
 function LoadLevel1ViaStart() {
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
@@ -305,21 +306,7 @@ function LoadLevel1ViaStart() {
 	Application.LoadLevel(level1);
 }
 
-function LoadLevel1ViaMenu() {
-	loadLevelOne.hidden = true;
-	loadLevelTwo.hidden = true;
-	loadLevelThree.hidden = true;
-	loadLevelFour.hidden = true;
-	BackToPauseMenuButton.hidden = true;
-	loadingLabel.hidden = false;
-	rightArrow.hidden = true;
-	leftArrow.hidden = true;
-	
-	Application.LoadLevel(level1);
-	Time.timeScale = savedTimeScale;
-}
-
-function LoadLevel2ViaMenu() {
+function LoadLevel2ViaStart() {
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
@@ -328,10 +315,9 @@ function LoadLevel2ViaMenu() {
 	loadingLabel.hidden = false;	
 	
 	Application.LoadLevel(level2);
-	Time.timeScale = savedTimeScale;
 }
 
-function LoadLevel3ViaMenu() {
+function LoadLevel3ViaStart() {
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
@@ -340,10 +326,9 @@ function LoadLevel3ViaMenu() {
 	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level3);
-	Time.timeScale = savedTimeScale;
 }
 
-function LoadLevel4ViaMenu() {
+function LoadLevel4ViaStart() {
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
@@ -352,7 +337,6 @@ function LoadLevel4ViaMenu() {
 	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level4);
-	Time.timeScale = savedTimeScale;
 }
 
 function OpenSite() {
