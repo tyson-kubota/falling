@@ -15,6 +15,7 @@ var loadLevelFour : UIButton;
 var openSiteButton : UIButton;
 var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
+var tiltWarning : UIButton;
 
 var buttonScaleFactor : float;
 var scriptName : GameObject;
@@ -28,6 +29,8 @@ var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
 private var savedTimeScale:float;
+
+var canShowStart : boolean;
 
 function Start () {
 //  yield WaitForSeconds(0.5f);
@@ -43,7 +46,7 @@ function Start () {
     bgSpriteStart = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSpriteStart.positionCenter();
 	bgSpriteStart.scaleTo( 0.0001f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
-	bgSpriteStart.alphaTo( 0.0001f, 0.3f, Easing.Sinusoidal.easeOut);
+	bgSpriteStart.alphaTo( 0.0001f, 0.1f, Easing.Sinusoidal.easeOut);
 
 	bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
@@ -56,6 +59,8 @@ function Start () {
 	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(30);
 	pauseButton.onTouchUpInside += PauseGameCheck;
 
+	pauseButton.hidden = true;
+
 	if (UI.isHD == true) {
 	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
 	}
@@ -63,14 +68,18 @@ function Start () {
 	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 	}
 
+	tiltWarning = UIButton.create("tiltwarning.png","tiltwarning.png", 0, 0);
+	tiltWarning.positionFromTop(buttonScaleFactor);
+	
 	rightArrow = UIButton.create("start.png","startDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
-	rightArrow.onTouchUpInside += LoadLevel1ViaMenu;
+	rightArrow.onTouchUpInside += LoadLevel1ViaStart;
 	
 	leftArrow = UIButton.create("chooselevel.png","chooselevelDown.png", 0, 0);
 	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
 	leftArrow.onTouchUpInside += LevelSelect;
-
+	
+	tiltWarning.hidden = true;
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	
@@ -131,7 +140,52 @@ function Start () {
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
 
+ 	yield WaitForSeconds (4);
+	bgSpriteStart.alphaTo( 3.0f, 0.85f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds (1);
+	canShowStart = true;
+//	ShowStart();
 	}
+
+function ShowStart() {
+	tiltWarning.hidden = true;
+	
+	rightArrow.hidden = false;
+	leftArrow.hidden = false;
+	rightArrow.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	leftArrow.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	canShowStart = false;
+}
+
+function CheckTiltAngle() {
+	canShowStart = false;
+	
+	yield WaitForSeconds (.75);
+	if ((Mathf.Abs(Input.acceleration.x) < .25) && (Mathf.Abs(Input.acceleration.y) < .25)) {
+		ShowStart();}
+	else {canShowStart = true;}
+}
+
+function ShowTiltWarning() {
+	canShowStart = false;
+	
+	tiltWarning.hidden = false;
+	tiltWarning.alphaFromTo( 0.25f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	yield WaitForSeconds (.75);
+	tiltWarning.alphaFromTo( 0.25f, 1.0f, 0.0f, Easing.Sinusoidal.easeOut);	
+	yield WaitForSeconds (.5);
+	canShowStart = true;
+}
+
+function Update () {
+	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .2) && (Mathf.Abs(Input.acceleration.y) < .2)) {
+		CheckTiltAngle();
+	}
+	else if (canShowStart == true) {
+		ShowTiltWarning();
+	}
+//	Debug.Log ("your input accel y is " + Input.acceleration.y + " and input accel x is " + Input.acceleration.x);
+}
 
 function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
@@ -238,6 +292,19 @@ function BackToPauseMenu() {
 	BackToPauseMenuButton.hidden = true;
 }
 
+function LoadLevel1ViaStart() {
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	loadingLabel.hidden = false;
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	
+	Application.LoadLevel(level1);
+}
+
 function LoadLevel1ViaMenu() {
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
@@ -297,6 +364,6 @@ function HideGUI() {
 }
 
 function UnhideGUI() {
-		pauseButton.hidden = false;
+		pauseButton.hidden = true;
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 }
