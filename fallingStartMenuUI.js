@@ -63,11 +63,11 @@ function Start () {
 	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 	}
 
-	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
+	rightArrow = UIButton.create("start.png","startDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
-	rightArrow.onTouchUpInside += PauseGameCheck;
+	rightArrow.onTouchUpInside += LoadLevel1ViaMenu;
 	
-	leftArrow = UIButton.create("restart.png","restartDown.png", 0, 0);
+	leftArrow = UIButton.create("chooselevel.png","chooselevelDown.png", 0, 0);
 	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
 	leftArrow.onTouchUpInside += LevelSelect;
 
@@ -126,7 +126,7 @@ function Start () {
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
 	
-	openSiteButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
+	openSiteButton = UIButton.create("website.png","website.png", 40, 40);
 	openSiteButton.positionFromBottomRight(.05f, .05f);	
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
@@ -245,6 +245,8 @@ function LoadLevel1ViaMenu() {
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
 	loadingLabel.hidden = false;
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
 	
 	Application.LoadLevel(level1);
 	Time.timeScale = savedTimeScale;

@@ -130,7 +130,7 @@ function Start () {
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
 	
-	openSiteButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
+	openSiteButton = UIButton.create("website.png","website.png", 40, 40);
 	openSiteButton.positionFromBottomRight(.05f, .05f);	
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;

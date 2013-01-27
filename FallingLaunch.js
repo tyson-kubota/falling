@@ -17,7 +17,7 @@ function Awake () {
 	}
 	
 	DontDestroyOnLoad (this);
-	Application.LoadLevel("Falling-scene-menu");
+//	Application.LoadLevel("Falling-scene-menu");
 }
 
 function Update () {
