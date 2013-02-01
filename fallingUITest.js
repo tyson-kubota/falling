@@ -165,6 +165,7 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 
 function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
+		FallingPlayer.isPausable = false;
 		rightArrow.hidden = false;
 		leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
@@ -180,6 +181,7 @@ function PauseGame() {
 	    yield WaitForSeconds (.1);
 	    Time.timeScale = 0;
 	    AudioListener.pause = true;
+	    FallingPlayer.isPausable = true;
     }
 }
 
@@ -332,7 +334,7 @@ function LoadLevel4ViaMenu() {
 }
 
 function OpenSite() {
-	Application.OpenURL ("http://tyson-kubota.github.com/");
+	Application.OpenURL ("http://tysonkubota.net/");
 }
 
 function HideGUI() {
