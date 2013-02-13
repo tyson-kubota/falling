@@ -123,6 +123,10 @@ function Update () {
 	fallingSpeed();
 }
 
+// I also tried moving fallingSpeed function to fixedUpdate, but it actually made the game slower,
+// since iOS is usually 30fps and fixedUpdate needs to run at 50fps (0.02 fixed timestep) for
+// decent collision detection.
+
 function fallingSpeed () {
    
 fingerCount = 0;
