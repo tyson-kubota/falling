@@ -82,8 +82,10 @@ if (FallingPlayer.isAlive == 1) {
 	dir.z = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
-    dir *= Time.deltaTime;
-        
+	// .:. not necessary in fixedupdate
+    // dir *= Time.deltaTime;
+    // print("Your dir is: " + dir);     
+    
     // Move object
     myTransform.Translate (dir * speed);
 }
