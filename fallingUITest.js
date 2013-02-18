@@ -47,7 +47,7 @@ function Start () {
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
-	bgSprite.alphaTo( 0.01f, 0.94f, Easing.Sinusoidal.easeOut);
+	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
 	
 	pauseButton = UIButton.create("pauseWhite.png","pauseGray.png", 0, 0);
@@ -143,7 +143,7 @@ function Start () {
 	lifeBarOutline.value = 1f;
 	lifeBarOutline.resizeTextureOnChange = false;
 				
-	lifeBar = UIProgressBar.create( "lifeBarRed.png", 0, 0 );
+	lifeBar = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
 	lifeBar.pixelsFromTopLeft ( 10, 10 );
 	lifeBar.resizeTextureOnChange = true;
 	lifeBar.value = 0.67f;	
