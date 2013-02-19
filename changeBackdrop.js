@@ -15,6 +15,7 @@ static var endSphereRenderer : Renderer;
 //var foo : Material; //set this in the editor
 //var bar : Material; //set this in the editor
 var oceanLevel : boolean = false;
+var ShouldUseOceanCamera : boolean = false;
 
 function Start () {
 
@@ -45,9 +46,9 @@ function OnTriggerEnter (other : Collider) {
 //		Enable the above method to re-add the fade 2d image backdrop on trigger enter.
 
 //		Debug.Log("You hit a changeBackdrop trigger!");
-
-		SmoothFogFade ();
-		enableOceanCamera();
+		
+		FadeCameraFarClipPlane ();
+		if (ShouldUseOceanCamera == true) {enableOceanCamera(); SmoothFogFade ();}
 	}
 }
 
@@ -55,6 +56,17 @@ function changeCameraFadeLayer() {
     var cameraFadeObject : GameObject = GameObject.Find ("iTween Camera Fade");
     if(cameraFadeObject)
        cameraFadeObject.layer = 4;
+}
+
+function FadeCameraFarClipPlane () {
+    iTween.ValueTo ( gameObject,
+        {
+            "from" : mainCamera.camera.farClipPlane,
+            "to" : 2500,
+            "onupdate" : "ChangeCameraFarClipPlane",
+            "time" : 3,
+            "easetype" : "easeInExpo"
+       });
 }
 
 function SmoothFogFade () {
@@ -86,7 +98,7 @@ function ChangeFogEndDistance (i : int) {
 }
 
 function ChangeCameraFarClipPlane (i : int) {
-	gameObject.Find("Camera").camera.farClipPlane = i;
+	mainCamera.camera.farClipPlane = i;
 }
 
 function enableOceanCamera () {
