@@ -46,7 +46,7 @@ function Start () {
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
-	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
+	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
 	
@@ -236,11 +236,12 @@ function LevelComplete() {
 
     savedTimeScale = Time.timeScale;
     scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
-    scriptName.rigidbody.isKinematic = true;
+	loadingLabel.hidden = false;
+	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);    
     yield WaitForSeconds (1);
 //    Time.timeScale = 0;
+	scriptName.rigidbody.isKinematic = true;
     AudioListener.pause = true;	
-	loadingLabel.hidden = false;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 }

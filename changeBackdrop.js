@@ -16,6 +16,7 @@ static var endSphereRenderer : Renderer;
 //var bar : Material; //set this in the editor
 var oceanLevel : boolean = false;
 var ShouldUseOceanCamera : boolean = false;
+var ShouldChangeBackdrop : boolean = false;
 
 function Start () {
 
@@ -41,6 +42,8 @@ function OnTriggerEnter (other : Collider) {
 	
 // 		not needed if not actually changing backdrop
 //		transform.Find("plane-close").renderer.materials = [newMat];
+		if (ShouldChangeBackdrop == true) {
+		transform.Find("plane-close").renderer.materials = [newMat];}
 
 //		FadeBetweenCameras ();
 //		Enable the above method to re-add the fade 2d image backdrop on trigger enter.
