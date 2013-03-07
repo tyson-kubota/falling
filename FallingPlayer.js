@@ -46,6 +46,8 @@ isAlive = lifeCountdown.isAlive;
 static var isPausable : boolean = true;
 
 var UIscriptName : GameObject;
+var UIscriptComponent : fallingUITest;
+
 
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -58,12 +60,13 @@ function Start() {
 	startingFogEndDistance = RenderSettings.fogEndDistance;
 	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
   	isAlive = 1;
+  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
 	rigidbody.isKinematic = false;	
-	UIscriptName.GetComponent(fallingUITest).UnhideGUI();
+	UIscriptComponent.UnhideGUI();
 }
 
 
@@ -152,9 +155,9 @@ function OnCollisionEnter (collision : Collision) {
   	isAlive = 0;
   	isPausable = false;
   	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-  	UIscriptName.GetComponent(fallingUITest).HideGUI();
+  	UIscriptComponent.HideGUI();
 	yield DeathRespawn ();
-	UIscriptName.GetComponent(fallingUITest).UnhideGUI();
+	UIscriptComponent.UnhideGUI();
   }
 
 }
@@ -173,7 +176,7 @@ function OnTriggerEnter (other : Collider) {
 	}
 	
   if (other.gameObject.CompareTag ("LevelEnd")) {
-	UIscriptName.GetComponent(fallingUITest).LevelComplete();
+	UIscriptComponent.LevelComplete();
   }	
 }
 			
