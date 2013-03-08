@@ -362,7 +362,7 @@ function UnhideGUI() {
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		circleReticle.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 }
 
 function fadeIn( shouldUnhideGUI : boolean ) {
