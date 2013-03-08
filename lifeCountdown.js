@@ -45,9 +45,9 @@ function TickingAway (delay : float) {
 		   	FallingPlayer.isPausable = false;
 		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
 		   	
-		   	UIscriptName.GetComponent(fallingUITest).HideGUI();
+		   	//UIscriptName.GetComponent(fallingUITest).HideGUI();
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
-			UIscriptName.GetComponent(fallingUITest).UnhideGUI();
+			//UIscriptName.GetComponent(fallingUITest).UnhideGUI();
 		}
 }
 

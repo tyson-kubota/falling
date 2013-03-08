@@ -190,6 +190,8 @@ function OnTriggerEnter (other : Collider) {
 	
   if (other.gameObject.CompareTag ("LevelEnd")) {
 	UIscriptComponent.LevelComplete();
+// to keep you from dying after you strike the levelend trigger
+	gameObject.SendMessage ("IncrementScore", 20);
   }	
 }
 			
