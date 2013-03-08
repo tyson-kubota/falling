@@ -18,12 +18,8 @@ static var isSlowing:boolean = false;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-var UIscriptName : GameObject;
-var UIscriptComponent : fallingUITest;
-
-var ScoreFlashTexture : GameObject;
-var ScoreFlashTextureScript : GUITextureLaunch;
-ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
+//var UIscriptName : GameObject;
+//var UIscriptComponent : fallingUITest;
 
 function Awake() {
 	myTransform = transform;
@@ -37,7 +33,7 @@ function Start() {
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
 
-  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
+//  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 }
 
 function FixedUpdate () {
