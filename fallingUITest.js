@@ -380,3 +380,10 @@ function fadeOut() {
 		yield WaitForSeconds(1);
 		fadeSprite.hidden = true;
 }
+
+function speedLinesNow() {
+//		Debug.Log("Time to fade!");
+		bgSprite.hidden = false;
+		bgSprite.alphaTo( 2.0f, 0.9f, Easing.Sinusoidal.easeOut);
+		yield WaitForSeconds(2.0);
+}

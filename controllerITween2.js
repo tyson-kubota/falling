@@ -1,10 +1,8 @@
 public var force:float = 1.0;
 public var simulateAccelerometer:boolean = false;
 public var touchedBy:boolean = false;
-//public var fingerCount:float = 0;
 var dir : Vector3 = Vector3.zero;
 var endPoint = 0.0; 
-//private var startPoint = 18000.0; 
 var touch : Touch;
 var fingerCount = 0;
 
@@ -16,11 +14,16 @@ private var timeVar : float;
 static var Slowdown : int = 0;
 var speed = 10.0;
 static var isSlowing:boolean = false;
-//static var landscapeFlipped:boolean = false;
-//var flipMultiplier : int = 1;
 
 var script : ScoreController;
 script = GetComponent("ScoreController");
+
+var UIscriptName : GameObject;
+var UIscriptComponent : fallingUITest;
+
+var ScoreFlashTexture : GameObject;
+var ScoreFlashTextureScript : GUITextureLaunch;
+ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
 
 function Awake() {
 	myTransform = transform;
@@ -28,27 +31,13 @@ function Awake() {
 
 
 function Start() {
-	// make landscape view
-	// iPhoneSettings.screenOrientation = iPhoneScreenOrientation.Landscape;
-	
-//  disabled 12-11-2012
-//	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-//	Screen.orientation = ScreenOrientation.LandscapeRight;
-//	landscapeFlipped = true;
-//	flipMultiplier = -1;
-//	}
-//	else {	Screen.orientation = ScreenOrientation.LandscapeLeft;}
 
-//	iPhoneSettings.screenOrientation = iPhoneScreenOrientation.LandscapeLeft;
-		
 //	Screen.sleepTimeout = 0.0f;
 //	deprecated, now should use NeverSleep
-
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
-//	startPoint = transform.position; 
     startTime = Time.time; 
 
-//	Slowdown = 0;
+  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 }
 
 function FixedUpdate () {
@@ -86,12 +75,10 @@ if (FallingPlayer.isAlive == 1) {
     // dir *= Time.deltaTime;
     // print("Your dir is: " + dir);     
     
-    // Move object
     myTransform.Translate (dir * speed);
 }
 else {dir = Vector3.zero;}
 
-//    constantForce.relativeForce = (Vector3.down * Slowdown); 
 }
 
 function SmoothSlowdown () {
@@ -128,7 +115,7 @@ function Update () {
 // decent collision detection.
 
 function fallingSpeed () {
-   
+
 fingerCount = 0;
 	
 	if (FallingPlayer.isAlive == 1) {
@@ -158,6 +145,7 @@ constantForce.relativeForce = (Vector3.down * Slowdown);
 function speedUp () {
 		Slowdown = 18000;        
 		Camera.main.SendMessage("speedLinesUp");
+//		UIscriptComponent.speedLinesNow();		
 }
 
 function slowDown () {
