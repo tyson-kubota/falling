@@ -270,7 +270,8 @@ function LevelSelect() {
 	leftArrow.hidden = true;
 	rightArrow.hidden = true;
 	pauseButton.hidden = true;
-	
+	openSiteButton.hidden = false;
+		
 	loadLevelOne.hidden = false;
 	loadLevelTwo.hidden = false;
 	loadLevelThree.hidden = false;
@@ -284,7 +285,8 @@ function BackToPauseMenu() {
 	leftArrow.hidden = false;
 	rightArrow.hidden = false;
 //	pauseButton.hidden = false;
-	
+	openSiteButton.hidden = true;
+		
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;

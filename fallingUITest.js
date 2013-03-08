@@ -177,7 +177,7 @@ function PauseGame() {
 		leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
-		openSiteButton.hidden = false;
+		//openSiteButton.hidden = false;
 		
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
