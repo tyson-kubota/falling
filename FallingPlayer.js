@@ -67,11 +67,13 @@ function Start() {
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
 	rigidbody.isKinematic = false;
-	//UIscriptComponent.UnhideGUI();
+	UIscriptComponent.UnhideGUI();
 	introFade();
 }
 
 function introFade() {
+	// this disables (unchecks) the script FadeInOutAlt after three seconds,
+	// so OnGui is only called at the start of each level load.
 	yield WaitForSeconds (3);
 	whiteFader = Camera.main.GetComponent(FadeInOutAlt);
 	whiteFader.enabled = false;
