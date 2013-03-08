@@ -48,6 +48,7 @@ static var isPausable : boolean = true;
 var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
+var whiteFader : FadeInOutAlt;
 
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -65,10 +66,16 @@ function Start() {
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
-	rigidbody.isKinematic = false;	
-	UIscriptComponent.UnhideGUI();
+	rigidbody.isKinematic = false;
+	//UIscriptComponent.UnhideGUI();
+	introFade();
 }
 
+function introFade() {
+	yield WaitForSeconds (3);
+	whiteFader = Camera.main.GetComponent(FadeInOutAlt);
+	whiteFader.enabled = false;
+}
 
 function FadeAudio (timer : float, fadeType : FadeDir) {
 
@@ -89,7 +96,9 @@ function DeathRespawn () {
 	isPausable = false;
 	rigidbody.isKinematic = true;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
-  	Camera.main.SendMessage("fadeOut");
+	
+	UIscriptComponent.fadeOut();
+// 	Camera.main.SendMessage("fadeOut");
 //  isAlive = 1;
 
 	if (levelChangeBackdrop == true) {
@@ -105,7 +114,9 @@ function DeathRespawn () {
 	collider.attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
 	transform.position = respawnPosition; // + Vector3.up;
-	Camera.main.SendMessage("fadeIn");
+	UIscriptComponent.fadeIn(true);
+//	Camera.main.SendMessage("fadeIn");
+
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
 	isPausable = true;
@@ -155,9 +166,9 @@ function OnCollisionEnter (collision : Collision) {
   	isAlive = 0;
   	isPausable = false;
   	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-  	UIscriptComponent.HideGUI();
+  	//UIscriptComponent.HideGUI();
 	yield DeathRespawn ();
-	UIscriptComponent.UnhideGUI();
+	//UIscriptComponent.UnhideGUI();
   }
 
 }

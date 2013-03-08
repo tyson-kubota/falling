@@ -3,6 +3,7 @@
 var player : GameObject;
 var value : float = 0.5f;
 var bgSprite : UISprite;
+var fadeSprite : UISprite;
 var pauseButton : UIButton;
 var circleReticle: UIButton;
 var lifeBarOutline : UIProgressBar;
@@ -49,7 +50,13 @@ function Start () {
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
-	
+
+	fadeSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
+	fadeSprite.positionCenter();
+	fadeSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
+	fadeSprite.alphaTo( 0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+	fadeSprite.hidden = true;
+
 	pauseButton = UIButton.create("pauseWhite.png","pauseGray.png", 0, 0);
 	pauseButton.pixelsFromTopRight( 5, 5 );
 	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(30);
@@ -220,7 +227,8 @@ function PauseGameCheck() {
 
 function RestartLevel() {
 	FallingPlayer.isPausable = false;	
-	Camera.main.SendMessage("fadeOut");
+//	Camera.main.SendMessage("fadeOut");
+	//fadeOut();
 	Respawn.currentRespawn = initialRespawn;
 	scriptName.GetComponent(FallingPlayer).DeathRespawn ();
 	UnPauseGame(false);
@@ -354,5 +362,21 @@ function UnhideGUI() {
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Linear.easeIn);
+		circleReticle.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+}
+
+function fadeIn( shouldUnhideGUI : boolean ) {
+		fadeSprite.hidden = false;
+		fadeSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
+		yield WaitForSeconds(.5);
+		if (shouldUnhideGUI == true) {UnhideGUI();}
+		yield WaitForSeconds(.5);
+		fadeSprite.hidden = true;
+}
+
+function fadeOut() {
+		fadeSprite.hidden = false;
+		fadeSprite.alphaTo( 1.0f, 1.0f, Easing.Sinusoidal.easeOut);
+		yield WaitForSeconds(1);
+		fadeSprite.hidden = true;
 }

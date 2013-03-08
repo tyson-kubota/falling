@@ -6,7 +6,7 @@
 
 public var fadeOutTexture : Texture2D;
 public var fadeSpeed = 0.3;
-var canFade : boolean = false;
+//var canFade : boolean = false;
 var drawDepth = -1000;
 
 //--------------------------------------------------------------------
