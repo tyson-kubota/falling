@@ -121,9 +121,9 @@ function DeathRespawn () {
 
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
-	isPausable = true;
 	rigidbody.isKinematic = false;
    	isAlive = 1;
+   	UIscriptComponent.UnhideGUI();
 }   	
 
 function changeLevelBackdrop () {
@@ -168,8 +168,9 @@ function OnCollisionEnter (collision : Collision) {
   	isAlive = 0;
   	isPausable = false;
   	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-  	//UIscriptComponent.HideGUI();
+  	UIscriptComponent.HideGUI();
 	yield DeathRespawn ();
+	//isPausable = true;
 	//UIscriptComponent.UnhideGUI();
   }
 

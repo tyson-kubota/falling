@@ -237,6 +237,7 @@ function RestartLevel() {
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
 	Respawn.currentRespawn = initialRespawn;
+	HideGUI();
 	scriptName.GetComponent(FallingPlayer).DeathRespawn ();
 	UnPauseGame(false);
 }
@@ -370,6 +371,8 @@ function UnhideGUI() {
 		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+		yield WaitForSeconds (1.0);
+		FallingPlayer.isPausable = true;
 }
 
 function fadeIn( shouldUnhideGUI : boolean ) {
