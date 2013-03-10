@@ -243,6 +243,7 @@ function RestartLevel() {
 }
 
 function LevelComplete() {
+	HideGUI();
 	FallingPlayer.isPausable = false;
 	controllerITween2.Slowdown = 0;
 	bgSprite.hidden = false;
