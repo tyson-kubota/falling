@@ -14,12 +14,18 @@ private var timeVar : float;
 static var Slowdown : int = 0;
 var speed = 10.0;
 static var isSlowing:boolean = false;
+static var speedingUp:int = 1;
 
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
 //var UIscriptName : GameObject;
 //var UIscriptComponent : fallingUITest;
+
+var SpeedLinesTexture : GameObject;
+
+var SpeedLinesTextureScript : GUITextureLaunch;
+SpeedLinesTextureScript = SpeedLinesTexture.GetComponent("GUITextureLaunch");
 
 function Awake() {
 	myTransform = transform;
@@ -122,15 +128,27 @@ fingerCount = 0;
 		}
 			
 		if ((fingerCount > 1)) { 	
-			speedUp();
+			//speedUp();
+			speedingUp = 2; speedsUp(); Slowdown = 18000;
+			//if (Slowdown < 1) 
+			//{speedingUp = 2; speedsUp(); Slowdown = 18000; }
+			
 		}
 	    else if (fingerCount < 2) {
 	//    	slowDown();
-			Slowdown = 0;
+			//if (Slowdown > 0) {speedDown(); yield;}
+			if (Slowdown > 0) {speedingUp = 0; speedsUp(); Slowdown = 0; }
+			//else {speedsUp();}
 	    }
 	}
+	else if (FallingPlayer.isAlive == 0) {
+ 		speedingUp = 0;
+ 		speedsUp();
+ 		Slowdown = 0;
+ 	}
 	else {
 	Slowdown = 0;
+	speedingUp = 1;
 	dir = Vector3.zero;
 	}
  
@@ -138,10 +156,34 @@ fingerCount = 0;
 constantForce.relativeForce = (Vector3.down * Slowdown);
 }
 
+function speedsUp () {
+		if (speedingUp == 2) {
+		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
+		}
+		else {
+		SpeedLinesTextureScript.LinesFlash (1.0, FadeDir.In);
+}		
+}
+
 function speedUp () {
-		Slowdown = 18000;        
-		Camera.main.SendMessage("speedLinesUp");
+//		Slowdown = 18000;        
+//		Camera.main.SendMessage("speedLinesUp");
 //		UIscriptComponent.speedLinesNow();		
+		if (speedingUp == true) {
+		SpeedLinesTextureScript.FadeFlash (0.25, FadeDir.In);
+		yield WaitForSeconds(.25);
+		}
+		else {
+		SpeedLinesTextureScript.FadeFlash (0.5, FadeDir.Out);
+		yield WaitForSeconds(.5);
+		}
+
+}
+
+function speedDown () {
+		Slowdown = 0;
+		SpeedLinesTextureScript.LinesFlash (1.0, FadeDir.Out);
+		yield WaitForSeconds(1.0);
 }
 
 function slowDown () {

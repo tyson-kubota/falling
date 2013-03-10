@@ -4,6 +4,7 @@ var player : GameObject;
 var value : float = 0.5f;
 var bgSprite : UISprite;
 var fadeSprite : UISprite;
+var SpeedLinesSprite : UISprite;
 var pauseButton : UIButton;
 var circleReticle: UIButton;
 var lifeBarOutline : UIProgressBar;
@@ -50,6 +51,12 @@ function Start () {
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
+
+    SpeedLinesSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
+	SpeedLinesSprite.positionCenter();
+	SpeedLinesSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
+	SpeedLinesSprite.alphaTo( 0.01f, 0.6f, Easing.Sinusoidal.easeOut);
+	SpeedLinesSprite.hidden = true;
 
 	fadeSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
 	fadeSprite.positionCenter();
@@ -383,7 +390,13 @@ function fadeOut() {
 
 function speedLinesNow() {
 //		Debug.Log("Time to fade!");
-		bgSprite.hidden = false;
-		bgSprite.alphaTo( 2.0f, 0.9f, Easing.Sinusoidal.easeOut);
+		SpeedLinesSprite.hidden = false;
+		SpeedLinesSprite.alphaTo( 2.0f, 0.6f, Easing.Sinusoidal.easeOut);
 		yield WaitForSeconds(2.0);
+}
+
+function speedLinesOff() {
+		SpeedLinesSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
+		yield WaitForSeconds(1.0);
+		SpeedLinesSprite.hidden = true;
 }
