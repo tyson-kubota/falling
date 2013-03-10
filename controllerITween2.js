@@ -161,7 +161,7 @@ function speedsUp () {
 		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
 		}
 		else {
-		SpeedLinesTextureScript.LinesFlash (1.0, FadeDir.In);
+		SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
 }		
 }
 

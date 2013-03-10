@@ -38,11 +38,19 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
         guiTexture.color.a = Mathf.Lerp(start, end, i);
         yield;
     	}
-    	if  (controllerITween2.Slowdown < 1) {
-    yield WaitForSeconds (timer); 	}
+    if  (controllerITween2.Slowdown < 1) {yield WaitForSeconds (timer);}
     controllerITween2.speedingUp = 1; 
     }
-    
+ 
+}
+
+function LinesFlashOut (timer : float, fadeType : FadeDir) {
+
+    var start = fadeType == FadeDir.In? 0.0 : peakValue;
+    var end = fadeType == FadeDir.In? peakValue : 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
     if ((controllerITween2.Slowdown > 1) && (controllerITween2.speedingUp == 0)) { 
  	while (i <= 1.0) {
         i += step * Time.deltaTime;
@@ -52,5 +60,4 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
     yield WaitForSeconds (timer);
     controllerITween2.speedingUp = 1; 
     }
-	Debug.Log("Your while loop finished.");
 }
