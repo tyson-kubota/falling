@@ -57,7 +57,7 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
         guiTexture.color.a = Mathf.Lerp(end, start, i);
         yield;
     	}
-    yield WaitForSeconds (timer);
+    yield WaitForSeconds (timer/3);
     controllerITween2.speedingUp = 1; 
     }
 }

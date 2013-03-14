@@ -127,7 +127,7 @@ fingerCount = 0;
 	    	}
 		}
 			
-		if ((fingerCount > 1)) { 	
+		if (fingerCount > 1) { 	
 			//speedUp();
 			speedingUp = 2; speedsUp(); Slowdown = 18000;
 			//if (Slowdown < 1) 
