@@ -129,7 +129,8 @@ fingerCount = 0;
 			
 		if (fingerCount > 1) { 	
 			//speedUp();
-			speedingUp = 2; speedsUp(); Slowdown = 18000;
+			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; speedsUp();}
+			
 			//if (Slowdown < 1) 
 			//{speedingUp = 2; speedsUp(); Slowdown = 18000; }
 			
@@ -137,27 +138,27 @@ fingerCount = 0;
 	    else if (fingerCount < 2) {
 	//    	slowDown();
 			//if (Slowdown > 0) {speedDown(); yield;}
-			if (Slowdown > 0) {speedingUp = 0; speedsUp(); Slowdown = 0; }
-			//else {speedsUp();}
+			//Slowdown = 0;
+			
+			if (Slowdown > 0) {speedingUp = 0; Slowdown = 0; speedsUp(); }
 	    }
 	}
-	else if (FallingPlayer.isAlive == 0) {
- 		speedingUp = 0;
- 		speedsUp();
- 		Slowdown = 0;
- 	}
+
 	else {
 	Slowdown = 0;
-	speedingUp = 1;
+	speedingUp = 0;
+	speedsUp();
 	dir = Vector3.zero;
 	}
- 
+
+//  Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
 //	Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 constantForce.relativeForce = (Vector3.down * Slowdown);
 }
 
 function speedsUp () {
 		if (speedingUp == 2) {
+		speedingUp = 1;
 		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
 		}
 		else {
@@ -166,18 +167,16 @@ function speedsUp () {
 }
 
 function speedUp () {
-//		Slowdown = 18000;        
-//		Camera.main.SendMessage("speedLinesUp");
+		Slowdown = 18000;        
+		Camera.main.SendMessage("speedLinesUp");
 //		UIscriptComponent.speedLinesNow();		
-		if (speedingUp == true) {
-		SpeedLinesTextureScript.FadeFlash (0.25, FadeDir.In);
-		yield WaitForSeconds(.25);
-		}
-		else {
-		SpeedLinesTextureScript.FadeFlash (0.5, FadeDir.Out);
-		yield WaitForSeconds(.5);
-		}
 
+//		if (speedingUp == true) {
+//		SpeedLinesTextureScript.FadeFlash (0.25, FadeDir.In);
+//		yield WaitForSeconds(.25);}
+//		else {
+//		SpeedLinesTextureScript.FadeFlash (0.5, FadeDir.Out);
+//		yield WaitForSeconds(.5);}
 }
 
 function speedDown () {
