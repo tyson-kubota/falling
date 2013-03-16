@@ -49,7 +49,7 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
 function LinesFlashOut (timer : float, fadeType : FadeDir) {
 
     var start = fadeType == FadeDir.In? 0.0 : peakValue;
-    var end = fadeType == FadeDir.In? peakValue : 0.0;
+    var end = fadeType == FadeDir.In? guiTexture.color.a : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
  
@@ -64,4 +64,8 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
     yield WaitForSeconds (timer/3);
     controllerITween2.speedingUp = 1; 
     }
+}
+
+function LinesOff () {
+        guiTexture.color.a = 0;
 }

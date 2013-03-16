@@ -146,8 +146,8 @@ fingerCount = 0;
 
 	else {
 	Slowdown = 0;
-	speedingUp = 0;
-	speedsUp();
+	speedingUp = 1;
+	SpeedLinesTextureScript.LinesOff();
 	dir = Vector3.zero;
 	}
 
