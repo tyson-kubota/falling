@@ -21,7 +21,6 @@ ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
 
 public var force:float = 1.0;
 var dir : Vector3 = Vector3.zero;
-public var touchingSomething:boolean = false;
 
 enum FadeDir {In, Out}
 var fadeTime = 0.5;
@@ -116,14 +115,13 @@ function DeathRespawn () {
 	collider.attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
 	transform.position = respawnPosition; // + Vector3.up;
-	UIscriptComponent.fadeIn(true);
 //	Camera.main.SendMessage("fadeIn");
 
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
 	rigidbody.isKinematic = false;
    	isAlive = 1;
-   	UIscriptComponent.UnhideGUI();
+   	UIscriptComponent.fadeIn(true);
 }   	
 
 function changeLevelBackdrop () {
@@ -183,7 +181,7 @@ function OnTriggerEnter (other : Collider) {
 //    Camera.main.SendMessage("flashOut");
 	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
 
-	gameObject.SendMessage ("IncrementScore", 7);
+	gameObject.SendMessage ("IncrementScore", 4);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
 //  	Camera.main.SendMessage("flashUp");	  	

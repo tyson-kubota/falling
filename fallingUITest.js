@@ -247,14 +247,14 @@ function LevelComplete() {
 	FallingPlayer.isPausable = false;
 	controllerITween2.Slowdown = 0;
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.0f, 0.0f, 0.9f, Easing.Sinusoidal.easeOut);
-//	yield WaitForSeconds (.5);
+	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.95f, Easing.Sinusoidal.easeIn);
+	scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
+	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
     savedTimeScale = Time.timeScale;
-    scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
 	loadingLabel.hidden = false;
-	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);    
+	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
     yield WaitForSeconds (1);
 //    Time.timeScale = 0;
 	scriptName.rigidbody.isKinematic = true;
