@@ -247,7 +247,7 @@ function LevelComplete() {
 	FallingPlayer.isPausable = false;
 	controllerITween2.Slowdown = 0;
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	bgSprite.alphaFromTo( 1.0f, 0.0f, 0.9f, Easing.Sinusoidal.easeOut);
 //	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
