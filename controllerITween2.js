@@ -12,7 +12,7 @@ private var timeTapEnded : float;
 private var timeAtTap : float; 
 private var timeVar : float; 
 static var Slowdown : int = 0;
-var speed = 10.0;
+var speed = 2.4;
 static var isSlowing:boolean = false;
 static var speedingUp:int = 1;
 
