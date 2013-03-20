@@ -46,6 +46,7 @@ isAlive = lifeCountdown.isAlive;
 static var isPausable : boolean = true;
 
 var UIscriptName : GameObject;
+var UIscriptComponent : fallingStartMenuUI;
 
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -58,12 +59,13 @@ function Start() {
 	startingFogEndDistance = RenderSettings.fogEndDistance;
 	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
   	isAlive = 1;
+  	UIscriptComponent = UIscriptName.GetComponent(fallingStartMenuUI);  	
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
 	rigidbody.isKinematic = false;	
-	UIscriptName.GetComponent(fallingStartMenuUI).UnhideGUI();
+	UIscriptComponent.UnhideGUI();
 }
 
 
@@ -137,5 +139,4 @@ function Update () {
                                    Time.deltaTime * smooth);  
 	  }
 	  
-var deadlyObjectName : String = "DeathByFire";
 var initialRespawn : Respawn;	// set this to the initial respawn point for the level.

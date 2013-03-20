@@ -21,10 +21,10 @@ var ShouldChangeBackdrop : boolean = false;
 function Start () {
 
 	if (oceanLevel == true) {
-		mainCamera = gameObject.Find("Camera");
+		mainCamera = transform.FindChild("Camera").gameObject;
 		
-		oceanCamera = gameObject.Find("Camera-for-ocean");
-		backdropMist = gameObject.Find("Cylinder");
+		oceanCamera = transform.FindChild("Camera-for-ocean").gameObject;
+		backdropMist = transform.FindChild("Cylinder").gameObject;
 		
 		oceanRenderer = gameObject.Find("sky-water-ocean/Mesh").renderer;
 		oceanRenderer.enabled = false;

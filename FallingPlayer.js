@@ -48,6 +48,8 @@ var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
 var whiteFader : FadeInOutAlt;
+private var BackdropMist : GameObject;
+BackdropMist = transform.FindChild("Cylinder").gameObject;
 
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -58,7 +60,7 @@ function Awake() {
 function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
+	startingCameraFarClipPlane = transform.FindChild("Camera").camera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 	AudioListener.pause = false;
@@ -133,11 +135,9 @@ function changeLevelBackdrop () {
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 //	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	gameObject.Find("Camera").camera.farClipPlane = startingCameraFarClipPlane;
-	transform.Find("plane-close").renderer.materials = [origMat];
-	var BackdropMist = gameObject.Find("Cylinder");
-	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});
-			   	
+  	transform.FindChild("Camera").camera.farClipPlane = startingCameraFarClipPlane;
+	transform.FindChild("plane-close").renderer.materials = [origMat];
+	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});			   	
 	}
 	   		   	
 function Update () {
