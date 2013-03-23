@@ -184,7 +184,10 @@ function OnTriggerEnter (other : Collider) {
 	gameObject.SendMessage ("IncrementScore", 6);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
-//  	Camera.main.SendMessage("flashUp");	  	
+
+//	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?
+
+//  Camera.main.SendMessage("flashUp");	  	
 	}
 	
   if (other.gameObject.CompareTag ("LevelEnd")) {
