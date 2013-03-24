@@ -12,6 +12,7 @@ function Start () {
 	   	isAlive = 1;
 	   	Loop ();
 	   	Loop2 ();
+	   	ScoreLerpLoop ();
 }
 	   	
 function Loop () {
@@ -27,19 +28,26 @@ function Loop2 () {
 		yield LifeFlashCheck(.2, 5);
     }
 }
+
+function ScoreLerpLoop () {
+    while (true) {
+		gameObject.SendMessage ("ScoreUpdate", .25);
+		yield WaitForSeconds(.25);
+	}
+}
 	   
 	   	
 function TickingAway (delay : float) {
-		if ((script.currentScore > 0) && (controllerITween2.Slowdown < 18000)) {
-	   		gameObject.SendMessage ("DecrementScore", delay);
-	   		yield WaitForSeconds(delay);
-	   	}
-	   	
-		else if ((script.currentScore > 0) && (controllerITween2.Slowdown > 17999)) {
+		if (controllerITween2.Slowdown > 17999) {
 			gameObject.SendMessage ("DecrementScore", delay);
 	   		yield WaitForSeconds((delay/4));
 		}
 		
+		else if ((script.currentScore > 0) && (controllerITween2.Slowdown < 18000)) {
+	   		gameObject.SendMessage ("DecrementScore", delay);
+	   		yield WaitForSeconds(delay);
+	   	}
+	   	
 	   	else {
 		   	isAlive = 0;
 		   	FallingPlayer.isPausable = false;
