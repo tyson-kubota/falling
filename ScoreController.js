@@ -8,7 +8,7 @@ static var maxScore = 25f;
 static var visibleScore : float = 20f;
 
 function Start() {
-	currentScore = 20;
+	ResetScore (25);
 }
 
 function LerpVisibleScore (start : float, end : float, timer : float) {
@@ -43,4 +43,4 @@ function ScoreUpdate ( timer : float) {
 //	Debug.Log("Your visibleScore is: " + visibleScore + " and your currentScore is: " + currentScore);
 }
 
-function ResetScore ( i : float ) {currentScore = 20;}
+function ResetScore ( i : float ) {currentScore = maxScore;}
