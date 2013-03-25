@@ -167,7 +167,8 @@ function OnCollisionEnter (collision : Collision) {
   	isPausable = false;
   	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
   	UIscriptComponent.HideGUI();
-	yield DeathRespawn ();
+  	//Debug.Log("You died in a fatal collision with " + collision.gameObject);
+    yield DeathRespawn ();
 	//isPausable = true;
 	//UIscriptComponent.UnhideGUI();
   }
