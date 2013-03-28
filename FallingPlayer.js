@@ -162,15 +162,17 @@ function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
 // Screen.sleepTimeout = 0.0f;
 
-  if (collision.gameObject.CompareTag ("Death") && (isAlive == 1)) {
-  	isAlive = 0;
-  	isPausable = false;
-  	lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-  	UIscriptComponent.HideGUI();
-  	//Debug.Log("You died in a fatal collision with " + collision.gameObject);
-    yield DeathRespawn ();
-	//isPausable = true;
-	//UIscriptComponent.UnhideGUI();
+  if (collision.gameObject.CompareTag ("Death") && isAlive == 1) {
+  	if (isPausable == true) {
+  		isAlive = 0;
+  		isPausable = false;
+  		lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+  		UIscriptComponent.HideGUI();
+  		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
+    	yield DeathRespawn ();
+		//isPausable = true;
+		//UIscriptComponent.UnhideGUI();
+	}
   }
 
 }
