@@ -110,6 +110,7 @@ isSlowing = false;
 
 function Update () {
 	fallingSpeed();
+//	Debug.Log("Slowdown = " + Slowdown);
 }
 
 // I also tried moving fallingSpeed function to fixedUpdate, but it actually made the game slower,
@@ -139,8 +140,8 @@ fingerCount = 0;
 	//    	slowDown();
 			//if (Slowdown > 0) {speedDown(); yield;}
 			//Slowdown = 0;
-			
-			if (Slowdown > 0) {speedingUp = 0; Slowdown = 0; speedsUp(); }
+			if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.3); }
+			//else if (Slowdown > 0) {speedingUp = 0; speedsUp(); }
 	    }
 	}
 
@@ -192,4 +193,24 @@ function slowDown () {
 	    else {Slowdown = 0;}
 //	the above Slowdown = 0 statement breaks the tweened slowdown, but prevents a nasty bug where newly-loaded levels don't slow properly 
 //	    else { Camera.main.SendMessage("speedLinesDown"); }
+}
+
+function lerpSlowdown (timer : float) {
+
+    var start = Slowdown;
+    var end = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        Slowdown = Mathf.Lerp(start, end, i);
+        yield;
+        
+        if (Slowdown > 17999) {break;}
+    	}
+    yield WaitForSeconds (timer);
+    //speedingUp = 1; 
+ 
 }
