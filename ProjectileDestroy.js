@@ -11,4 +11,9 @@ function OnCollisionEnter (collision : Collision) {
   if (collision.gameObject.CompareTag ("Player")) {
 	Destroy(gameObject, 1);
   }
+  
+// but if one fireball hits another, destroy immediately.
+  if (collision.gameObject.CompareTag ("Death")) {
+	Destroy(gameObject, 0);
+  }
 }
