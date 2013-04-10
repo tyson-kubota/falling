@@ -15,6 +15,7 @@ static var endSphereRenderer : Renderer;
 //var foo : Material; //set this in the editor
 //var bar : Material; //set this in the editor
 var oceanLevel : boolean = false;
+var mistLevel : boolean = false;
 var ShouldUseOceanCamera : boolean = false;
 var ShouldChangeBackdrop : boolean = false;
 
@@ -35,6 +36,10 @@ function Start () {
 		endSphereRenderer = gameObject.Find("score-orbs-end/score-orb/Mesh").renderer;
 		endSphereRenderer.enabled = false;
 		}
+	
+	if (mistLevel == true) {	
+		backdropMist = transform.FindChild("Cylinder").gameObject;
+		}
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -52,6 +57,7 @@ function OnTriggerEnter (other : Collider) {
 		
 		FadeCameraFarClipPlane ();
 		if (ShouldUseOceanCamera == true) {enableOceanCamera(); SmoothFogFade ();}
+		else if (mistLevel == true) {iTween.ColorTo(backdropMist,{"a":0.0f,"time":4});}
 	}
 }
 
