@@ -2,6 +2,7 @@
 
 var projectilePrefab : Rigidbody;
 var launchInterval : float = 10.0;
+var randomTrajectory : boolean = false;
 private var isLaunched : boolean = false;
 
 // Starting in 2 seconds.
@@ -30,5 +31,5 @@ function OnTriggerEnter (other : Collider) {
 
 function LaunchProjectile () {
     var instance : Rigidbody = Instantiate(projectilePrefab, transform.position, transform.rotation);
-//    instance.velocity = Random.insideUnitSphere * 5;
+	if (randomTrajectory == true) {instance.velocity = Random.insideUnitSphere * 5;}
 }
