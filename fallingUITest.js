@@ -180,11 +180,6 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
 		FallingPlayer.isPausable = false;
-		rightArrow.hidden = false;
-		leftArrow.hidden = false;
-		loadNewLevelButton.hidden = false;
-		bgSprite.hidden = false;
-		//openSiteButton.hidden = false;
 		
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
@@ -195,6 +190,13 @@ function PauseGame() {
 	    yield WaitForSeconds (.1);
 	    Time.timeScale = 0;
 	    AudioListener.pause = true;
+
+   		rightArrow.hidden = false;
+		leftArrow.hidden = false;
+		loadNewLevelButton.hidden = false;
+		bgSprite.hidden = false;
+		//openSiteButton.hidden = false;
+
 	    FallingPlayer.isPausable = true;
     }
 }
