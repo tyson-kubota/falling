@@ -28,8 +28,17 @@ function OnTriggerEnter (other : Collider) {
 	}
 }
 
+function OnTriggerExit (other : Collider) {
+  if (other.gameObject.CompareTag ("Player")){
+		if (isLaunched == true) {
+			CancelInvoke("LaunchProjectile");
+			isLaunched = false;
+		}	
+	}
+}
+
 
 function LaunchProjectile () {
     var instance : Rigidbody = Instantiate(projectilePrefab, transform.position, transform.rotation);
-	if (randomTrajectory == true) {instance.velocity = Random.insideUnitSphere * 5;}
+	if (randomTrajectory == true) {instance.velocity = Random.insideUnitSphere * 15;}
 }
