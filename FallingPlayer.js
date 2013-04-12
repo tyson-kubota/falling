@@ -102,7 +102,7 @@ function DeathRespawn () {
 	
 	UIscriptComponent.fadeOut();
 // 	Camera.main.SendMessage("fadeOut");
-//  isAlive = 1;
+  isAlive = 1;
 
 	if (levelChangeBackdrop == true) {
 		changeLevelBackdrop ();
@@ -122,7 +122,7 @@ function DeathRespawn () {
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
 	rigidbody.isKinematic = false;
-   	isAlive = 1;
+//   	isAlive = 1;
    	UIscriptComponent.fadeIn(true);
 }   	
 
@@ -163,7 +163,7 @@ function OnCollisionEnter (collision : Collision) {
 // Screen.sleepTimeout = 0.0f;
 
   if (collision.gameObject.CompareTag ("Death") && isAlive == 1) {
-  	if (isPausable == true) {
+  	if (isPausable == true || collision.gameObject.layer == 17 ) {
   		isAlive = 0;
   		isPausable = false;
   		lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);

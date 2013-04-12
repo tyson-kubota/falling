@@ -40,5 +40,5 @@ function OnTriggerExit (other : Collider) {
 
 function LaunchProjectile () {
     var instance : Rigidbody = Instantiate(projectilePrefab, transform.position, transform.rotation);
-	if (randomTrajectory == true) {instance.velocity = Random.insideUnitSphere * 15;}
+	if (randomTrajectory == true) {instance.velocity = Random.onUnitSphere * 5;}
 }
