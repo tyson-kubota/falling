@@ -51,6 +51,8 @@ var whiteFader : FadeInOutAlt;
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
 
+var initialRespawn : Respawn;	// set this to the initial respawn point for the level.
+
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
@@ -150,14 +152,8 @@ function Update () {
     transform.rotation = Quaternion.Slerp(transform.rotation, target,
                                    Time.deltaTime * smooth);  
 	  }
-	  
-var deadlyObjectName : String = "DeathByFire";
-var initialRespawn : Respawn;	// set this to the initial respawn point for the level.
-
-// textfield to hold the score and score variable
-private var textfield:GUIText;
-private var score:int;
-
+	 
+	 
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
 // Screen.sleepTimeout = 0.0f;

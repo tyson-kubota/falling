@@ -63,21 +63,23 @@ function Start()
 		SetActive();
 }
 
-function OnTriggerEnter()
+function OnTriggerEnter(other : Collider)
 {
-	if (currentRespawn != this)		// make sure we're not respawning or re-activating an already active pad!
-	{
-		// turn the old respawn point off
-		currentRespawn.SetInactive ();
-		
-		// play the "Activated" one-shot sound effect if one has been supplied:
-		if (SFXRespawnActivate)
-			AudioSource.PlayClipAtPoint(SFXRespawnActivate, transform.position, SFXVolume);
-
-		// Set the current respawn point to be us and make it visible.
-		currentRespawn = this;
-		
-		SetActive ();
+  if (other.gameObject.CompareTag ("Player")){
+		if (currentRespawn != this)		// make sure we're not respawning or re-activating an already active pad!
+		{
+			// turn the old respawn point off
+			currentRespawn.SetInactive ();
+			
+			// play the "Activated" one-shot sound effect if one has been supplied:
+			if (SFXRespawnActivate)
+				AudioSource.PlayClipAtPoint(SFXRespawnActivate, transform.position, SFXVolume);
+	
+			// Set the current respawn point to be us and make it visible.
+			currentRespawn = this;
+			
+			SetActive ();
+		}
 	}
 }
 
