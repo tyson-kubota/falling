@@ -51,8 +51,6 @@ var whiteFader : FadeInOutAlt;
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
 
-var initialRespawn : Respawn;	// set this to the initial respawn point for the level.
-
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
