@@ -18,6 +18,9 @@ var oceanLevel : boolean = false;
 var mistLevel : boolean = false;
 var ShouldUseOceanCamera : boolean = false;
 var ShouldChangeBackdrop : boolean = false;
+var FogOnly : boolean = false;
+var farClipPlaneValue : int = 2500;
+var fogEndValue : int = 3000;
 
 function Start () {
 
@@ -56,6 +59,7 @@ function OnTriggerEnter (other : Collider) {
 //		Debug.Log("You hit a changeBackdrop trigger!");
 		
 		FadeCameraFarClipPlane ();
+		if (FogOnly == true) {SmoothFogFade ();}
 		if (ShouldUseOceanCamera == true) {enableOceanCamera(); SmoothFogFade ();}
 		else if (mistLevel == true) {iTween.ColorTo(backdropMist,{"a":0.0f,"time":4});}
 	}
@@ -71,7 +75,7 @@ function FadeCameraFarClipPlane () {
     iTween.ValueTo ( gameObject,
         {
             "from" : mainCamera.camera.farClipPlane,
-            "to" : 2500,
+            "to" : farClipPlaneValue,
             "onupdate" : "ChangeCameraFarClipPlane",
             "time" : 3,
             "easetype" : "easeInExpo"
@@ -82,7 +86,7 @@ function SmoothFogFade () {
     iTween.ValueTo ( gameObject,
         {
             "from" : FallingPlayer.startingFogEndDistance,
-            "to" : 3000,
+            "to" : fogEndValue,
             "onupdate" : "ChangeFogEndDistance",
             "time" : 3,
             "easetype" : "easeInExpo"
