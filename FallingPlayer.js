@@ -113,6 +113,9 @@ function DeathRespawn () {
   	      
     gameObject.SendMessage ("ResetScore", 0);
   	yield WaitForSeconds(1);
+
+	RenderSettings.fogEndDistance = startingFogEndDistance;
+  	
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
 	collider.attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
