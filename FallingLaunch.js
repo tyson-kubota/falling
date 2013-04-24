@@ -1,7 +1,7 @@
 #pragma strict
 static var flipMultiplier : int = -1;
 static var landscapeFlipped:boolean = false;
-
+static var levelEndSlowdown:int = 0;
 var targetFPS : int = 30;
 
 function Awake () {

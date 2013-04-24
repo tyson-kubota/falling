@@ -38,7 +38,8 @@ function Start() {
 //	deprecated, now should use NeverSleep
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
-
+	Slowdown = FallingLaunch.levelEndSlowdown;
+	lerpSlowdown(.3);
 //  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 }
 

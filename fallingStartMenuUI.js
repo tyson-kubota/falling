@@ -262,6 +262,7 @@ function LoadNewLevelViaMenu() {
 	BackToPauseMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 
+	FallingLaunch.levelEndSlowdown = 0;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 }

@@ -254,13 +254,14 @@ function LevelComplete() {
 	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
+	FallingLaunch.levelEndSlowdown = controllerITween2.Slowdown;
     savedTimeScale = Time.timeScale;
 	loadingLabel.hidden = false;
 	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
     yield WaitForSeconds (1);
 //    Time.timeScale = 0;
 	scriptName.rigidbody.isKinematic = true;
-    AudioListener.pause = true;	
+    AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 }
@@ -272,7 +273,8 @@ function LoadNewLevelViaMenu() {
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
 	loadingLabel.hidden = false;
-
+	
+	FallingLaunch.levelEndSlowdown = 0;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 }
@@ -405,4 +407,10 @@ function speedLinesOff() {
 		SpeedLinesSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
 		yield WaitForSeconds(1.0);
 		SpeedLinesSprite.hidden = true;
+}
+
+
+
+function OnApplicationPause(pauseStatus: boolean) {
+    if (pauseStatus) {PauseGame();}
 }
