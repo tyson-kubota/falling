@@ -410,7 +410,36 @@ function speedLinesOff() {
 }
 
 
-
 function OnApplicationPause(pauseStatus: boolean) {
-    if (pauseStatus) {PauseGame();}
+    if (pauseStatus && Time.timeScale != 0) {setSavedTimeScale(); PauseGameNow();}
+}
+
+function setSavedTimeScale() {
+	savedTimeScale = Time.timeScale;
+}
+	
+function PauseGameNow() {		
+	circleReticle.hidden = true;
+	lifeBar.hidden = true;
+	lifeBarOutline.hidden = true;
+    
+//	savedTimeScale = Time.timeScale;
+    Time.timeScale = 0;
+    AudioListener.pause = true;
+
+	rightArrow.hidden = false;
+	leftArrow.hidden = false;
+	loadNewLevelButton.hidden = false;
+	bgSprite.hidden = false;
+}
+
+function PauseGameBackgroundCheck() {
+	if (FallingPlayer.isPausable == true) {
+		if (Time.timeScale == 0) {
+			UnPauseGame(true);
+		}
+		else {
+			PauseGameNow();
+		}
+	}
 }
