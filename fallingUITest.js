@@ -411,7 +411,7 @@ function speedLinesOff() {
 
 
 function OnApplicationPause(pauseStatus: boolean) {
-    if (pauseStatus && Time.timeScale != 0) {setSavedTimeScale(); PauseGameNow();}
+    if (pauseStatus && Time.timeScale != 0 && FallingPlayer.isPausable == true) {setSavedTimeScale(); PauseGameNow();}
 }
 
 function setSavedTimeScale() {

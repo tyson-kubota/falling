@@ -42,7 +42,7 @@ script = GetComponent("ScoreController");
 static var isAlive : int = 0;
 isAlive = lifeCountdown.isAlive;
 
-static var isPausable : boolean = true;
+static var isPausable : boolean = false;
 
 var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
@@ -66,7 +66,7 @@ function Start() {
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
-	isPausable = true;  
+//	isPausable = true;  
 	rigidbody.isKinematic = false;
 	UIscriptComponent.UnhideGUI();
 	introFade();
