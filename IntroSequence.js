@@ -14,6 +14,7 @@ function Start () {
 }
 
 function EndIntro () {
+	FallingLaunch.levelEndSlowdown = 8000;
 	PlayerObject.active = true;
 	introCamera.active = false;
 	mainCamera.active = true;
