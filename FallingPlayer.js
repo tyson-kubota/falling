@@ -16,7 +16,7 @@ var levelChangeBackdrop : boolean = false;
 
 var ScoreFlashTexture : GameObject;
 
-var ScoreFlashTextureScript : GUITextureLaunch;
+static var ScoreFlashTextureScript : GUITextureLaunch;
 ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
 
 public var force:float = 1.0;
@@ -111,7 +111,7 @@ function DeathRespawn () {
 //	fadeOutAudio ();
   	FadeAudio ((fadeTime/2), FadeDir.Out);
   	      
-    gameObject.SendMessage ("ResetScore", 0);
+    script.ResetScore(0);
   	yield WaitForSeconds(1);
 
 	RenderSettings.fogEndDistance = startingFogEndDistance;
@@ -181,7 +181,7 @@ function OnTriggerEnter (other : Collider) {
 //    Camera.main.SendMessage("flashOut");
 	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
 
-	gameObject.SendMessage ("IncrementScore", 6);
+	script.IncrementScore(6);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
 
@@ -193,7 +193,7 @@ function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("LevelEnd")) {
 	UIscriptComponent.LevelComplete();
 // to keep you from dying after you strike the levelend trigger
-	gameObject.SendMessage ("IncrementScore", 25);
+	script.IncrementScore(25);
   }	
 }
 			

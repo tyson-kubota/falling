@@ -171,6 +171,8 @@ function speedsUp () {
 function speedUp () {
 		Slowdown = 18000;        
 		Camera.main.SendMessage("speedLinesUp");
+//		SendMessage is slow; rephrase if I ever use this speedUp method again.
+
 //		UIscriptComponent.speedLinesNow();		
 
 //		if (speedingUp == true) {
