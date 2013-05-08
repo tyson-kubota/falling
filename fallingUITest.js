@@ -1,6 +1,8 @@
 #pragma strict
 
 var player : GameObject;
+var fallingPlayerComponent : FallingPlayer;
+
 var value : float = 0.5f;
 var bgSprite : UISprite;
 var fadeSprite : UISprite;
@@ -21,7 +23,6 @@ var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 
 var buttonScaleFactor : float;
-var scriptName : GameObject;
 var initialRespawn : Respawn;
 
 var levelToLoad : String = "";
@@ -46,6 +47,9 @@ function Start () {
 //    if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	Screen.orientation = ScreenOrientation.LandscapeRight;}
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
+	
+	fallingPlayerComponent = player.GetComponent("FallingPlayer");
+
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
@@ -134,7 +138,7 @@ function Start () {
 	BackToPauseMenuButton.hidden = true;
 	
 	loadingLabel = UIButton.create("loading.png","loading.png", 20, 20);
-	loadingLabel.positionFromCenter(0f, 0f);
+	loadingLabel.positionCenter();
 	loadingLabel.hidden = true;
 	
 	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
@@ -186,7 +190,7 @@ function PauseGame() {
 		lifeBarOutline.hidden = true;
 	    
 	    savedTimeScale = Time.timeScale;
-		scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
+		fallingPlayerComponent.FadeAudio (.09, FadeDir.Out);
 	    yield WaitForSeconds (.1);
 	    Time.timeScale = 0;
 	    AudioListener.pause = true;
@@ -205,7 +209,7 @@ function UnPauseGame(resume : boolean) {
 	FallingPlayer.isPausable = false;
     Time.timeScale = savedTimeScale;
     AudioListener.pause = false;
-	scriptName.GetComponent(FallingPlayer).FadeAudio (1.0, FadeDir.In);
+	fallingPlayerComponent.FadeAudio (1.0, FadeDir.In);
 	circleReticle.hidden = false;
 	lifeBar.hidden = false;
 	lifeBarOutline.hidden = false;
@@ -240,7 +244,7 @@ function RestartLevel() {
 	//fadeOut();
 	Respawn.currentRespawn = initialRespawn;
 	HideGUI();
-	scriptName.GetComponent(FallingPlayer).DeathRespawn ();
+	fallingPlayerComponent.DeathRespawn ();
 	UnPauseGame(false);
 }
 
@@ -250,7 +254,7 @@ function LevelComplete() {
 	controllerITween2.Slowdown = 0;
 	bgSprite.hidden = false;
 	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.95f, Easing.Sinusoidal.easeIn);
-	scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
+	fallingPlayerComponent.FadeAudio (.8, FadeDir.Out);
 	yield WaitForSeconds (.5);
 // fade in congrats menu / buttons here 
 
@@ -260,7 +264,7 @@ function LevelComplete() {
 	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
     yield WaitForSeconds (1);
 //    Time.timeScale = 0;
-	scriptName.rigidbody.isKinematic = true;
+	player.rigidbody.isKinematic = true;
     AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
