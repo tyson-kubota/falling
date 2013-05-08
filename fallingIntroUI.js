@@ -15,7 +15,7 @@ function Start () {
 //	loadingLabel.positionFromCenter(0f, 0f);
 	}
 
-function ShowIcon(icon : UIButton) {
+function ShowIcon(icon : UISprite) {
 	icon.hidden = false;
 	icon.alphaFromTo( 1.0f, 0.0f, 0.9f, Easing.Sinusoidal.easeIn);
 	yield WaitForSeconds (4);
