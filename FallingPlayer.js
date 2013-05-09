@@ -48,6 +48,9 @@ var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
 var whiteFader : FadeInOutAlt;
+var introComponent : IntroSequence1stPerson;
+introComponent = GetComponent("IntroSequence1stPerson");
+
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
 
@@ -68,7 +71,9 @@ function Start() {
   	FadeAudio (0.1, FadeDir.In);
 //	isPausable = true;  
 	rigidbody.isKinematic = false;
+	if (!introComponent) {
 	UIscriptComponent.UnhideGUI();
+	}
 	introFade();
 }
 
