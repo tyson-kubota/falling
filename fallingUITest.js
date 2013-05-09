@@ -270,6 +270,20 @@ function LevelComplete() {
 	Time.timeScale = savedTimeScale;
 }
 
+function BeginOutroUI() {
+	HideGUI();
+	FallingPlayer.isPausable = false;
+	player.rigidbody.isKinematic = true;
+}
+
+function GameCompleteUI() {
+	bgSprite.hidden = false;
+	bgSprite.alphaFromTo( 3.0f, 0.0f, 0.95f, Easing.Sinusoidal.easeIn);
+	fallingPlayerComponent.FadeAudio (2.0, FadeDir.Out);
+	yield WaitForSeconds (1.0);
+	yield WaitForSeconds (2.0);
+}
+
 function LoadNewLevelViaMenu() {
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
