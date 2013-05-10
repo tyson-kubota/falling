@@ -278,10 +278,17 @@ function BeginOutroUI() {
 
 function GameCompleteUI() {
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 3.0f, 0.0f, 0.95f, Easing.Sinusoidal.easeIn);
+	bgSprite.alphaFromTo( 4.5f, 0.0f, 0.95f, Easing.Sinusoidal.easeInOut);
 	fallingPlayerComponent.FadeAudio (2.0, FadeDir.Out);
 	yield WaitForSeconds (1.0);
 	yield WaitForSeconds (2.0);
+}
+
+function OutroDiamondFlash() {
+	bgSprite.hidden = false;
+	bgSprite.alphaFromTo( 1.5f, 0.90f, 0.2f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds (1.5);
+	bgSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeIn);
 }
 
 function LoadNewLevelViaMenu() {

@@ -8,7 +8,7 @@ var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
 var outroShards : GameObject;
-var outroStaticShards : GameObject;
+//var outroStaticShards : GameObject;
 var outroCompletedOrb : GameObject;
 
 function Start () {
@@ -19,17 +19,17 @@ function Start () {
 }
 
 function BeginOutro () {
-	ScoreController.IncrementScore(35);
 	ScoreController.enabled = false;
 	LifeController.enabled = false;	
 	
-	outroStaticShards.active = false;	
-	outroShards.active = true;
+//	outroStaticShards.active = false;	
+//	outroShards.active = true;
 		
 	PlayerController.lerpSlowdown(1);
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
 	UIscriptComponent.BeginOutroUI();
+	ScoreController.IncrementScore(35);
 }
 
 function CompletedOrb () {

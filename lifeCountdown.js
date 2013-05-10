@@ -4,6 +4,7 @@ script = GetComponent("ScoreController");
 var LifeFlashTexture : GameObject;
 static var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
+static var inOutro : boolean = false;
 
 static var isAlive : int = 0;
 var UIscriptName : GameObject;
@@ -31,20 +32,21 @@ function Loop2 () {
 
 function ScoreLerpLoop () {
     while (true) {
-		gameObject.SendMessage ("ScoreUpdate", .25);
+		script.ScoreUpdate(.25);
 		yield WaitForSeconds(.25);
 	}
 }
 	   
 	   	
 function TickingAway (delay : float) {
+	if (inOutro == false) {
 		if (controllerITween2.Slowdown > 17999) {
-			gameObject.SendMessage ("DecrementScore", delay);
+			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4));
 		}
 		
 		else if ((script.currentScore > 0) && (controllerITween2.Slowdown < 18000)) {
-	   		gameObject.SendMessage ("DecrementScore", delay);
+			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
 	   	}
 	   	
@@ -57,12 +59,13 @@ function TickingAway (delay : float) {
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
 			//UIscriptName.GetComponent(fallingUITest).UnhideGUI();
 		}
+	}
 }
 
 
 function LifeFlashCheck (delay : float, score : int) {
 
-	if (script.currentScore < score) {
+	if (script.currentScore < score && inOutro == false) {
 	    //Camera.main.SendMessage("lifeFlashOut");
 		LifeFlashTextureScript.FadeFlash (delay, FadeDir.In);
 		yield WaitForSeconds(delay);
