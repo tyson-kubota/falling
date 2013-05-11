@@ -1,18 +1,8 @@
 #pragma strict
 
-var buttonScaleFactor : float;
 var scriptName : GameObject;
 
 function Start () {
-
-	if (UI.isHD == true) {
-	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
-	}
-	else {
-	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
-	}
-
-//	loadingLabel.positionFromCenter(0f, 0f);
 	}
 
 function ShowIcon(icon : UISprite) {
