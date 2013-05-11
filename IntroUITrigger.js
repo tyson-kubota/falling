@@ -4,6 +4,7 @@ var fallingIntroUI : GameObject;
 static var fallingIntroUIComponent : fallingIntroUI;
 var helpIcon: UISprite;
 var thisIcon : String = "level1";
+var thisTimer : float = 8;
 var helpBackgroundSprite : UISprite;
 var activeIntro : boolean = false;
 var buttonScaleFactor : float;
@@ -26,9 +27,9 @@ function Start () {
 		
 	helpBackgroundSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, 4 );
 	//helpBackgroundSprite.positionFromBottomLeft(buttonScaleFactor, .05f);
-	helpBackgroundSprite.alphaTo( 1.01f, 0.6f, Easing.Sinusoidal.easeOut);
+	helpBackgroundSprite.alphaTo( 1.01f, 0.1f, Easing.Sinusoidal.easeOut);
 	//helpBackgroundSprite.positionFromTop ( -2.5f * buttonScaleFactor );
-	helpBackgroundSprite.positionFromCenter(0f, 0f);
+	helpBackgroundSprite.positionFromTopLeft(buttonScaleFactor, 0.25f);
 	//helpBackgroundSprite.hidden = true;
 	helpBackgroundSprite.scaleTo( 0.01f, new Vector3( (Screen.width), (Screen.height), 1 ), Easing.Linear.easeIn);
 
@@ -37,7 +38,7 @@ function Start () {
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == false) {
 	activeIntro = true;
-	fallingIntroUIComponent.ShowIcon(helpIcon);
+	fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer);
 	if (audio) {audio.Play();}
 	}
 }
