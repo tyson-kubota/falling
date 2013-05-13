@@ -161,7 +161,7 @@ function CheckTiltAngle() {
 	canShowStart = false;
 	
 	yield WaitForSeconds (.75);
-	if ((Mathf.Abs(Input.acceleration.x) < .25) && (Mathf.Abs(Input.acceleration.y) < .25)) {
+	if ((Mathf.Abs(Input.acceleration.x) < .4) && (Mathf.Abs(Input.acceleration.y) < .4)) {
 		ShowStart();}
 	else {canShowStart = true;}
 }
@@ -178,7 +178,7 @@ function ShowTiltWarning() {
 }
 
 function Update () {
-	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .2) && (Mathf.Abs(Input.acceleration.y) < .2)) {
+	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .4) && (Mathf.Abs(Input.acceleration.y) < .4)) {
 		CheckTiltAngle();
 	}
 	else if (canShowStart == true) {

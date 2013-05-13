@@ -69,7 +69,7 @@ function Start() {
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
-//	isPausable = true;  
+	isPausable = false;  
 	rigidbody.isKinematic = false;
 	if (!introComponent) {
 	UIscriptComponent.UnhideGUI();
