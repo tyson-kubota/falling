@@ -69,3 +69,20 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
 function LinesOff () {
         guiTexture.color.a = 0;
 }
+
+function FadeOut (timer : float) {
+
+    var start = guiTexture.color.a;
+    var end = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        guiTexture.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    	}
+    	
+    yield WaitForSeconds (timer);
+ 
+}
