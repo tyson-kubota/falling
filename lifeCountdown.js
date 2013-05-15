@@ -17,7 +17,7 @@ function Start () {
 }
 	   	
 function Loop () {
-    while (true) {
+    while (true && inOutro == false) {
         yield TickingAway(.25);
 //        Debug.Log("Your visible score is + " + script.visibleScore);
 //        Debug.Log("Your current score is + " + script.currentScore);
@@ -25,13 +25,13 @@ function Loop () {
 }
 
 function Loop2 () {
-    while (true) {
+    while (true && inOutro == false) {
 		yield LifeFlashCheck(.2, 5);
     }
 }
 
 function ScoreLerpLoop () {
-    while (true) {
+    while (true && inOutro == false) {
 		script.ScoreUpdate(.25);
 		yield WaitForSeconds(.25);
 	}
@@ -39,7 +39,6 @@ function ScoreLerpLoop () {
 	   
 	   	
 function TickingAway (delay : float) {
-	if (inOutro == false) {
 		if (controllerITween2.Slowdown > 17999) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4));
@@ -59,7 +58,6 @@ function TickingAway (delay : float) {
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
 			//UIscriptName.GetComponent(fallingUITest).UnhideGUI();
 		}
-	}
 }
 
 

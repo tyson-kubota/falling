@@ -217,3 +217,7 @@ function lerpSlowdown (timer : float) {
     //speedingUp = 1; 
  
 }
+
+function SpeedLinesOff () {
+	SpeedLinesTextureScript.LinesOff();
+}

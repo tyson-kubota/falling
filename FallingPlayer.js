@@ -42,6 +42,8 @@ script = GetComponent("ScoreController");
 static var isAlive : int = 0;
 isAlive = lifeCountdown.isAlive;
 
+static var isTiltable : boolean = true;
+
 static var isPausable : boolean = false;
 
 var UIscriptName : GameObject;
@@ -149,16 +151,21 @@ function changeLevelBackdrop () {
 	}
 	   		   	
 function Update () {
-    var dir : Vector3 = Vector3.zero;
-	var tiltAroundZ = (FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle));
-    var tiltAroundX = (FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle));
-
-    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
-                // Dampen towards the target rotation
-    transform.rotation = Quaternion.Slerp(transform.rotation, target,
-                                   Time.deltaTime * smooth);  
-	  }
-	 
+	playerTilt ();
+}
+	  
+function playerTilt () {
+	if (isTiltable == true) {
+	    var dir : Vector3 = Vector3.zero;
+		var tiltAroundZ = (FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle));
+	    var tiltAroundX = (FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle));
+	
+	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
+	                // Dampen towards the target rotation
+	    transform.rotation = Quaternion.Lerp(transform.rotation, target,
+	                                   Time.deltaTime * smooth);  
+    }
+}	 
 	 
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);

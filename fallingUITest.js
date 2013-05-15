@@ -271,7 +271,7 @@ function LevelComplete() {
 }
 
 function BeginOutroUI() {
-	HideGUI();
+	FadeOutGUI();
 	FallingPlayer.isPausable = false;
 	player.rigidbody.isKinematic = true;
 }
@@ -390,6 +390,21 @@ function HideGUI() {
 		lifeBar.hidden = true;
 		lifeBarOutline.hidden = true;
 }
+
+function FadeOutGUI() {
+	pauseButton.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
+	lifeBar.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
+	lifeBarOutline.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
+	circleReticle.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
+	
+	yield WaitForSeconds (1.0);
+	
+	pauseButton.hidden = true;
+	circleReticle.hidden = true;
+	lifeBar.hidden = true;
+	lifeBarOutline.hidden = true;
+}
+
 
 function UnhideGUI() {
 		pauseButton.hidden = false;

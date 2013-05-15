@@ -21,8 +21,9 @@ function Start () {
 function BeginOutro () {
 	ScoreController.enabled = false;
 	LifeController.enabled = false;	
-		
+	FallingPlayer.isTiltable = false;			
 	PlayerController.lerpSlowdown(1);
+	PlayerController.SpeedLinesOff();
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
 	UIscriptComponent.BeginOutroUI();
@@ -43,7 +44,9 @@ function LerpTowardsDiamond (timer : float) {
     var end = outroCompletionPoint.transform.position;
     var i = 0.0;
     var step = 1.0/timer;
-	var rotation:Quaternion;
+	var startRotation = transform.rotation;
+	var endRotation = Quaternion.Euler(-54,96,-2.3);
+	//var zeroRotation = Quaternion.Euler(0,0,0);
 	var direction:Vector3 = diamondLookTarget.position - start;
 //	rotation = Quaternion.LookRotation(direction);
 //	Debug.Log('direction is ' + diamondLookTarget.position);
@@ -52,8 +55,9 @@ function LerpTowardsDiamond (timer : float) {
 //      transform.LookAt(diamondLookTarget);    
         i += step * Time.deltaTime;
         transform.position = Vector3.Lerp(start, end, i);
-// 		transform.rotation = Quaternion.Slerp(transform.rotation, rotation, i);
+ 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
 
         yield;
     }
+    
 }
