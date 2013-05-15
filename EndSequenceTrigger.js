@@ -25,13 +25,10 @@ function OnTriggerEnter (other : Collider) {
 			shard.animation.Play();
 	
 		if (audio) {audio.Play();}
-		
-		FallingPlayer.ScoreFlashTextureScript.FadeFlash (1.0, FadeDir.In);
-		
-		yield WaitForSeconds (9.0);
-		SwapDiamonds();
-		yield WaitForSeconds (5.0);
-		UIscriptComponent.GameCompleteUI();
+
+		FallingPlayer.ScoreFlashTextureScript.FadeFlash (8.0, FadeDir.In);
+		//yield WaitForSeconds (1.0);
+		//FallingPlayer.ScoreFlashTextureScript.FadeFlash (0.5, FadeDir.Out);
 	}
 }
 

@@ -278,7 +278,7 @@ function BeginOutroUI() {
 
 function GameCompleteUI() {
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 4.5f, 0.0f, 0.95f, Easing.Sinusoidal.easeInOut);
+	bgSprite.alphaFromTo( 4.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeInOut);
 	fallingPlayerComponent.FadeAudio (2.0, FadeDir.Out);
 	yield WaitForSeconds (1.0);
 	yield WaitForSeconds (2.0);

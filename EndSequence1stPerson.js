@@ -3,6 +3,8 @@
 var PlayerController : controllerITween2;
 var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
+var EndTriggerName : GameObject;
+var EndTriggerComponent : EndSequenceTrigger;
 
 var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
@@ -16,6 +18,7 @@ function Start () {
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
 	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");
+	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
 }
 
 function BeginOutro () {
@@ -23,19 +26,14 @@ function BeginOutro () {
 	LifeController.enabled = false;	
 	FallingPlayer.isTiltable = false;			
 	PlayerController.lerpSlowdown(1);
-	PlayerController.SpeedLinesOff();
+	PlayerController.SpeedLinesOff(1);
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
 	UIscriptComponent.BeginOutroUI();
     ScoreController.IncrementScore(35);
     LerpTowardsDiamond(12);
 	yield WaitForSeconds (12);
-}
-
-function CompletedOrb () {
-	outroCompletedOrb.active = true;	
-//	outroShards.active = false;
-	UIscriptComponent.GameCompleteUI();
+	UIscriptComponent.GameCompleteUI();	
 }
 
 function LerpTowardsDiamond (timer : float) {
@@ -59,5 +57,6 @@ function LerpTowardsDiamond (timer : float) {
 
         yield;
     }
-    
+
+	EndTriggerComponent.SwapDiamonds();
 }

@@ -218,6 +218,8 @@ function lerpSlowdown (timer : float) {
  
 }
 
-function SpeedLinesOff () {
+function SpeedLinesOff (timer : float) {
+	SpeedLinesTextureScript.LinesFlashOut (timer, FadeDir.In);
+	yield WaitForSeconds(timer);
 	SpeedLinesTextureScript.LinesOff();
 }
