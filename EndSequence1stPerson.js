@@ -32,7 +32,7 @@ function BeginOutro () {
 	UIscriptComponent.BeginOutroUI();
     ScoreController.IncrementScore(35);
     LerpTowardsDiamond(12);
-	yield WaitForSeconds (12);
+	yield WaitForSeconds (20);
 	UIscriptComponent.GameCompleteUI();	
 }
 
