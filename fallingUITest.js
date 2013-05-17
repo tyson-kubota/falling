@@ -102,30 +102,34 @@ function Start () {
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 
 	if (level1 == Application.loadedLevelName) {
-	loadLevelOne = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
+	loadLevelOne.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);}
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
 	
 	if (level2 == Application.loadedLevelName) {
-	loadLevelTwo = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
+	loadLevelTwo.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelTwo = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);}
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
 	loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
 	
 	if (level3 == Application.loadedLevelName) {
-	loadLevelThree = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
+	loadLevelThree.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelThree = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);}
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
 	loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
 	
 	if (level4 == Application.loadedLevelName) {
-	loadLevelFour = UIButton.create("level1Down.png","level1.png", 0, 0);}
+	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
+	loadLevelFour.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelFour = UIButton.create("level1.png","level1Down.png", 0, 0);}
+	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);}
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
 	loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;		
 	

@@ -31,8 +31,8 @@ function BeginOutro () {
 	PlayerController.enabled = false;
 	UIscriptComponent.BeginOutroUI();
     ScoreController.IncrementScore(35);
-    LerpTowardsDiamond(12);
-	yield WaitForSeconds (20);
+    LerpTowardsDiamond(10);
+	yield WaitForSeconds (17);
 	UIscriptComponent.GameCompleteUI();	
 }
 
