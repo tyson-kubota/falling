@@ -87,32 +87,20 @@ function Start () {
 	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-
-	if (level1 == Application.loadedLevelName) {
-	loadLevelOne = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelOne = UIButton.create("level1.png","level1Down.png", 0, 0);}
+		
+	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);}
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaStart;
-	
-	if (level2 == Application.loadedLevelName) {
-	loadLevelTwo = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelTwo = UIButton.create("level1.png","level1Down.png", 0, 0);}
+				
+	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);}
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
 	loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
-	
-	if (level3 == Application.loadedLevelName) {
-	loadLevelThree = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelThree = UIButton.create("level1.png","level1Down.png", 0, 0);}
+		
+	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);}
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
 	loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
-	
-	if (level4 == Application.loadedLevelName) {
-	loadLevelFour = UIButton.create("level1Down.png","level1.png", 0, 0);}
-	else {				
-	loadLevelFour = UIButton.create("level1.png","level1Down.png", 0, 0);}
+			
+	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);}
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
 	loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;		
 	
