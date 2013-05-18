@@ -2,42 +2,33 @@
 
 var fallingIntroUI : GameObject;
 static var fallingIntroUIComponent : fallingIntroUI;
+
+var fallingUI : GameObject;
+static var fallingUIComponent : fallingUITest;
+
 var helpIcon: UISprite;
 var thisIcon : String = "level1";
 var thisTimer : float = 8;
 var helpBackgroundSprite : UISprite;
 var activeIntro : boolean = false;
-var buttonScaleFactor : float;
+var textHeight : int;
 
 function Start () {
 	fallingIntroUIComponent = fallingIntroUI.GetComponent("fallingIntroUI");
+	fallingUIComponent = fallingUI.GetComponent("fallingUITest");
     helpIcon = UI.firstToolkit.addSprite( thisIcon + ".png", 0, 0, 3 );
 
-//	helpIcon = UIButton.create(thisIcon + ".png", thisIcon + ".png", 0, 0, 0);
-	//helpIcon.positionCenter();
-	helpIcon.positionFromBottom(0.1f);
+	textHeight = (UI.isHD == true) ? 15 : 18;
+
+	helpIcon.pixelsFromBottom(textHeight);
 	helpIcon.hidden = true;
-
-	if (UI.isHD == true) {
-	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
-	}
-	else {
-	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
-	}
 		
-	helpBackgroundSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, 4 );
-	//helpBackgroundSprite.positionFromBottomLeft(buttonScaleFactor, .05f);
-	helpBackgroundSprite.alphaTo( 1.01f, 0.1f, Easing.Sinusoidal.easeOut);
-	//helpBackgroundSprite.positionFromTop ( -2.5f * buttonScaleFactor );
-	helpBackgroundSprite.positionFromTopLeft(buttonScaleFactor, 0.25f);
-	//helpBackgroundSprite.hidden = true;
-	helpBackgroundSprite.scaleTo( 0.01f, new Vector3( (Screen.width), (Screen.height), 1 ), Easing.Linear.easeIn);
-
 }
 
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == false) {
 	activeIntro = true;
+	fallingUIComponent.tutorialSpritePosition(thisTimer);
 	fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer);
 	if (audio) {audio.Play();}
 	}

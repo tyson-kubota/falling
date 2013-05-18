@@ -5,8 +5,8 @@ var fallingPlayerComponent : FallingPlayer;
 
 var value : float = 0.5f;
 var bgSprite : UISprite;
+var tutorialSprite : UISprite;
 var fadeSprite : UISprite;
-var SpeedLinesSprite : UISprite;
 var pauseButton : UIButton;
 var circleReticle: UIButton;
 var lifeBarOutline : UIProgressBar;
@@ -22,6 +22,7 @@ var openSiteButton : UIButton;
 var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 
+var spriteEdgeSize : int;
 var buttonScaleFactor : float;
 var initialRespawn : Respawn;
 
@@ -56,12 +57,20 @@ function Start () {
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
 
-    SpeedLinesSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
-	SpeedLinesSprite.positionCenter();
-	SpeedLinesSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
-	SpeedLinesSprite.alphaTo( 0.01f, 0.6f, Easing.Sinusoidal.easeOut);
-	SpeedLinesSprite.hidden = true;
-
+	if (UI.isHD == true) {
+		spriteEdgeSize = 4;
+		buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
+	}
+	else {
+		spriteEdgeSize = 2;
+		buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
+	}
+	
+//	var tutorialHeight = 1.25 * spriteEdgeSize;
+	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
+	tutorialSprite.hidden = true;
+	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+	
 	fadeSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
 	fadeSprite.positionCenter();
 	fadeSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
@@ -72,18 +81,6 @@ function Start () {
 	pauseButton.pixelsFromTopRight( 5, 5 );
 	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(30);
 	pauseButton.onTouchUpInside += PauseGameCheck;
-
-//	var resumeButton = UIButton.create("pauseGray.png","pauseWhite.png", 0, 0 );
-//	resumeButton.pixelsFromBottomRight( 10, 10 );
-//    savedTimeScale = Time.timeScale;
-//	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(20);
-//	resumeButton.onTouchUpInside += UnPauseGame;
-	if (UI.isHD == true) {
-	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
-	}
-	else {
-	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
-	}
 
 	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
@@ -440,19 +437,6 @@ function fadeOut() {
 		fadeSprite.hidden = true;
 }
 
-function speedLinesNow() {
-//		Debug.Log("Time to fade!");
-		SpeedLinesSprite.hidden = false;
-		SpeedLinesSprite.alphaTo( 2.0f, 0.6f, Easing.Sinusoidal.easeOut);
-		yield WaitForSeconds(2.0);
-}
-
-function speedLinesOff() {
-		SpeedLinesSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-		yield WaitForSeconds(1.0);
-		SpeedLinesSprite.hidden = true;
-}
-
 
 function OnApplicationPause(pauseStatus: boolean) {
     if (pauseStatus && Time.timeScale != 0 && FallingPlayer.isPausable == true) {setSavedTimeScale(); PauseGameNow();}
@@ -486,4 +470,15 @@ function PauseGameBackgroundCheck() {
 			PauseGameNow();
 		}
 	}
+}
+
+function tutorialSpritePosition(timer : float) {
+	tutorialSprite.centerize();
+	tutorialSprite.pixelsFromBottom (- spriteEdgeSize * 3);
+	tutorialSprite.hidden = false;
+	tutorialSprite.alphaFromTo( 1.0f, 0f, 0.6f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds (timer);
+	tutorialSprite.alphaTo( 2.0f, 0.0f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds (2);
+	tutorialSprite.hidden = true;
 }

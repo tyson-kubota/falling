@@ -88,19 +88,19 @@ function Start () {
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		
-	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);}
+	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaStart;
 				
-	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);}
+	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
 	loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
 		
-	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);}
+	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
 	loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
 			
-	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);}
+	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
 	loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;		
 	
