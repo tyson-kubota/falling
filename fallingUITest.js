@@ -476,7 +476,7 @@ function tutorialSpritePosition(timer : float) {
 	tutorialSprite.centerize();
 	tutorialSprite.pixelsFromBottom (- spriteEdgeSize * 3);
 	tutorialSprite.hidden = false;
-	tutorialSprite.alphaFromTo( 1.0f, 0f, 0.6f, Easing.Sinusoidal.easeOut);
+	tutorialSprite.alphaFromTo( 1.0f, 0f, 0.85f, Easing.Sinusoidal.easeOut);
 	yield WaitForSeconds (timer);
 	tutorialSprite.alphaTo( 2.0f, 0.0f, Easing.Sinusoidal.easeOut);
 	yield WaitForSeconds (2);

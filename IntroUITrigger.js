@@ -18,7 +18,7 @@ function Start () {
 	fallingUIComponent = fallingUI.GetComponent("fallingUITest");
     helpIcon = UI.firstToolkit.addSprite( thisIcon + ".png", 0, 0, 3 );
 
-	textHeight = (UI.isHD == true) ? 15 : 18;
+	textHeight = (UI.isHD == true) ? 18 : 18;
 
 	helpIcon.pixelsFromBottom(textHeight);
 	helpIcon.hidden = true;
