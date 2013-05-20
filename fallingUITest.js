@@ -5,7 +5,8 @@ var fallingPlayerComponent : FallingPlayer;
 
 var value : float = 0.5f;
 var bgSprite : UISprite;
-var tutorialSprite : UISprite;
+static var tutorialSprite : UISprite;
+static var tutorialSpriteExtraTimer : float = 0; 
 var fadeSprite : UISprite;
 var pauseButton : UIButton;
 var circleReticle: UIButton;
@@ -478,6 +479,8 @@ function tutorialSpritePosition(timer : float) {
 	tutorialSprite.hidden = false;
 	tutorialSprite.alphaFromTo( 1.0f, 0f, 0.85f, Easing.Sinusoidal.easeOut);
 	yield WaitForSeconds (timer);
+	yield WaitForSeconds (tutorialSpriteExtraTimer);
+	tutorialSpriteExtraTimer = 0;
 	tutorialSprite.alphaTo( 2.0f, 0.0f, Easing.Sinusoidal.easeOut);
 	yield WaitForSeconds (2);
 	tutorialSprite.hidden = true;

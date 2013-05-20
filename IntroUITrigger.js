@@ -28,7 +28,8 @@ function Start () {
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == false) {
 	activeIntro = true;
-	fallingUIComponent.tutorialSpritePosition(thisTimer);
+	if (fallingUITest.tutorialSprite.hidden == true) {fallingUIComponent.tutorialSpritePosition(thisTimer);}
+	else {fallingUITest.tutorialSpriteExtraTimer = (thisTimer - 2);}
 	fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer);
 	if (audio) {audio.Play();}
 	}
