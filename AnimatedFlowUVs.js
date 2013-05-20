@@ -8,7 +8,7 @@ function Start () {}
 function Update () {
 	if (shouldAnimate == true) {
 		var offset = Time.time * speed;
-		renderer.sharedMaterial.mainTextureOffset = Vector2(0,offset%1);
+		renderer.sharedMaterial.mainTextureOffset = Vector2(0,offset);
 	}
 }
 
