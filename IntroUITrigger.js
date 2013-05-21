@@ -10,7 +10,7 @@ var helpIcon: UISprite;
 var thisIcon : String = "level1";
 var thisTimer : float = 8;
 var helpBackgroundSprite : UISprite;
-var activeIntro : boolean = false;
+static var activeIntro : boolean = false;
 var textHeight : int;
 
 function Start () {
