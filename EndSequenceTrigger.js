@@ -4,7 +4,9 @@ var Player : GameObject;
 var EndScriptComponent : EndSequence1stPerson;
 
 var shards : Array;
+var shardColor : Material;
 var endDiamond : GameObject;
+var diamondCore : GameObject;
 
 var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
@@ -41,12 +43,48 @@ function GetChildren(obj : GameObject) : Array{
     return children;
 }
 
-function SwapDiamonds(){
+function SwapDiamonds(timer : float){
 	FallingPlayer.ScoreFlashTextureScript.FadeFlash (4.0, FadeDir.Out);
 	UIscriptComponent.OutroDiamondFlash();
 	//yield WaitForSeconds (.2);
 	endDiamond.active = true;
-	//yield WaitForSeconds (.25);
+	
+	var start = shardColor.color;
+    var end = Color.black;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        
+        for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
+        shard.transform.Find("sky-rock-angled-segment").renderer.material.color = Color.Lerp(start, end, i);
+        
+        yield;
+    	}
+    	
+    yield WaitForSeconds (2);
+    	
 	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
-		Destroy (shard);
+    	Destroy (shard);
+}
+
+function AddDiamondCore(timer : float){
+	diamondCore.active = true;
+
+    var start = 0;
+    var end = .95;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        diamondCore.renderer.material.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    	}
+    	
+    yield WaitForSeconds (timer);
+
+
+
 }

@@ -33,7 +33,11 @@ function BeginOutro () {
     ScoreController.IncrementScore(35);
     LerpTowardsDiamond(10);
 	yield WaitForSeconds (17);
-	UIscriptComponent.GameCompleteUI();	
+	LerpIntoDiamond(8);
+	EndTriggerComponent.AddDiamondCore(5);
+	yield WaitForSeconds (4);
+	//UIscriptComponent.GameCompleteUI();
+	UIscriptComponent.LevelComplete();
 }
 
 function LerpTowardsDiamond (timer : float) {
@@ -52,11 +56,29 @@ function LerpTowardsDiamond (timer : float) {
     while (i <= 1.0) {
 //      transform.LookAt(diamondLookTarget);    
         i += step * Time.deltaTime;
-        transform.position = Vector3.Lerp(start, end, i);
+        transform.position = Vector3.Slerp(start, end, i);
  		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
 
         yield;
     }
 
-	EndTriggerComponent.SwapDiamonds();
+	EndTriggerComponent.SwapDiamonds(6);
+}
+
+function LerpIntoDiamond (timer : float) {
+	var end = outroCompletedOrb.transform.position; 
+    var start = gameObject.transform.position;
+	var startRotation = transform.rotation;
+	var endRotation = Quaternion.Euler(-79,97,-2.3);    
+    var i = 0.0;
+    var step = 1.0/timer;
+	
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        transform.position = Vector3.Slerp(start, end, i);
+ 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+        
+        yield;
+    }
+
 }
