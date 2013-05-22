@@ -63,7 +63,7 @@ function SwapDiamonds(timer : float){
         yield;
     	}
     	
-    yield WaitForSeconds (2);
+    yield WaitForSeconds (1);
     	
 	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
     	Destroy (shard);
@@ -73,7 +73,7 @@ function AddDiamondCore(timer : float){
 	diamondCore.active = true;
 
     var start = 0;
-    var end = .95;
+    var end = .9;
     var i = 0.0;
     var step = 1.0/timer;
  
@@ -85,6 +85,21 @@ function AddDiamondCore(timer : float){
     	
     yield WaitForSeconds (timer);
 
+}
 
+function FadeDiamond(timer : float){
+
+    var start = endDiamond.renderer.material.color;
+    var end = Color.black;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        endDiamond.renderer.material.color = Color.Lerp(start, end, i);
+        yield;
+    	}
+    	
+    yield WaitForSeconds (timer);
 
 }

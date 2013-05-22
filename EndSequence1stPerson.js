@@ -31,11 +31,15 @@ function BeginOutro () {
 	PlayerController.enabled = false;
 	UIscriptComponent.BeginOutroUI();
     ScoreController.IncrementScore(35);
+    
     LerpTowardsDiamond(10);
-	yield WaitForSeconds (17);
-	LerpIntoDiamond(8);
+	yield WaitForSeconds (10);
+	LerpIntoDiamond(14);
 	EndTriggerComponent.AddDiamondCore(5);
-	yield WaitForSeconds (4);
+	yield WaitForSeconds (3);
+	EndTriggerComponent.FadeDiamond(18);
+	yield WaitForSeconds (8);
+	
 	//UIscriptComponent.GameCompleteUI();
 	UIscriptComponent.LevelComplete();
 }
