@@ -1,5 +1,4 @@
 var script : ScoreController;
-script = GetComponent("ScoreController");
 
 var LifeFlashTexture : GameObject;
 static var LifeFlashTextureScript : GUITextureLaunch;
@@ -8,6 +7,10 @@ static var inOutro : boolean = false;
 
 static var isAlive : int = 0;
 var UIscriptName : GameObject;
+
+function Awake () {
+	   	script = GetComponent("ScoreController");
+}
 
 function Start () {
 	   	isAlive = 1;

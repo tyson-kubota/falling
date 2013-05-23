@@ -278,12 +278,27 @@ function BeginOutroUI() {
 	player.rigidbody.isKinematic = true;
 }
 
-function GameCompleteUI() {
+function OldGameCompleteUI() {
 	bgSprite.hidden = false;
 	bgSprite.alphaFromTo( 4.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeInOut);
 	fallingPlayerComponent.FadeAudio (2.0, FadeDir.Out);
 	yield WaitForSeconds (1.0);
 	yield WaitForSeconds (2.0);
+}
+
+function GameCompleteUI() {
+	bgSprite.hidden = false;
+	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeIn);
+	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
+	yield WaitForSeconds (.5);
+    savedTimeScale = Time.timeScale;
+//	loadingLabel.hidden = false;
+//	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
+    yield WaitForSeconds (1);
+    AudioListener.pause = true;
+	FallingPlayer.isTiltable = true;
+	Application.LoadLevel(levelToLoad);
+	Time.timeScale = savedTimeScale;
 }
 
 function OutroDiamondFlash() {

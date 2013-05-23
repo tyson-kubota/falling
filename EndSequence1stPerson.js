@@ -21,7 +21,7 @@ function Start () {
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
 }
 
-function BeginOutro () {
+function PlayOutro () {
 	ScoreController.enabled = false;
 	LifeController.enabled = false;	
 	FallingPlayer.isTiltable = false;			
@@ -33,15 +33,21 @@ function BeginOutro () {
     ScoreController.IncrementScore(35);
     
     LerpTowardsDiamond(10);
+    RotateTowardsDiamond(10);
 	yield WaitForSeconds (10);
-	LerpIntoDiamond(14);
+	//LerpIntoDiamond(14);
+	animation.Play("end-player-anim");
 	EndTriggerComponent.AddDiamondCore(5);
-	yield WaitForSeconds (3);
-	EndTriggerComponent.FadeDiamond(18);
-	yield WaitForSeconds (8);
+	EndTriggerComponent.AddDiamond3DCore(5);
+	yield WaitForSeconds (2);
+	EndTriggerComponent.FadeDiamond(8);
+	yield WaitForSeconds (6);
 	
-	//UIscriptComponent.GameCompleteUI();
-	UIscriptComponent.LevelComplete();
+	ScoreController.enabled = true;
+	LifeController.enabled = true;
+	lifeCountdown.inOutro = false;
+	UIscriptComponent.GameCompleteUI();
+	//UIscriptComponent.LevelComplete();
 }
 
 function LerpTowardsDiamond (timer : float) {
@@ -52,8 +58,8 @@ function LerpTowardsDiamond (timer : float) {
     var step = 1.0/timer;
 	var startRotation = transform.rotation;
 	var endRotation = Quaternion.Euler(-54,96,-2.3);
-	//var zeroRotation = Quaternion.Euler(0,0,0);
-	var direction:Vector3 = diamondLookTarget.position - start;
+//	var zeroRotation = Quaternion.Euler(0,0,0);
+//	var direction:Vector3 = diamondLookTarget.position - start;
 //	rotation = Quaternion.LookRotation(direction);
 //	Debug.Log('direction is ' + diamondLookTarget.position);
 	 		
@@ -61,12 +67,26 @@ function LerpTowardsDiamond (timer : float) {
 //      transform.LookAt(diamondLookTarget);    
         i += step * Time.deltaTime;
         transform.position = Vector3.Slerp(start, end, i);
- 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+ 		//transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
 
         yield;
     }
 
 	EndTriggerComponent.SwapDiamonds(6);
+}
+
+function RotateTowardsDiamond (timer : float) {
+    var i = 0.0;
+    var step = 1.0/timer;
+	var startRotation = transform.rotation;
+	var endRotation = Quaternion.Euler(-54,96,-2.3);
+	 		
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+ 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+
+        yield;
+    }
 }
 
 function LerpIntoDiamond (timer : float) {

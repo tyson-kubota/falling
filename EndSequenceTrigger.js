@@ -7,11 +7,13 @@ var shards : Array;
 var shardColor : Material;
 var endDiamond : GameObject;
 var diamondCore : GameObject;
+var diamond3DCore1 : GameObject;
+var diamond3DCore2 : GameObject;
 
 var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
-function Start () {
+function Awake () {
 	EndScriptComponent = Player.GetComponent("EndSequence1stPerson");
 	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");
 }
@@ -20,7 +22,7 @@ function OnTriggerEnter (other : Collider) {
 	if (other.gameObject.CompareTag ("Player") && lifeCountdown.inOutro == false) {
 		lifeCountdown.inOutro = true;
 		if (EndScriptComponent) {
-		EndScriptComponent.BeginOutro();
+		EndScriptComponent.PlayOutro();
 		}
 		
 		for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
@@ -97,6 +99,27 @@ function FadeDiamond(timer : float){
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         endDiamond.renderer.material.color = Color.Lerp(start, end, i);
+        yield;
+    	}
+    	
+    yield WaitForSeconds (timer);
+
+}
+
+
+function AddDiamond3DCore(timer : float){
+	diamond3DCore1.active = true;
+	diamond3DCore2.active = true;
+
+    var start = Color.black;
+    var end = diamond3DCore1.renderer.material.color;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        diamond3DCore1.renderer.material.color = Color.Lerp(start, end, i);
+        diamond3DCore2.renderer.material.color = Color.Lerp(start, end, i);
         yield;
     	}
     	
