@@ -288,7 +288,7 @@ function OldGameCompleteUI() {
 
 function GameCompleteUI() {
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeIn);
+	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeIn);
 	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
 	yield WaitForSeconds (.5);
     savedTimeScale = Time.timeScale;
@@ -301,10 +301,10 @@ function GameCompleteUI() {
 	Time.timeScale = savedTimeScale;
 }
 
-function OutroDiamondFlash() {
+function OutroDiamondFlash( timer : float ) {
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.5f, 0.90f, 0.2f, Easing.Sinusoidal.easeOut);
-	yield WaitForSeconds (1.5);
+	bgSprite.alphaFromTo( timer, 1.0f, 0.2f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds (timer);
 	bgSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeIn);
 }
 

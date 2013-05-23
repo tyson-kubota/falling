@@ -30,7 +30,7 @@ function OnTriggerEnter (other : Collider) {
 	
 		if (audio) {audio.Play();}
 
-		FallingPlayer.ScoreFlashTextureScript.FadeFlash (8.0, FadeDir.In);
+		FallingPlayer.ScoreFlashTextureScript.FadeFlash (12.0, FadeDir.In);
 		//yield WaitForSeconds (1.0);
 		//FallingPlayer.ScoreFlashTextureScript.FadeFlash (0.5, FadeDir.Out);
 	}
@@ -46,8 +46,8 @@ function GetChildren(obj : GameObject) : Array{
 }
 
 function SwapDiamonds(timer : float){
-	FallingPlayer.ScoreFlashTextureScript.FadeFlash (4.0, FadeDir.Out);
-	UIscriptComponent.OutroDiamondFlash();
+	FallingPlayer.ScoreFlashTextureScript.FadeFlash (3.0, FadeDir.Out);
+	UIscriptComponent.OutroDiamondFlash(2);
 	//yield WaitForSeconds (.2);
 	endDiamond.active = true;
 	

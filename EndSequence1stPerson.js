@@ -38,8 +38,9 @@ function PlayOutro () {
 	//LerpIntoDiamond(14);
 	animation.Play("end-player-anim");
 	EndTriggerComponent.AddDiamondCore(5);
-	EndTriggerComponent.AddDiamond3DCore(5);
-	yield WaitForSeconds (2);
+	yield WaitForSeconds (1);
+	EndTriggerComponent.AddDiamond3DCore(6);
+	yield WaitForSeconds (1);
 	EndTriggerComponent.FadeDiamond(8);
 	yield WaitForSeconds (6);
 	
@@ -72,7 +73,7 @@ function LerpTowardsDiamond (timer : float) {
         yield;
     }
 
-	EndTriggerComponent.SwapDiamonds(6);
+	EndTriggerComponent.SwapDiamonds(4);
 }
 
 function RotateTowardsDiamond (timer : float) {
