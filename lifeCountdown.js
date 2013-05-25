@@ -42,25 +42,24 @@ function ScoreLerpLoop () {
 	   
 	   	
 function TickingAway (delay : float) {
+	if (script.currentScore > 0) {
 		if (MoveController.Slowdown > 17999) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4));
 		}
 		
-		else if ((script.currentScore > 0) && (MoveController.Slowdown < 18000)) {
+		else if (MoveController.Slowdown < 18000) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
 	   	}
-	   	
-	   	else {
+	}
+	
+	else {
 		   	isAlive = 0;
 		   	FallingPlayer.isPausable = false;
 		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-		   	
-		   	//UIscriptName.GetComponent(fallingUITest).HideGUI();
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
-			//UIscriptName.GetComponent(fallingUITest).UnhideGUI();
-		}
+	}
 }
 
 
