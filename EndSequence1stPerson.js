@@ -1,6 +1,6 @@
 #pragma strict
 
-var PlayerController : controllerITween2;
+var PlayerController : MoveController;
 var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
 var EndTriggerName : GameObject;
@@ -14,7 +14,7 @@ var outroCompletedOrb : GameObject;
 var outroCompletionPoint : GameObject;
 
 function Start () {
-	PlayerController = GetComponent("controllerITween2");
+	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
 	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");

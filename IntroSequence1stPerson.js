@@ -1,6 +1,6 @@
 #pragma strict
 
-var PlayerController : controllerITween2;
+var PlayerController : MoveController;
 var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
 
@@ -8,7 +8,7 @@ var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
 function Start () {
-	PlayerController = GetComponent("controllerITween2");
+	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
 	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");

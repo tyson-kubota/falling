@@ -42,12 +42,12 @@ function ScoreLerpLoop () {
 	   
 	   	
 function TickingAway (delay : float) {
-		if (controllerITween2.Slowdown > 17999) {
+		if (MoveController.Slowdown > 17999) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4));
 		}
 		
-		else if ((script.currentScore > 0) && (controllerITween2.Slowdown < 18000)) {
+		else if ((script.currentScore > 0) && (MoveController.Slowdown < 18000)) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
 	   	}
