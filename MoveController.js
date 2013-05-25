@@ -39,7 +39,7 @@ function Start() {
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
-	lerpSlowdown(.3);
+	lerpSlowdown(.5);
 //  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 }
 
@@ -141,7 +141,7 @@ fingerCount = 0;
 	//    	slowDown();
 			//if (Slowdown > 0) {speedDown(); yield;}
 			//Slowdown = 0;
-			if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.3); }
+			if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
 			//else if (Slowdown > 0) {speedingUp = 0; speedsUp(); }
 	    }
 	}
