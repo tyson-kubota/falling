@@ -5,11 +5,12 @@ var endGameSprite : UISprite;
 var theEndLabel : UISprite;
 var aboutButton : UIButton;
 var homeButton : UIButton;
-var newGameButton : UIButton;
+var continueButton : UIButton;
 
 var textHeight : int;
 
 var homeLevel : String = "Falling-scene-menu";
+var level1 : String = "Falling-scene-tutorial";
 
 function Start () {
 
@@ -30,12 +31,12 @@ function Start () {
 //	aboutButton.onTouchUpInside += OpenAbout;
 	aboutButton.hidden = true;
 	
-	newGameButton = UIButton.create("newgame.png","newgame.png", 40, 40);
-	newGameButton.pixelsFromBottomRight(textHeight, textHeight);	
-	newGameButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	newGameButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-//	newGameButton.onTouchUpInside += NewLevel;
-	newGameButton.hidden = true;
+	continueButton = UIButton.create("newgame.png","newgame.png", 40, 40);
+	continueButton.pixelsFromBottomRight(textHeight, textHeight);	
+	continueButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	continueButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	continueButton.onTouchUpInside += continueLevel;
+	continueButton.hidden = true;
 
 	homeButton = UIButton.create("home.png","home.png", 40, 40);
 	homeButton.centerize();
@@ -53,16 +54,16 @@ function ShowEndGameUI() {
 	yield WaitForSeconds(1);
 	
 	theEndLabel.hidden = false;
-	theEndLabel.alphaFromTo( 3.0f, 0f, 1.0f, Easing.Sinusoidal.easeIn);
+	theEndLabel.alphaFromTo( 3.0f, 0f, 0.5f, Easing.Sinusoidal.easeIn);
 
 	yield WaitForSeconds(3);
 	aboutButton.hidden = false;
-	newGameButton.hidden = false;
+	continueButton.hidden = false;
 	homeButton.hidden = false;
 	endGameSprite.hidden = false;
 
 	aboutButton.alphaFromTo( 2.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
-	newGameButton.alphaFromTo( 2.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	continueButton.alphaFromTo( 2.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	homeButton.alphaFromTo( 2.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	endGameSprite.alphaFromTo( 2.0f, 0f, 0.25f, Easing.Sinusoidal.easeIn);
 	
@@ -75,7 +76,7 @@ function LoadHome() {
 //	var delay : float = 2;
 
 //	aboutButton.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
-//	newGameButton.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
+//	continueButton.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
 //	homeButton.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
 //	endGameSprite.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
 //	theEndLabel.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
@@ -85,12 +86,24 @@ function LoadHome() {
 	theEndLabel.hidden = true;
 	
 	aboutButton.hidden = true;
-	newGameButton.hidden = true;
+	continueButton.hidden = true;
 	homeButton.hidden = true;
 	endGameSprite.hidden = true;
 	
 //	fallingUITest.loadingLabel.hidden = false;
-	
+	FallingPlayer.isTiltable = true;
 	Application.LoadLevel(homeLevel);
 //	Time.timeScale = savedTimeScale;
+}
+
+
+function continueLevel() {
+	aboutButton.hidden = true;
+	continueButton.hidden = true;
+	homeButton.hidden = true;
+	endGameSprite.hidden = true;
+	
+	fallingUITest.loadingLabel.hidden = false;
+	FallingPlayer.isTiltable = true;
+	Application.LoadLevel(level1);
 }
