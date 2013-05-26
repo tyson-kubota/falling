@@ -12,6 +12,7 @@ var pauseButton : UIButton;
 var circleReticle: UIButton;
 var lifeBarOutline : UIProgressBar;
 var lifeBar : UIProgressBar;
+var lifeBarThreat : UIProgressBar;
 var rightArrow : UIButton;
 var leftArrow : UIButton;
 var loadNewLevelButton : UIButton;
@@ -162,6 +163,13 @@ function Start () {
 	lifeBarOutline.pixelsFromTopLeft ( 8, 8 );
 	lifeBarOutline.value = 1f;
 	lifeBarOutline.resizeTextureOnChange = false;
+
+	lifeBarThreat = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
+	lifeBarThreat.pixelsFromTopLeft ( 10, 10 );
+	lifeBarThreat.value = 1f;
+	lifeBarThreat.resizeTextureOnChange = false;
+	lifeBarThreat.alphaTo( 1.0f, 0.2f, Easing.Sinusoidal.easeOut);
+	lifeBarThreat.hidden = true;
 				
 	lifeBar = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
 	lifeBar.pixelsFromTopLeft ( 10, 10 );
