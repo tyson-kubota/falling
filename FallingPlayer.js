@@ -194,6 +194,7 @@ function OnTriggerEnter (other : Collider) {
 	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
 
 	script.IncrementScore(6);
+	UIscriptComponent.flashProgressBar(1);
 	if (audio) {audio.Play();}
 	yield WaitForSeconds(.2);
 

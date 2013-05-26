@@ -183,6 +183,12 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 	}
 }
 
+function flashProgressBar(delay : float) {
+	lifeBar.alphaTo( 0.01f, 1.0f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds(.25);
+	lifeBar.alphaTo( delay, 0.5f, Easing.Sinusoidal.easeInOut);
+}
+
 function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
 		FallingPlayer.isPausable = false;
@@ -430,7 +436,7 @@ function UnhideGUI() {
 		lifeBarOutline.hidden = false;
 		
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		lifeBar.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+		lifeBar.alphaFromTo( 1.0f, 0.0f, 0.5f, Easing.Quartic.easeIn);
 		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		yield WaitForSeconds (1.0);
