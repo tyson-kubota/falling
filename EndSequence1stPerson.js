@@ -9,6 +9,9 @@ var EndTriggerComponent : EndSequenceTrigger;
 var UIscriptName : GameObject;
 var UIscriptComponent : fallingUITest;
 
+var UIscriptEndMenuName : GameObject;
+var UIscriptEndMenuComponent : FallingEndMenuUI;
+
 //var outroShards : GameObject;
 var outroCompletedOrb : GameObject;
 var outroCompletionPoint : GameObject;
@@ -18,6 +21,7 @@ function Start () {
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
 	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");
+	UIscriptEndMenuComponent = UIscriptEndMenuName.GetComponent("FallingEndMenuUI");
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
 }
 
@@ -48,6 +52,8 @@ function PlayOutro () {
 	LifeController.enabled = true;
 	lifeCountdown.inOutro = false;
 	UIscriptComponent.GameCompleteUI();
+	UIscriptEndMenuComponent.ShowEndGameUI();
+	
 	//UIscriptComponent.LevelComplete();
 }
 

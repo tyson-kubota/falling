@@ -20,10 +20,10 @@ var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
 var openSiteButton : UIButton;
-var loadingLabel : UIButton;
+static var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 
-var spriteEdgeSize : int;
+static var spriteEdgeSize : int;
 var buttonScaleFactor : float;
 var initialRespawn : Respawn;
 
@@ -292,7 +292,7 @@ function OldGameCompleteUI() {
 	yield WaitForSeconds (2.0);
 }
 
-function GameCompleteUI() {
+function GameComplete() {
 	bgSprite.hidden = false;
 	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeIn);
 	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
@@ -305,6 +305,14 @@ function GameCompleteUI() {
 	FallingPlayer.isTiltable = true;
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
+}
+
+function GameCompleteUI() {
+	bgSprite.hidden = false;
+	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
+	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
+	
+	// add anything else that requires main uitoolkit instance
 }
 
 function OutroDiamondFlash( timer : float ) {
