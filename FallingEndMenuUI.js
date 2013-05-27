@@ -118,7 +118,7 @@ function continueLevel() {
 }
 
 function fadeInAbout() {
-	aboutButton.alphaTo( .25f, 1.0f, Easing.Sinusoidal.easeOut);
+	aboutButton.alphaTo( .05f, 1.0f, Easing.Sinusoidal.easeOut);
 }
 
 function fadeOutAbout() {
@@ -126,14 +126,14 @@ function fadeOutAbout() {
 }
 
 function fadeInHome() {
-	homeButton.alphaTo( .25f, 1.0f, Easing.Sinusoidal.easeOut);
+	homeButton.alphaTo( .05f, 1.0f, Easing.Sinusoidal.easeOut);
 }
 
 function fadeOutHome() {
 	homeButton.alphaTo( .25f, 0.5f, Easing.Sinusoidal.easeOut);
 	
 }function fadeInContinue() {
-	continueButton.alphaTo( .25f, 1.0f, Easing.Sinusoidal.easeOut);
+	continueButton.alphaTo( .05f, 1.0f, Easing.Sinusoidal.easeOut);
 }
 
 function fadeOutContinue() {
