@@ -95,19 +95,27 @@ function Start () {
 	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaStart;
+	loadLevelOne.onTouchUp += upLevel1;
+	loadLevelOne.onTouchDown += downLevel1;
 				
 	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
 	loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
-		
+	loadLevelTwo.onTouchUp += upLevel2;
+	loadLevelTwo.onTouchDown += downLevel2;
+			
 	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
 	loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
-			
+	loadLevelThree.onTouchUp += upLevel3;
+	loadLevelThree.onTouchDown += downLevel3;
+				
 	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
 	loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;		
-	
+	loadLevelFour.onTouchUp += upLevel4;
+	loadLevelFour.onTouchDown += downLevel4;
+		
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
@@ -144,8 +152,8 @@ function ShowStart() {
 	
 	rightArrow.hidden = false;
 	leftArrow.hidden = false;
-	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
-	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
+	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
+	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
 }
 
@@ -270,6 +278,8 @@ function LevelSelect() {
 	loadLevelThree.hidden = false;
 	loadLevelFour.hidden = false;
 	
+	fadeInLoadNewLevels();
+	
 	loadNewLevelButton.hidden = true;	
 	BackToPauseMenuButton.hidden = false;
 }
@@ -279,6 +289,8 @@ function BackToPauseMenu() {
 	rightArrow.hidden = false;
 //	pauseButton.hidden = false;
 	openSiteButton.hidden = true;
+	
+	fadeInPauseMenu();
 		
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
@@ -358,9 +370,55 @@ function fadeInLeftArrow() {
 }
 
 function fadeOutRightArrow() {
-	rightArrow.alphaTo(.25f, 0.5f, Easing.Sinusoidal.easeOut);
+	rightArrow.alphaTo(.25f, 0.4f, Easing.Sinusoidal.easeOut);
 }
 
 function fadeOutLeftArrow() {
-	leftArrow.alphaTo(.25f, 0.5f, Easing.Sinusoidal.easeOut);
+	leftArrow.alphaTo(.25f, 0.4f, Easing.Sinusoidal.easeOut);
+}
+
+function fadeInLoadNewLevels() {
+
+	loadLevelOne.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelTwo.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelThree.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelFour.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+}
+
+function fadeInPauseMenu() {
+	rightArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
+	leftArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
+}
+
+function downLevel1() {
+	loadLevelOne.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+}
+
+function downLevel2() {
+	loadLevelTwo.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+}
+
+function downLevel3() {
+	loadLevelThree.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+}
+
+function downLevel4() {
+	loadLevelFour.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+}
+
+
+function upLevel1() {
+	loadLevelOne.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+}
+
+function upLevel2() {
+	loadLevelTwo.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+}
+
+function upLevel3() {
+	loadLevelThree.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+}
+
+function upLevel4() {
+	loadLevelFour.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
 }

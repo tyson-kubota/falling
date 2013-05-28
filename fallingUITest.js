@@ -171,7 +171,7 @@ function Start () {
 //	lifeBarThreat.resizeTextureOnChange = true;
 //	animateThreatBar (lifeBarThreat);
 	lifeBarThreat.hidden = true;
-	lifeBarThreat.alphaTo( 0.01f, 0f, Easing.Sinusoidal.easeOut);
+	lifeBarThreat.alphaFromTo( 0.01f, 0f, 0f, Easing.Sinusoidal.easeOut);
 					
 	lifeBar = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
 	lifeBar.pixelsFromTopLeft ( 10, 10 );
