@@ -10,12 +10,8 @@ var diamondCore : GameObject;
 var diamond3DCore1 : GameObject;
 var diamond3DCore2 : GameObject;
 
-var UIscriptName : GameObject;
-var UIscriptComponent : fallingUITest;
-
 function Awake () {
 	EndScriptComponent = Player.GetComponent("EndSequence1stPerson");
-	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -47,7 +43,7 @@ function GetChildren(obj : GameObject) : Array{
 
 function SwapDiamonds(timer : float){
 	FallingPlayer.ScoreFlashTextureScript.FadeFlash (3.0, FadeDir.Out);
-	UIscriptComponent.OutroDiamondFlash(2);
+	FallingPlayer.UIscriptComponent.OutroDiamondFlash(2);
 	//yield WaitForSeconds (.2);
 	endDiamond.active = true;
 	

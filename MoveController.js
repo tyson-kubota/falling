@@ -19,9 +19,6 @@ static var speedingUp:int = 1;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-//var UIscriptName : GameObject;
-//var UIscriptComponent : fallingUITest;
-
 var SpeedLinesTexture : GameObject;
 
 var SpeedLinesTextureScript : GUITextureLaunch;
@@ -40,7 +37,6 @@ function Start() {
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
 	lerpSlowdown(.5);
-//  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
 }
 
 function FixedUpdate () {
@@ -132,7 +128,6 @@ fingerCount = 0;
 		if (fingerCount > 1) { 	
 			//speedUp();
 			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; speedsUp();}
-			
 			//if (Slowdown < 1) 
 			//{speedingUp = 2; speedsUp(); Slowdown = 18000; }
 			
@@ -151,6 +146,7 @@ fingerCount = 0;
 	speedingUp = 1;
 	SpeedLinesTextureScript.LinesOff();
 	dir = Vector3.zero;
+	FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
 	}
 
 //  Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
@@ -162,9 +158,11 @@ function speedsUp () {
 		if (speedingUp == 2) {
 		speedingUp = 1;
 		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
+		FallingPlayer.UIscriptComponent.showThreatBar(1);
 		}
 		else {
 		SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
+		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
 }		
 }
 

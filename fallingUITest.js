@@ -165,12 +165,14 @@ function Start () {
 	lifeBarOutline.resizeTextureOnChange = false;
 
 	lifeBarThreat = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
-	lifeBarThreat.pixelsFromTopLeft ( 10, 10 );
+	lifeBarThreat.rightToLeft = true;
+	lifeBarThreat.pixelsFromTopLeft ( 10, 244 );
 	lifeBarThreat.value = 1f;
-	lifeBarThreat.resizeTextureOnChange = false;
-	lifeBarThreat.alphaTo( 1.0f, 0.2f, Easing.Sinusoidal.easeOut);
-	lifeBarThreat.hidden = true;
-				
+//	lifeBarThreat.resizeTextureOnChange = true;
+//	animateThreatBar (lifeBarThreat);
+//	lifeBarThreat.hidden = true;
+	lifeBarThreat.alphaTo( 0.01f, 0f, Easing.Sinusoidal.easeOut);
+					
 	lifeBar = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
 	lifeBar.pixelsFromTopLeft ( 10, 10 );
 	lifeBar.resizeTextureOnChange = true;
@@ -191,10 +193,33 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 	}
 }
 
+function animateThreatBar(lifeBar : UIProgressBar) {
+	while (true)
+	{
+	lifeBar.value = (1 - (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore)));
+	yield 0;
+	}
+}
+
 function flashProgressBar(delay : float) {
 	lifeBar.alphaTo( 0.01f, 1.0f, Easing.Sinusoidal.easeOut);
 	yield WaitForSeconds(.25);
 	lifeBar.alphaTo( delay, 0.5f, Easing.Sinusoidal.easeInOut);
+}
+
+function showThreatBar(delay : float) {
+	lifeBarThreat.alphaTo( delay, 1.0f, Easing.Sinusoidal.easeInOut);
+}
+
+function hideThreatBar(delay : float) {
+	lifeBarThreat.alphaTo( delay, 0.0f, Easing.Sinusoidal.easeInOut);
+}
+
+function flashThreatBar(delay : float) {
+	lifeBarThreat.hidden = false;
+	lifeBarThreat.alphaFromTo( delay, 1.0f, 0.0f, Easing.Sinusoidal.easeInOut);
+	yield WaitForSeconds(delay);
+//	lifeBarThreat.hidden = true;
 }
 
 function PauseGame() {

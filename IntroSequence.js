@@ -4,12 +4,8 @@ var PlayerObject : GameObject;
 var introCamera : GameObject;
 var mainCamera : GameObject;
 
-var UIscriptName : GameObject;
-var UIscriptComponent : fallingUITest;
-
 function Start () {
-	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
-	UIscriptComponent.HideGUI();
+	FallingPlayer.UIscriptComponent.HideGUI();
 	
 }
 

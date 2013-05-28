@@ -47,7 +47,7 @@ static var isTiltable : boolean = true;
 static var isPausable : boolean = false;
 
 var UIscriptName : GameObject;
-var UIscriptComponent : fallingUITest;
+static var UIscriptComponent : fallingUITest;
 
 var whiteFader : FadeInOutAlt;
 var introComponent : IntroSequence1stPerson;

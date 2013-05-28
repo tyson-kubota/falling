@@ -6,9 +6,6 @@ var LifeController : lifeCountdown;
 var EndTriggerName : GameObject;
 var EndTriggerComponent : EndSequenceTrigger;
 
-var UIscriptName : GameObject;
-var UIscriptComponent : fallingUITest;
-
 var UIscriptEndMenuName : GameObject;
 var UIscriptEndMenuComponent : FallingEndMenuUI;
 
@@ -20,7 +17,6 @@ function Start () {
 	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
-	UIscriptComponent = UIscriptName.GetComponent("fallingUITest");
 	UIscriptEndMenuComponent = UIscriptEndMenuName.GetComponent("FallingEndMenuUI");
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
 }
@@ -33,7 +29,7 @@ function PlayOutro () {
 	PlayerController.SpeedLinesOff(1);
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
-	UIscriptComponent.BeginOutroUI();
+	FallingPlayer.UIscriptComponent.BeginOutroUI();
     ScoreController.IncrementScore(35);
     
     LerpTowardsDiamond(10);
@@ -51,7 +47,7 @@ function PlayOutro () {
 	ScoreController.enabled = true;
 	LifeController.enabled = true;
 	lifeCountdown.inOutro = false;
-	UIscriptComponent.GameCompleteUI();
+	FallingPlayer.UIscriptComponent.GameCompleteUI();
 	UIscriptEndMenuComponent.ShowEndGameUI();
 	
 	//UIscriptComponent.LevelComplete();
