@@ -164,13 +164,13 @@ function Start () {
 	lifeBarOutline.value = 1f;
 	lifeBarOutline.resizeTextureOnChange = false;
 
-	lifeBarThreat = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
+	lifeBarThreat = UIProgressBar.create( "lifeBarRed.png", 0, 0 );
 	lifeBarThreat.rightToLeft = true;
 	lifeBarThreat.pixelsFromTopLeft ( 10, 246 );
 	lifeBarThreat.value = 1f;
 //	lifeBarThreat.resizeTextureOnChange = true;
 //	animateThreatBar (lifeBarThreat);
-//	lifeBarThreat.hidden = true;
+	lifeBarThreat.hidden = true;
 	lifeBarThreat.alphaTo( 0.01f, 0f, Easing.Sinusoidal.easeOut);
 					
 	lifeBar = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
@@ -208,7 +208,7 @@ function flashProgressBar(delay : float) {
 }
 
 function showThreatBar(delay : float) {
-	lifeBarThreat.alphaTo( delay, 1.0f, Easing.Sinusoidal.easeInOut);
+	lifeBarThreat.alphaTo( delay, 0.25f, Easing.Sinusoidal.easeInOut);
 }
 
 function hideThreatBar(delay : float) {
@@ -229,6 +229,7 @@ function PauseGame() {
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
 		lifeBarOutline.hidden = true;
+	    lifeBarThreat.hidden = true;
 	    
 	    savedTimeScale = Time.timeScale;
 		fallingPlayerComponent.FadeAudio (.09, FadeDir.Out);
@@ -254,6 +255,7 @@ function UnPauseGame(resume : boolean) {
 	circleReticle.hidden = false;
 	lifeBar.hidden = false;
 	lifeBarOutline.hidden = false;
+	lifeBarThreat.hidden = false;
 	
 	bgSprite.hidden = true;
 	rightArrow.hidden = true;
@@ -453,6 +455,7 @@ function HideGUI() {
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
 		lifeBarOutline.hidden = true;
+		lifeBarThreat.hidden = true;
 }
 
 function FadeOutGUI() {
@@ -460,7 +463,7 @@ function FadeOutGUI() {
 	lifeBar.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
 	lifeBarOutline.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
 	circleReticle.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
-	
+	lifeBarThreat.hidden = true;
 	yield WaitForSeconds (1.0);
 	
 	pauseButton.hidden = true;
@@ -475,7 +478,9 @@ function UnhideGUI() {
 		circleReticle.hidden = false;
 		lifeBar.hidden = false;
 		lifeBarOutline.hidden = false;
+		lifeBarThreat.hidden = false;
 		
+//		lifeBarThreat.alphaFrom( 1.0f, 0.0f, Easing.Quartic.easeIn);
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBar.alphaFromTo( 1.0f, 0.0f, 0.5f, Easing.Quartic.easeIn);
 		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
