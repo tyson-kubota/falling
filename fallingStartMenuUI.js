@@ -71,13 +71,17 @@ function Start () {
 	tiltWarning = UIButton.create("tiltwarning.png","tiltwarning.png", 0, 0);
 	tiltWarning.positionFromTop(buttonScaleFactor);
 	
-	rightArrow = UIButton.create("start.png","startDown.png", 0, 0);
+	rightArrow = UIButton.create("startDown.png","startDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
 	rightArrow.onTouchUpInside += LoadLevel1ViaStart;
-	
-	leftArrow = UIButton.create("chooselevel.png","chooselevelDown.png", 0, 0);
+	rightArrow.onTouchDown += fadeInRightArrow;
+	rightArrow.onTouchUp += fadeOutRightArrow;
+
+	leftArrow = UIButton.create("chooselevelDown.png","chooselevelDown.png", 0, 0);
 	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
 	leftArrow.onTouchUpInside += LevelSelect;
+	leftArrow.onTouchDown += fadeInLeftArrow;
+	leftArrow.onTouchUp += fadeOutLeftArrow;
 	
 	tiltWarning.hidden = true;
 	rightArrow.hidden = true;
@@ -140,8 +144,8 @@ function ShowStart() {
 	
 	rightArrow.hidden = false;
 	leftArrow.hidden = false;
-	rightArrow.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
-	leftArrow.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
+	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
 }
 
@@ -343,4 +347,20 @@ function HideGUI() {
 function UnhideGUI() {
 		pauseButton.hidden = true;
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+}
+
+function fadeInRightArrow() {
+	rightArrow.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);
+}
+
+function fadeInLeftArrow() {
+	leftArrow.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);
+}
+
+function fadeOutRightArrow() {
+	rightArrow.alphaTo(.25f, 0.5f, Easing.Sinusoidal.easeOut);
+}
+
+function fadeOutLeftArrow() {
+	leftArrow.alphaTo(.25f, 0.5f, Easing.Sinusoidal.easeOut);
 }

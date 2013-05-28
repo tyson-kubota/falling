@@ -166,7 +166,7 @@ function Start () {
 
 	lifeBarThreat = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
 	lifeBarThreat.rightToLeft = true;
-	lifeBarThreat.pixelsFromTopLeft ( 10, 244 );
+	lifeBarThreat.pixelsFromTopLeft ( 10, 246 );
 	lifeBarThreat.value = 1f;
 //	lifeBarThreat.resizeTextureOnChange = true;
 //	animateThreatBar (lifeBarThreat);
