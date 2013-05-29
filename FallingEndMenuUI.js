@@ -2,7 +2,6 @@
 
 var endGameSprite : UISprite;
 
-var theEndLabel : UISprite;
 var aboutButton : UIButton;
 var homeButton : UIButton;
 var continueButton : UIButton;
@@ -15,10 +14,6 @@ var level1 : String = "Falling-scene-tutorial";
 function Start () {
 
 	textHeight = (UI.isHD == true) ? 18 : 18;
-
-	theEndLabel = UI.firstToolkit.addSprite( "theend.png", 0, 0, 0 );
-	theEndLabel.positionCenter();
-	theEndLabel.hidden = true;
 	
 	endGameSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 2 );
 	endGameSprite.hidden = true;
@@ -60,11 +55,6 @@ function ShowEndGameUI() {
 	endGameSprite.centerize();
 	endGameSprite.pixelsFromBottom (- fallingUITest.spriteEdgeSize * 3);
 	
-	yield WaitForSeconds(1);
-	
-	theEndLabel.hidden = false;
-	theEndLabel.alphaFromTo( 3.0f, 0f, 0.5f, Easing.Sinusoidal.easeIn);
-
 	yield WaitForSeconds(3);
 	aboutButton.hidden = false;
 	continueButton.hidden = false;
@@ -88,11 +78,9 @@ function LoadHome() {
 //	continueButton.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
 //	homeButton.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
 //	endGameSprite.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
-//	theEndLabel.alphaTo( 2, 0, Easing.Sinusoidal.easeOut);
 
 //	yield WaitForSeconds(2);
 
-	theEndLabel.hidden = true;
 	aboutButton.hidden = true;
 	continueButton.hidden = true;
 	homeButton.hidden = true;
@@ -106,7 +94,6 @@ function LoadHome() {
 
 
 function continueLevel() {
-	theEndLabel.hidden = true;
 	aboutButton.hidden = true;
 	continueButton.hidden = true;
 	homeButton.hidden = true;

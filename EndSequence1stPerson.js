@@ -5,6 +5,8 @@ var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
 var EndTriggerName : GameObject;
 var EndTriggerComponent : EndSequenceTrigger;
+var EndMenuLogoObject : GameObject;
+var EndMenuLogoCamera : GameObject;
 
 var UIscriptEndMenuName : GameObject;
 var UIscriptEndMenuComponent : FallingEndMenuUI;
@@ -49,7 +51,8 @@ function PlayOutro () {
 	lifeCountdown.inOutro = false;
 	FallingPlayer.UIscriptComponent.GameCompleteUI();
 	UIscriptEndMenuComponent.ShowEndGameUI();
-	
+	yield WaitForSeconds(1);
+	FadeEndMenuLogo(3);
 	//UIscriptComponent.LevelComplete();
 }
 
@@ -108,4 +111,22 @@ function LerpIntoDiamond (timer : float) {
         yield;
     }
 
+}
+
+function FadeEndMenuLogo(timer:float){
+
+	EndMenuLogoCamera.GetComponent(Camera).enabled = true;
+	EndMenuLogoObject.renderer.enabled = true;
+    var start = 0;
+    var end = 1.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        EndMenuLogoObject.renderer.material.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    	}
+    	
+    yield WaitForSeconds (timer);
 }
