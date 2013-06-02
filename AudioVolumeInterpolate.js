@@ -4,6 +4,7 @@ var player : Transform = null;
 var maxDistance : float = 0f;
 var myTr : Transform = null;
 var aSource : AudioSource = null;
+var distance : float;
 
 function Start () {
 	myTr = transform;
@@ -14,7 +15,7 @@ function Start () {
 }
 
 function Update () {
-	var distance = Vector3.Distance(myTr.position, player.position);
+	distance = Vector3.Distance(myTr.position, player.position);
 	if (distance <= maxDistance) {
 		aSource.volume = Mathf.Abs((distance / maxDistance) - 1f);
 	}

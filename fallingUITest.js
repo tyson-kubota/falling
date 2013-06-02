@@ -521,6 +521,7 @@ function PauseGameNow() {
     
 //	savedTimeScale = Time.timeScale;
     Time.timeScale = 0;
+    AudioListener.volume = 0;
     AudioListener.pause = true;
 
 	rightArrow.hidden = false;
