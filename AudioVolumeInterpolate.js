@@ -10,7 +10,7 @@ function Start () {
 	aSource = GetComponent(AudioSource);
 	aSource.volume = 0f;
 //	findPlayer();
-	player = GameObject.Find("Player").transform;
+	player = GameObject.Find("Player/Camera").transform;
 }
 
 function Update () {
