@@ -540,16 +540,3 @@ function PauseGameBackgroundCheck() {
 		}
 	}
 }
-
-function tutorialSpritePosition(timer : float) {
-	tutorialSprite.centerize();
-	tutorialSprite.pixelsFromBottom (- spriteEdgeSize * 3);
-	tutorialSprite.hidden = false;
-	tutorialSprite.alphaFromTo( 1.0f, 0f, 0.85f, Easing.Sinusoidal.easeOut);
-	yield WaitForSeconds (timer);
-	yield WaitForSeconds (tutorialSpriteExtraTimer);
-	tutorialSpriteExtraTimer = 0;
-	tutorialSprite.alphaTo( 2.0f, 0.0f, Easing.Sinusoidal.easeOut);
-	yield WaitForSeconds (2);
-	tutorialSprite.hidden = true;
-}

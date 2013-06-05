@@ -31,7 +31,6 @@ function OnTriggerEnter (other : Collider) {
 	if (fallingUITest.tutorialSprite.hidden == false) {
 		fallingUITest.tutorialSpriteExtraTimer = (thisTimer - 2);
 	}
-	fallingUIComponent.tutorialSpritePosition(thisTimer);
 	fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer);
 	if (audio) {audio.Play();}
 	}
