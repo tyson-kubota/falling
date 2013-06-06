@@ -6,6 +6,7 @@ var triggerAnimation : String;
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
 	animation.CrossFade(triggerAnimation, 0.5);
+	if (audio) {audio.Play();}
   }	
 }
 
