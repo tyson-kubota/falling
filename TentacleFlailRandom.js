@@ -9,7 +9,7 @@ function OnTriggerEnter (other : Collider) {
 	var seconds : int = Time.time;
     var oddeven = (seconds % 2) == 0;	// Find out whether current second is odd or even
     var animationToRun : String;
-    Debug.Log("oddeven was " + oddeven);
+//    Debug.Log("oddeven was " + oddeven);
 	animationToRun = (oddeven == true) ? triggerAnimation1 : triggerAnimation2 ;
 	animation.CrossFade(animationToRun, 0.5);
   }

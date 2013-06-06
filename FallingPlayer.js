@@ -109,7 +109,6 @@ function DeathRespawn () {
 	
 	UIscriptComponent.fadeOut();
 // 	Camera.main.SendMessage("fadeOut");
-  isAlive = 1;
 
 	if (levelChangeBackdrop == true) {
 		changeLevelBackdrop ();
@@ -120,7 +119,7 @@ function DeathRespawn () {
   	      
     script.ResetScore(0);
   	yield WaitForSeconds(1);
-
+	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   	
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
