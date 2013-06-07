@@ -25,30 +25,30 @@ var textHeight : int;
 function Start () {
 
 	if (thisTrigger == Triggers.trigger1) {
-	var tutorialSprite1 : UISprite;
-	tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 8 );
-	tutorialSprite = tutorialSprite1;
-	tutorialSprite.hidden = true;
-	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
-	iconDepth = 7;
+		var tutorialSprite1 : UISprite;
+		tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 8 );
+		tutorialSprite = tutorialSprite1;
+		tutorialSprite.hidden = true;
+		tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+		iconDepth = 7;
 	}
 
 	if (thisTrigger == Triggers.trigger2) {
-	var tutorialSprite2 : UISprite;
-	tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 6 );
-	tutorialSprite = tutorialSprite1;
-	tutorialSprite.hidden = true;
-	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
-	iconDepth = 5;
+		var tutorialSprite2 : UISprite;
+		tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 6 );
+		tutorialSprite = tutorialSprite1;
+		tutorialSprite.hidden = true;
+		tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+		iconDepth = 5;
 	}
 	
 	if (thisTrigger == Triggers.trigger3) {
-	var tutorialSprite3 : UISprite;
-	tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
-	tutorialSprite = tutorialSprite1;
-	tutorialSprite.hidden = true;
-	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
-	iconDepth = 3;
+		var tutorialSprite3 : UISprite;
+		tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
+		tutorialSprite = tutorialSprite1;
+		tutorialSprite.hidden = true;
+		tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+		iconDepth = 3;
 	}	
 	
 	fallingIntroUIComponent = fallingIntroUI.GetComponent("fallingIntroUI");
@@ -64,16 +64,16 @@ function Start () {
 
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == false) {
-	activeIntro = true;
-	fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer, tutorialSprite);
-	tutorialSpritePosition(thisTimer);
-	if (audio) {audio.Play();}
+		activeIntro = true;
+		fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer, tutorialSprite);
+		tutorialSpritePosition(thisTimer);
+		if (audio) {audio.Play();}
 	}
 }
 
 function OnTriggerExit (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == true) {
-	activeIntro = false;
+		activeIntro = false;
 	}
 }
 

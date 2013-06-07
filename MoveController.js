@@ -17,7 +17,6 @@ static var isSlowing:boolean = false;
 static var speedingUp:int = 1;
 
 var mainCamera : GameObject;
-var myPitch : float;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
