@@ -12,6 +12,7 @@ function OnTriggerEnter (other : Collider) {
 //    Debug.Log("oddeven was " + oddeven);
 	animationToRun = (oddeven == true) ? triggerAnimation1 : triggerAnimation2 ;
 	animation.CrossFade(animationToRun, 0.5);
+	if (audio) {audio.Play();}
   }
 }
 
