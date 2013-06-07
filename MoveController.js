@@ -16,6 +16,8 @@ var speed = 2.4;
 static var isSlowing:boolean = false;
 static var speedingUp:int = 1;
 
+var mainCamera : GameObject;
+var myPitch : float;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
@@ -37,6 +39,8 @@ function Start() {
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
 	lerpSlowdown(.5);
+	
+	mainCamera = transform.FindChild("Camera").gameObject;
 }
 
 function FixedUpdate () {
@@ -145,6 +149,7 @@ fingerCount = 0;
 	Slowdown = 0;
 	speedingUp = 1;
 	SpeedLinesTextureScript.LinesOff();
+	mainCamera.audio.pitch = 1;
 	dir = Vector3.zero;
 	FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
 	}
@@ -159,10 +164,12 @@ function speedsUp () {
 		speedingUp = 1;
 		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
 		FallingPlayer.UIscriptComponent.showThreatBar(1);
+		if (mainCamera.audio) {lerpPitchUp(.25, 2);}
 		}
 		else {
 		SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
 		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
+		if (mainCamera.audio) {lerpPitchDown(1, 1);}
 }		
 }
 
@@ -203,7 +210,6 @@ function lerpSlowdown (timer : float) {
     var i = 0.0;
     var step = 1.0/timer;
  
-
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         Slowdown = Mathf.Lerp(start, end, i);
@@ -214,6 +220,42 @@ function lerpSlowdown (timer : float) {
     yield WaitForSeconds (timer);
     //speedingUp = 1; 
  
+}
+
+function lerpPitchUp (timer : float, endPitch : float) {
+
+    var start = mainCamera.audio.pitch;
+    var end = endPitch;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        mainCamera.audio.pitch = Mathf.Lerp(start, end, i);
+        yield;
+        
+        if (Slowdown < 1) {break;}
+    	}
+    yield WaitForSeconds (timer);
+}
+
+function lerpPitchDown (timer : float, endPitch : float) {
+
+    var start = mainCamera.audio.pitch;
+    var end = endPitch;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        mainCamera.audio.pitch = Mathf.Lerp(start, end, i);
+        yield;
+
+        if (Slowdown > 17999) {break;}        
+    	}
+    yield WaitForSeconds (timer);
 }
 
 function SpeedLinesOff (timer : float) {
