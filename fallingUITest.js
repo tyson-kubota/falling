@@ -5,7 +5,7 @@ var fallingPlayerComponent : FallingPlayer;
 
 var value : float = 0.5f;
 var bgSprite : UISprite;
-static var tutorialSprite : UISprite;
+//static var tutorialSprite : UISprite;
 static var tutorialSpriteExtraTimer : float = 0; 
 var fadeSprite : UISprite;
 var pauseButton : UIButton;
@@ -69,9 +69,9 @@ function Start () {
 	}
 	
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
-	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
-	tutorialSprite.hidden = true;
-	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+//	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
+//	tutorialSprite.hidden = true;
+//	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
 	
 	fadeSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
 	fadeSprite.positionCenter();
