@@ -4,6 +4,9 @@ var mainAnimation : String;
 var triggerAnimation1 : String;
 var triggerAnimation2 : String;
 
+var triggerInTime : float = 0.5;
+var triggerOutTime : float = 1.0;
+
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
 	var seconds : int = Time.time;
@@ -11,7 +14,7 @@ function OnTriggerEnter (other : Collider) {
     var animationToRun : String;
 //    Debug.Log("oddeven was " + oddeven);
 	animationToRun = (oddeven == true) ? triggerAnimation1 : triggerAnimation2 ;
-	animation.CrossFade(animationToRun, 0.5);
+	animation.CrossFade(animationToRun, triggerInTime);
 	if (audio) {audio.Play();}
   }
 }
@@ -19,6 +22,6 @@ function OnTriggerEnter (other : Collider) {
 function OnTriggerExit (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
 	//animation.PlayQueued("twist2", QueueMode.PlayNow);
-  	animation.CrossFade(mainAnimation, 1.0);
+  	animation.CrossFade(mainAnimation, triggerOutTime);
   }	
 }
