@@ -1,10 +1,10 @@
 #pragma strict
-static var flipMultiplier : int = -1;
+static var flipMultiplier : float = -1;
 static var landscapeFlipped:boolean = false;
 static var levelEndSlowdown:int = 0;
 var targetFPS : int = 30;
 static var isTablet : boolean = false;
-static var iOSGen = iPhone.generation;
+static var iOSGen;
 
 enum iPads {
 	iPadUnknown,
@@ -29,12 +29,21 @@ function Awake () {
 	
 	iOSGen = iPhone.generation;
 	
-	if ((iOSGen && 
-	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
+//	Debug.Log("this is an " + iOSGen  + " device!");
+	
+//	if ((iOSGen && 
+//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
+
+	if (iOSGen.ToString().Contains("iPad")) {
 		isTablet = true;
 		flipMultiplier = 2 * flipMultiplier;
 		//Debug.Log("this is an " + iOSGen  + " iPad!");
-	};
+	}
+	else {
+		isTablet = false;
+		flipMultiplier = flipMultiplier;
+		//Debug.Log("this is not a tablet, but rather an " + iOSGen);
+	}
 	
 	DontDestroyOnLoad (this);
 //	Application.LoadLevel("Falling-scene-menu");

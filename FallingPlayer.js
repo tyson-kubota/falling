@@ -156,8 +156,8 @@ function Update () {
 function playerTilt () {
 	if (isTiltable == true) {
 	    var dir : Vector3 = Vector3.zero;
-		var tiltAroundZ = (FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle));
-	    var tiltAroundX = (FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle));
+		var tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle)), -tiltAngle, tiltAngle);
+	    var tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle)), -tiltAngle, tiltAngle);
 	
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation

@@ -38,7 +38,7 @@ function Start() {
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
 	lerpSlowdown(.5);
-	
+	lerpControl(3);
 	mainCamera = transform.FindChild("Camera").gameObject;
 }
 
@@ -77,7 +77,7 @@ if (FallingPlayer.isAlive == 1) {
     // dir *= Time.deltaTime;
     // print("Your dir is: " + dir);     
     
-    myTransform.Translate (dir * speed);
+    myTransform.Translate (dir * speed, Space.World);
 }
 else {dir = Vector3.zero;}
 
@@ -261,4 +261,21 @@ function SpeedLinesOff (timer : float) {
 	SpeedLinesTextureScript.FadeOut (timer);
 	yield WaitForSeconds(timer);
 	SpeedLinesTextureScript.LinesOff();
+}
+
+function lerpControl(timer : float) {
+
+    var start = 0.0;
+    var end = FallingLaunch.flipMultiplier;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
+        yield;
+		//Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
+    	}
+    yield WaitForSeconds (timer);
 }
