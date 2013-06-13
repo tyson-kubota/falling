@@ -41,7 +41,7 @@ function Awake () {
 	}
 	else {
 		isTablet = false;
-		flipMultiplier = flipMultiplier;
+		flipMultiplier = 1.5 * flipMultiplier;
 		//Debug.Log("this is not a tablet, but rather an " + iOSGen);
 	}
 	

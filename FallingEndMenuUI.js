@@ -64,7 +64,7 @@ function ShowEndGameUI() {
 	aboutButton.alphaFromTo( 2.5f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
 	continueButton.alphaFromTo( 2.5f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
 	homeButton.alphaFromTo( 2.5f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
-	endGameSprite.alphaFromTo( 2.0f, 0f, 0.25f, Easing.Sinusoidal.easeIn);
+	endGameSprite.alphaFromTo( 2.0f, 0f, 0.25f, Easing.Sinusoidal.easeInOut);
 	
 	// add anything else that requires main uitoolkit instance
 }

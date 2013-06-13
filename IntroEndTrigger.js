@@ -13,7 +13,7 @@ function Start () {
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == false){
 	activeIntro = true;
-	FallingPlayer.ScoreFlashTextureScript.FadeFlash (1.5, FadeDir.Out);
+	FallingPlayer.ScoreFlashTextureScript.FadeFlash (3, FadeDir.Out);
 	IntroScriptComponent.EndIntro();
 	if (audio) {audio.Play();}
 	}
