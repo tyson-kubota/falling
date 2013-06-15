@@ -6,6 +6,8 @@ var targetFPS : int = 30;
 static var isTablet : boolean = false;
 static var iOSGen;
 
+var titleCard : GameObject;
+
 enum iPads {
 	iPadUnknown,
 	iPad1Gen,
@@ -51,6 +53,10 @@ function Awake () {
 //	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
 	
 	flipMultiplier = (isTablet == true) ? (2 * flipMultiplier) : (1.5 * flipMultiplier);
+
+	if (camera.main.aspect < 1.5) {
+		titleCard.transform.Translate(-200,0,0);
+	}
 	
 	DontDestroyOnLoad (this);
 //	Application.LoadLevel("Falling-scene-menu");
