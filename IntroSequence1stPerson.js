@@ -4,6 +4,7 @@ var PlayerController : MoveController;
 var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
 var destructible : ProjectileDestroy;
+var shardColor : Color;
 
 function Start () {
 	PlayerController = GetComponent("MoveController");
@@ -19,6 +20,7 @@ function Start () {
     	shard.renderer.enabled = false;
     	shard.rigidbody.isKinematic = true;
     	destructible.enabled = false;
+    	shardColor = shard.renderer.material.color;
     }
     
 }
@@ -37,4 +39,15 @@ function EndIntro () {
     	destructible.enabled = true;
     }
     
+	var start = shardColor;
+    var end = Color.black;
+    var i = 0.0;
+    var step = 1.0/5;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
+        shard.renderer.material.color = Color.Lerp(start, end, i);
+        yield;
+    	}
 }

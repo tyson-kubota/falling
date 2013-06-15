@@ -30,20 +30,27 @@ function Awake () {
 	iOSGen = iPhone.generation;
 	
 //	Debug.Log("this is an " + iOSGen  + " device!");
-	
-//	if ((iOSGen && 
-//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
+//	Debug.Log("Your screen dpi is " + Screen.dpi + "!");
 
 	if (iOSGen.ToString().Contains("iPad")) {
 		isTablet = true;
-		flipMultiplier = 2 * flipMultiplier;
-		//Debug.Log("this is an " + iOSGen  + " iPad!");
 	}
-	else {
-		isTablet = false;
-		flipMultiplier = 1.5 * flipMultiplier;
-		//Debug.Log("this is not a tablet, but rather an " + iOSGen);
+	
+	if (Screen.dpi > 0) {
+		if ((Screen.width / Screen.dpi) > 5 || (Screen.height / Screen.dpi) > 5) {
+			isTablet = true;
+			//Debug.Log("Looks like a tablet!");
+		}
+		else {
+			isTablet = false;
+			//Debug.Log("Based on reported screen size, not a tablet...");
+		}
 	}
+	
+//	if ((iOSGen && 
+//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
+	
+	flipMultiplier = (isTablet == true) ? (2 * flipMultiplier) : (1.5 * flipMultiplier);
 	
 	DontDestroyOnLoad (this);
 //	Application.LoadLevel("Falling-scene-menu");
