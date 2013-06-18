@@ -11,17 +11,24 @@ function Start () {
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
 
-	PlayerController.enabled = false;
-	ScoreController.enabled = false;
-	FallingPlayer.UIscriptComponent.HideGUI();
-   	
-   	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
-    	destructible = shard.GetComponent(ProjectileDestroy);
-    	shard.renderer.enabled = false;
-    	shard.rigidbody.isKinematic = true;
-    	destructible.enabled = false;
-    	shardColor = shard.renderer.material.color;
+    if (!FallingLaunch.didTutorial) {
+		PlayerController.enabled = false;
+		ScoreController.enabled = false;
+		FallingPlayer.UIscriptComponent.HideGUI();
+	   	
+	   	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
+	    	destructible = shard.GetComponent(ProjectileDestroy);
+	    	shard.renderer.enabled = false;
+	    	shard.rigidbody.isKinematic = true;
+	    	destructible.enabled = false;
+	    	shardColor = shard.renderer.material.color;
+	    }
     }
+    else if (FallingLaunch.didTutorial) {
+		PlayerController.enabled = true;
+		FallingPlayer.UIscriptComponent.HideGUI();
+    }
+
     
 }
 

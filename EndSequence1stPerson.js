@@ -53,6 +53,7 @@ function PlayOutro () {
 	UIscriptEndMenuComponent.ShowEndGameUI();
 	yield WaitForSeconds(1);
 	FadeEndMenuLogo(3);
+	FallingLaunch.didTutorial = true;
 	//UIscriptComponent.LevelComplete();
 }
 

@@ -63,7 +63,7 @@ function Start () {
 }
 
 function OnTriggerEnter (other : Collider) {
-  if (other.gameObject.CompareTag ("Player") && activeIntro == false) {
+  if (other.gameObject.CompareTag ("Player") && activeIntro == false && FallingLaunch.didTutorial == false) {
 		activeIntro = true;
 		fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer, tutorialSprite);
 		tutorialSpritePosition(thisTimer);
@@ -72,7 +72,7 @@ function OnTriggerEnter (other : Collider) {
 }
 
 function OnTriggerExit (other : Collider) {
-  if (other.gameObject.CompareTag ("Player") && activeIntro == true) {
+  if (other.gameObject.CompareTag ("Player") && activeIntro == true && FallingLaunch.didTutorial == false) {
 		activeIntro = false;
 	}
 }
