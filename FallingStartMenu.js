@@ -6,6 +6,8 @@ static var startingFogEndDistance : int = 1500;
 static var startingCameraFarClipPlane : int = 1700;
 static var startingCloudsAlpha : float = .39f;
 
+var titleCard : GameObject;
+
 //original for corroded sky tubes level
 //static var startingFogEndDistance : int = 2500;
 //static var startingCameraFarClipPlane : int = 2700;
@@ -52,6 +54,9 @@ function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
 //}
+	if (camera.main.aspect < 1.5) {
+		titleCard.transform.Translate(-200,0,0);
+	}
 }
 
 function Start() {
