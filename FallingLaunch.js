@@ -34,9 +34,10 @@ function Awake () {
 	//	Debug.Log("this is an " + iOSGen  + " device!");
 	//	Debug.Log("Your screen dpi is " + Screen.dpi + "!");
 		if (iOSGen == iPhoneGeneration.iPad1Gen || iOSGen == iPhoneGeneration.iPad2Gen || 
-		iOSGen == iPhoneGeneration.iPhone4 || iOSGen == iPhoneGeneration.iPodTouch4Gen) {
+		iOSGen == iPhoneGeneration.iPhone4 || iOSGen == iPhoneGeneration.iPodTouch4Gen ||
+		iOSGen.ToString().Contains("iPhone3G")) {
 			QualitySettings.DecreaseLevel(false);
-	//		targetFPS = 30;
+			targetFPS = 30;
 		}
 		else {
 			targetFPS = 60;
