@@ -7,7 +7,6 @@ static var didTutorial:boolean = false;
 
 var targetFPS : int = 30;
 static var isTablet : boolean = false;
-static var iOSGen;
 
 enum iPads {
 	iPadUnknown,
@@ -20,8 +19,6 @@ enum iPads {
 
 function Awake () {
 	if (!alreadyLaunched) {
-	
-		Application.targetFrameRate = targetFPS;
 		
 		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 			flipMultiplier = -1;
@@ -32,11 +29,19 @@ function Awake () {
 			flipMultiplier = 1;
 		}
 		
-		iOSGen = iPhone.generation;
+		var iOSGen = iPhone.generation;
 		
 	//	Debug.Log("this is an " + iOSGen  + " device!");
 	//	Debug.Log("Your screen dpi is " + Screen.dpi + "!");
-	
+		if (iOSGen == iPhoneGeneration.iPad1Gen || iOSGen == iPhoneGeneration.iPad2Gen || 
+		iOSGen == iPhoneGeneration.iPhone4 || iOSGen == iPhoneGeneration.iPodTouch4Gen) {
+			QualitySettings.DecreaseLevel(false);
+	//		targetFPS = 30;
+		}
+		else {
+			targetFPS = 60;
+		}	
+		
 		if (iOSGen.ToString().Contains("iPad")) {
 			isTablet = true;
 		}
@@ -59,6 +64,7 @@ function Awake () {
 	
 		DontDestroyOnLoad (this);
 		alreadyLaunched = true;
+		Application.targetFrameRate = targetFPS;
 		Application.LoadLevel("Falling-scene-menu");
 	}
 	else {
