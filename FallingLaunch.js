@@ -8,6 +8,12 @@ static var didTutorial:boolean = false;
 var targetFPS : int = 30;
 static var isTablet : boolean = false;
 
+//GameAnalytics variables
+static var secondsAlive : float = 0;
+static var secondsInLevel : float = 0;
+static var thisLevel : String = "unknownLevel";
+static var thisLevelArea : String = "start";
+
 enum iPads {
 	iPadUnknown,
 	iPad1Gen,

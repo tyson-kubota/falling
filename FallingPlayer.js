@@ -42,6 +42,9 @@ script = GetComponent("ScoreController");
 static var isAlive : int = 0;
 isAlive = lifeCountdown.isAlive;
 
+static var lifeStartTime : float = 0;
+var levelStartTime : float = 0;
+  	
 static var isTiltable : boolean = true;
 
 static var isPausable : boolean = false;
@@ -68,6 +71,8 @@ function Start() {
 	startingCameraFarClipPlane = transform.FindChild("Camera").camera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
+  	lifeStartTime = Time.time;
+  	levelStartTime = Time.time;
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
@@ -105,6 +110,7 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 function DeathRespawn () {
 	isPausable = false;
 	rigidbody.isKinematic = true;
+	lifeStartTime = Time.time;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
 	
 	UIscriptComponent.fadeOut();
@@ -176,6 +182,7 @@ function OnCollisionEnter (collision : Collision) {
   		isPausable = false;
   		lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
   		UIscriptComponent.HideGUI();
+  		FallingLaunch.secondsAlive = (Time.time - lifeStartTime);
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
     	yield DeathRespawn ();
 		//isPausable = true;
@@ -203,6 +210,7 @@ function OnTriggerEnter (other : Collider) {
 	}
 	
   if (other.gameObject.CompareTag ("LevelEnd")) {
+	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	UIscriptComponent.LevelComplete();
 // to keep you from dying after you strike the levelend trigger
 	script.IncrementScore(25);

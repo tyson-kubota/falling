@@ -5,6 +5,7 @@ static var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
 static var inOutro : boolean = false;
 
+
 static var isAlive : int = 0;
 var UIscriptName : GameObject;
 
@@ -13,10 +14,10 @@ function Awake () {
 }
 
 function Start () {
-	   	isAlive = 1;
-	   	Loop ();
-	   	Loop2 ();
-	   	ScoreLerpLoop ();
+   	isAlive = 1;
+   	Loop ();
+   	Loop2 ();
+   	ScoreLerpLoop ();
 }
 	   	
 function Loop () {
@@ -58,8 +59,14 @@ function TickingAway (delay : float) {
 		   	isAlive = 0;
 		   	FallingPlayer.isPausable = false;
 		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+		   	FallingLaunch.secondsAlive = (Time.time - FallingPlayer.lifeStartTime);
+		   	//GA.API.Design.NewEvent("Death:Drained:"+Application.loadedLevelName, FallingLaunch.secondsAlive, transform.position);
+		   	GA.API.Design.NewEvent("Death:Drained:", FallingLaunch.secondsAlive, transform.position);
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
-	}
+
+			// GameAnalytics syntax: GA.API.Design.NewEvent(String eventName, float eventValue, Vector3 trackPosition); 
+
+		}
 }
 
 
