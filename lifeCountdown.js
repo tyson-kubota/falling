@@ -61,7 +61,7 @@ function TickingAway (delay : float) {
 		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
 		   	FallingLaunch.secondsAlive = (Time.time - FallingPlayer.lifeStartTime);
 		   	//GA.API.Design.NewEvent("Death:Drained:"+Application.loadedLevelName, FallingLaunch.secondsAlive, transform.position);
-		   	GA.API.Design.NewEvent("Death:Drained:", FallingLaunch.secondsAlive, transform.position);
+		   	//GA.API.Design.NewEvent("Death:Drained:", FallingLaunch.secondsAlive, transform.position);
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
 
 			// GameAnalytics syntax: GA.API.Design.NewEvent(String eventName, float eventValue, Vector3 trackPosition); 
