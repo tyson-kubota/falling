@@ -131,7 +131,7 @@ fingerCount = 0;
 		if (fingerCount > 1) { 	
 			//speedUp();
 			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; speedsUp();
-				GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
+				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
 			}
 			//if (Slowdown < 1) 
 			//{speedingUp = 2; speedsUp(); Slowdown = 18000; }

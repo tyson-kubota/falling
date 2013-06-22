@@ -226,6 +226,10 @@ function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
 		FallingPlayer.isPausable = false;
 		
+		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
+		GA.API.Design.NewEvent("PauseGame:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		//Debug.Log("you paused at " + transform.parent.position);
+		
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
 		lifeBarOutline.hidden = true;
