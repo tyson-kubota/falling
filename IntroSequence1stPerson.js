@@ -11,7 +11,7 @@ function Start () {
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
 
-    if (!FallingLaunch.didTutorial) {
+    if (!FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = false;
 		ScoreController.enabled = false;
 		FallingPlayer.UIscriptComponent.HideGUI();
@@ -24,7 +24,7 @@ function Start () {
 	    	shardColor = shard.renderer.material.color;
 	    }
     }
-    else if (FallingLaunch.didTutorial) {
+    else if (FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = true;
 		FallingPlayer.UIscriptComponent.HideGUI();
     }

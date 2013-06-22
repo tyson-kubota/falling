@@ -43,8 +43,9 @@ static var isAlive : int = 0;
 isAlive = lifeCountdown.isAlive;
 
 static var lifeStartTime : float = 0;
-var levelStartTime : float = 0;
-  	
+static var levelStartTime : float = 0;
+static var isNewGamePlus : String;
+  	  	
 static var isTiltable : boolean = true;
 
 static var isPausable : boolean = false;
@@ -219,7 +220,10 @@ function OnTriggerEnter (other : Collider) {
 	}
 	
   if (other.gameObject.CompareTag ("LevelEnd")) {
+  	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
+	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
+	
 	UIscriptComponent.LevelComplete();
 // to keep you from dying after you strike the levelend trigger
 	script.IncrementScore(25);

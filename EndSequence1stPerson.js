@@ -24,6 +24,10 @@ function Start () {
 }
 
 function PlayOutro () {
+	//GameAnalytics events for beating the game
+	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
+	GA.API.Design.NewEvent("GameComplete:" + FallingPlayer.isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
+	
 	ScoreController.enabled = false;
 	LifeController.enabled = false;	
 	FallingPlayer.isTiltable = false;			
@@ -53,7 +57,7 @@ function PlayOutro () {
 	UIscriptEndMenuComponent.ShowEndGameUI();
 	yield WaitForSeconds(1);
 	FadeEndMenuLogo(3);
-	FallingLaunch.didTutorial = true;
+	FallingLaunch.NewGamePlus = true;
 	//UIscriptComponent.LevelComplete();
 }
 
