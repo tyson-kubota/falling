@@ -13,6 +13,7 @@ static var secondsAlive : float = 0;
 static var secondsInLevel : float = 0;
 static var thisLevel : String = "unknownLevel";
 static var thisLevelArea : String = "start";
+//var myTimer : GAUserTimer;
 
 enum iPads {
 	iPadUnknown,
@@ -68,7 +69,7 @@ function Awake () {
 	//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
 		
 		flipMultiplier = (isTablet == true) ? (2 * flipMultiplier) : (1.5 * flipMultiplier);
-	
+
 		DontDestroyOnLoad (this);
 		alreadyLaunched = true;
 		Application.targetFrameRate = targetFPS;
@@ -79,6 +80,25 @@ function Awake () {
 	}
 }
 
-function Update () {
+function Start () {
+//		myTimer = new GAUserTimer("Timer", "Session Length");
+//		myTimer.Start();
+}
 
+function OnApplicationPause(pauseStatus: boolean) {
+    //paused = pauseStatus;
+	if (pauseStatus) {
+//    	myTimer.Stop();
+//    	GoogleAnalytics.instance.Add(myTimer);
+//		GoogleAnalytics.instance.Dispatch();
+	}
+}
+
+function OnLevelWasLoaded (level : int) {
+	//loadedLevel = Application.loadedLevelName;
+//	var loadedLevel : GALevel = new GALevel();
+//	GoogleAnalytics.instance.Add(loadedLevel);
+//	GoogleAnalytics.instance.Dispatch();
+	
+	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
 }

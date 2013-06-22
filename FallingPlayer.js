@@ -73,6 +73,8 @@ function Start() {
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
   	lifeStartTime = Time.time;
   	levelStartTime = Time.time;
+  	FallingLaunch.thisLevel = Application.loadedLevelName;
+	FallingLaunch.thisLevelArea = "start";
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
@@ -183,6 +185,13 @@ function OnCollisionEnter (collision : Collision) {
   		lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
   		UIscriptComponent.HideGUI();
   		FallingLaunch.secondsAlive = (Time.time - lifeStartTime);
+  		
+  		GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
+  		
+  		//var deathCollideEvent : GAEvent = new GAEvent("Death", "Collision", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
+		//GoogleAnalytics.instance.Add(deathCollideEvent);
+		//GoogleAnalytics.instance.Dispatch();
+  		//Debug.Log("you died in the area " + FallingLaunch.thisLevelArea);
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
     	yield DeathRespawn ();
 		//isPausable = true;
