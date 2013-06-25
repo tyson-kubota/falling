@@ -26,7 +26,7 @@ function FadeFlash (timer : float, fadeType : FadeDir) {
 
 function LinesFlash (timer : float, fadeType : FadeDir) {
 
-    var start = fadeType == FadeDir.In? guiTexture.color.a : guiTexture.color.a;
+    var start = fadeType == FadeDir.In? guiTexture.color.a : peakValue;
     var end = fadeType == FadeDir.In? peakValue : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
@@ -38,7 +38,7 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
         guiTexture.color.a = Mathf.Lerp(start, end, i);
         yield;
         
-        if (MoveController.Slowdown > 1) {break;}
+        if (MoveController.Slowdown < 1) {break;}
     	}
     yield WaitForSeconds (timer);
     MoveController.speedingUp = 1; 
@@ -49,7 +49,7 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
 function LinesFlashOut (timer : float, fadeType : FadeDir) {
 
     var start = fadeType == FadeDir.In? 0.0 : peakValue;
-    var end = fadeType == FadeDir.In? guiTexture.color.a : guiTexture.color.a;
+    var end = fadeType == FadeDir.In? guiTexture.color.a : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
  
@@ -59,7 +59,7 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
         guiTexture.color.a = Mathf.Lerp(end, start, i);
         yield;
 
-        if (MoveController.Slowdown == 0) {break;}
+        if (MoveController.Slowdown > 1) {break;}
     	}
     yield WaitForSeconds (timer/3);
     MoveController.speedingUp = 1; 

@@ -1,7 +1,6 @@
 #pragma strict
 
 // original maxvelocity on player gameobject as of 4/4/2012: 120
-// maxvelocity on player gameobject as of 6/22/2013: 125
 // This MonoBehaviour uses hard clamping to limit the velocity of a rigidbody.
 
 // The maximum allowed velocity. The velocity will be clamped to keep
