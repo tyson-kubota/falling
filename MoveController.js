@@ -11,7 +11,8 @@ private var startTime : float;
 private var timeTapEnded : float; 
 private var timeAtTap : float; 
 private var timeVar : float; 
-static var Slowdown : int = 0;
+static var Slowdown : int = 5000;
+var neutralSlowdown : int = 5000;
 var speed = 2.4;
 static var isSlowing:boolean = false;
 static var speedingUp:int = 1;
@@ -24,6 +25,16 @@ var SpeedLinesTexture : GameObject;
 
 var SpeedLinesTextureScript : GUITextureLaunch;
 SpeedLinesTextureScript = SpeedLinesTexture.GetComponent("GUITextureLaunch");
+
+var SlowdownTexture : GameObject;
+
+var SlowdownTextureScript : GUITextureLaunch;
+SlowdownTextureScript = SlowdownTexture.GetComponent("GUITextureLaunch");
+
+
+var VelocityLimiterScript : SimpleVelocityLimiter;
+VelocityLimiterScript = GetComponent("SimpleVelocityLimiter");
+
 
 function Awake() {
 	myTransform = transform;
@@ -40,6 +51,7 @@ function Start() {
 	lerpSlowdown(.5);
 	lerpControl(3);
 	mainCamera = transform.FindChild("Camera").gameObject;
+	SpeedLinesTextureScript.FadeFlash (2, FadeDir.In);
 }
 
 function FixedUpdate () {
@@ -130,7 +142,8 @@ fingerCount = 0;
 			
 		if (fingerCount > 1) { 	
 			//speedUp();
-			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; speedsUp();
+//			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; VelocityLimiterScript.SetMaxVelocity(125); speedsUp();
+			if (Slowdown > 1) {speedingUp = 2; Slowdown = 0; speedsUp();
 				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
 			}
 			//if (Slowdown < 1) 
@@ -141,7 +154,8 @@ fingerCount = 0;
 	//    	slowDown();
 			//if (Slowdown > 0) {speedDown(); yield;}
 			//Slowdown = 0;
-			if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
+//			if (Slowdown > 0) { speedingUp = 0; speedsUp(); VelocityLimiterScript.SetMaxVelocity(250); lerpSlowdown(.5); }
+			if (Slowdown < 1) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
 			//else if (Slowdown > 0) {speedingUp = 0; speedsUp(); }
 	    }
 	}
@@ -163,14 +177,16 @@ constantForce.relativeForce = (Vector3.down * Slowdown);
 function speedsUp () {
 		if (speedingUp == 2) {
 		speedingUp = 1;
-		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
+		SpeedLinesTextureScript.LinesFlash (0.5, FadeDir.Out);
+		SlowdownTextureScript.LinesFlash (0.25, FadeDir.In);
 		FallingPlayer.UIscriptComponent.showThreatBar(1);
-		if (mainCamera.audio) {lerpPitchUp(.5, 2);}
+		if (mainCamera.audio) {lerpPitchDown(.5, .3);}
 		}
 		else {
-		SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
+		SpeedLinesTextureScript.LinesFlashOut (1.0, FadeDir.Out);
+		SlowdownTextureScript.LinesFlashOut (.75, FadeDir.In);
 		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-		if (mainCamera.audio) {lerpPitchDown(1, 1);}
+		if (mainCamera.audio) {lerpPitchUp(1, 1);}
 }		
 }
 
@@ -207,7 +223,7 @@ function slowDown () {
 function lerpSlowdown (timer : float) {
 
     var start = Slowdown;
-    var end = 0.0;
+    var end = neutralSlowdown;
     var i = 0.0;
     var step = 1.0/timer;
  
