@@ -75,7 +75,7 @@ function Start() {
   	lifeStartTime = Time.time;
   	levelStartTime = Time.time;
   	FallingLaunch.thisLevel = Application.loadedLevelName;
-	FallingLaunch.thisLevelArea = "start";
+	FallingLaunch.thisLevelArea = "0-start";
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
