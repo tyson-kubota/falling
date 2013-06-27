@@ -1,58 +1,69 @@
-// ScoreFlash
-//
-//--------------------------------------------------------------------
-//                        Public parameters
-//--------------------------------------------------------------------
+#pragma strict
 
-public var speedLinesTexture : Texture2D;
-public var fadeSpeed = 1;
+//public var launchTexture : Texture2D;
+var peakValue : float;
 
-var drawDepth = -1000;
-
-//--------------------------------------------------------------------
-//                       Private variables
-//--------------------------------------------------------------------
-
-private var alpha = 1.0; 
-
-private var fadeDir = -1;
-//private var fadeDirHalf = .5;
-
-//--------------------------------------------------------------------
-//                       Runtime functions
-//--------------------------------------------------------------------
-
-//--------------------------------------------------------------------
-
-function OnGUI(){
-    
-    alpha += fadeDir * fadeSpeed * Time.deltaTime;  
-    alpha = Mathf.Clamp01(alpha);   
-    
-    GUI.color.a = alpha;
-    
-    GUI.depth = drawDepth;
-    
-    GUI.DrawTexture(Rect(0, 0, Screen.width, Screen.height), speedLinesTexture);
+function Start () {
+	peakValue = renderer.material.color.a;
+	renderer.material.color.a = 0.0;
 }
 
-//--------------------------------------------------------------------
+function FadeFlash (timer : float, fadeType : FadeDir) {
 
-function speedLinesDown(){
-    fadeDir = -1;   
+    var start = fadeType == FadeDir.In? 0.0 : peakValue;
+    var end = fadeType == FadeDir.In? peakValue : 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        renderer.material.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
 }
 
-//--------------------------------------------------------------------
+function LinesFlash (timer : float, fadeType : FadeDir) {
 
-function speedLinesUp(){
-    fadeDir = 1;    
+    var start = fadeType == FadeDir.In? renderer.material.color.a : peakValue;
+    var end = fadeType == FadeDir.In? peakValue : 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+// if (controllerITween2.speedingUp == 2) {
+// if ((controllerITween2.speedingUp == 2) && (controllerITween2.Slowdown < 1)) {
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        renderer.material.color.a = Mathf.Lerp(start, end, i);
+        yield;
+        
+        if (MoveController.Slowdown < 1) {break;}
+    	}
+    yield WaitForSeconds (timer);
+    MoveController.speedingUp = 1; 
+//    }
+ 
 }
 
-function Start(){
-    alpha=1;
-    speedLinesDown();
+function LinesFlashOut (timer : float, fadeType : FadeDir) {
+
+    var start = fadeType == FadeDir.In? 0.0 : peakValue;
+    var end = fadeType == FadeDir.In? renderer.material.color.a : 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    if (MoveController.speedingUp == 0) { 
+ 	while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        renderer.material.color.a = Mathf.Lerp(end, start, i);
+        yield;
+
+        if (MoveController.Slowdown > 1) {break;}
+    	}
+    yield WaitForSeconds (timer/3);
+    MoveController.speedingUp = 1; 
+    }
 }
 
-function speedLinesUpHalf(){
-	fadeDir = .5;
+function LinesOff () {
+        renderer.material.color.a = 0;
 }

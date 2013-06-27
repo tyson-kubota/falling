@@ -25,6 +25,12 @@ var SpeedLinesTexture : GameObject;
 var SpeedLinesTextureScript : GUITextureLaunch;
 SpeedLinesTextureScript = SpeedLinesTexture.GetComponent("GUITextureLaunch");
 
+var SpeedLinesMesh : GameObject;
+
+var SpeedLinesMeshScript : SpeedLines;
+SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
+
+
 function Awake() {
 	myTransform = transform;
 }
@@ -149,7 +155,8 @@ fingerCount = 0;
 	else {
 	Slowdown = 0;
 	speedingUp = 1;
-	SpeedLinesTextureScript.LinesOff();
+	//SpeedLinesTextureScript.LinesOff();
+	SpeedLinesMeshScript.LinesOff();
 	mainCamera.audio.pitch = 1;
 	dir = Vector3.zero;
 	FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
@@ -163,12 +170,14 @@ constantForce.relativeForce = (Vector3.down * Slowdown);
 function speedsUp () {
 		if (speedingUp == 2) {
 		speedingUp = 1;
-		SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
+		//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
+		SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
 		FallingPlayer.UIscriptComponent.showThreatBar(1);
 		if (mainCamera.audio) {lerpPitchUp(.5, 2);}
 		}
 		else {
-		SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
+		//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
+		SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
 		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
 		if (mainCamera.audio) {lerpPitchDown(1, 1);}
 }		
@@ -191,7 +200,8 @@ function speedUp () {
 
 function speedDown () {
 		Slowdown = 0;
-		SpeedLinesTextureScript.LinesFlash (1.0, FadeDir.Out);
+		//SpeedLinesTextureScript.LinesFlash (1.0, FadeDir.Out);
+		SpeedLinesMeshScript.LinesFlash (1.0, FadeDir.Out);
 		yield WaitForSeconds(1.0);
 }
 
