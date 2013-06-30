@@ -5,16 +5,17 @@ var shouldAnimate : boolean = false;
 private var offset : float = 0;
 private var offsetStartTime : float;
 private var offsetTimer : float = 0;
+private var resetTime : float;
 
 function Start () {
 	renderer.sharedMaterial.mainTextureOffset = Vector2(0,0);
+	resetTime = (1/speed);
 }
 
 function Update () {
 	if (shouldAnimate == true) {
 		offset = offsetTimer * speed;
-		
-		if ((offsetTimer*speed) >= 1) {
+		if (offsetTimer >= resetTime) {
 			offsetStartTime = Time.time;
 		}
 		
