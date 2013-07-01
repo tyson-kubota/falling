@@ -6,9 +6,11 @@ private var offset : float = 0;
 private var offsetStartTime : float;
 private var offsetTimer : float = 0;
 private var resetTime : float;
+private var thisRenderer : Vector2;
 
 function Start () {
-	renderer.sharedMaterial.mainTextureOffset = Vector2(0,0);
+	thisRenderer = renderer.sharedMaterial.mainTextureOffset;
+	thisRenderer = Vector2(0,0);
 	resetTime = Mathf.Abs(1/speed);
 }
 
@@ -23,7 +25,7 @@ function Update () {
 	
 //		Debug.Log("Your offset Timer is " + offsetTimer + 
 //		" and resetTimer is " + resetTime);
-		renderer.sharedMaterial.mainTextureOffset = Vector2(0,offset);
+		thisRenderer = Vector2(0,offset);
 	}
 }
 
