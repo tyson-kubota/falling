@@ -130,12 +130,13 @@ function DeathRespawn () {
   	      
     script.ResetScore(0);
 
+  	yield WaitForSeconds(1);
+
 //	if you want to clear destroyed projectiles...
 	if (clearDestroyedObjects == true) {
   		Resources.UnloadUnusedAssets();
 	}
 
-  	yield WaitForSeconds(1);
 	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   	
