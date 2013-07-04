@@ -53,6 +53,8 @@ static var isPausable : boolean = false;
 var UIscriptName : GameObject;
 static var UIscriptComponent : fallingUITest;
 
+var clearDestroyedObjects : boolean = false;
+
 var whiteFader : FadeInOutAlt;
 var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
@@ -127,6 +129,12 @@ function DeathRespawn () {
   	FadeAudio ((fadeTime/2), FadeDir.Out);
   	      
     script.ResetScore(0);
+
+//	if you want to clear destroyed projectiles...
+	if (clearDestroyedObjects == true) {
+  		Resources.UnloadUnusedAssets();
+	}
+
   	yield WaitForSeconds(1);
 	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;

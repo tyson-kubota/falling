@@ -247,6 +247,10 @@ function PauseGame() {
 		bgSprite.hidden = false;
 		//openSiteButton.hidden = false;
 
+		//clear any unused stuff in pause menu. 
+		//audio and video should be stopped, so any hiccuping won't be as obvious.
+		Resources.UnloadUnusedAssets();
+
 	    FallingPlayer.isPausable = true;
     }
 }
