@@ -28,7 +28,8 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
     var end = fadeType == FadeDir.In? peakValue : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
- 
+	
+	renderer.enabled = true;
 // if (controllerITween2.speedingUp == 2) {
 // if ((controllerITween2.speedingUp == 2) && (controllerITween2.Slowdown < 1)) {
     while (i <= 1.0) { 
@@ -57,13 +58,16 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
         renderer.material.color.a = Mathf.Lerp(end, start, i);
         yield;
 
-        if (MoveController.Slowdown > 1) {break;}
+        if (MoveController.Slowdown > 1) {break; renderer.enabled = true;}
+        if (i >= 1.0) {renderer.enabled = false;} 
     	}
     yield WaitForSeconds (timer/3);
-    MoveController.speedingUp = 1; 
+    MoveController.speedingUp = 1;
+    //yield WaitForSeconds (timer*(2/3));
     }
 }
 
 function LinesOff () {
         renderer.material.color.a = 0;
+        renderer.enabled = false;
 }

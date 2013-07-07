@@ -1,3 +1,5 @@
+#pragma strict
+
 public var force:float = 1.0;
 public var simulateAccelerometer:boolean = false;
 public var touchedBy:boolean = false;
@@ -7,12 +9,10 @@ var touch : Touch;
 var fingerCount = 0;
 
 private var myTransform : Transform;
-private var startTime : float; 
-private var timeTapEnded : float; 
-private var timeAtTap : float; 
-private var timeVar : float; 
+private var startTime : float;
+
 static var Slowdown : int = 0;
-var speed = 2.4;
+var speed : float = 2.4;
 static var isSlowing:boolean = false;
 static var speedingUp:int = 1;
 
@@ -125,7 +125,7 @@ function Update () {
 
 function fallingSpeed () {
 
-fingerCount = 0;
+	fingerCount = 0;
 	
 	if (FallingPlayer.isAlive == 1) {
 	    for (touch in Input.touches) {
@@ -153,18 +153,20 @@ fingerCount = 0;
 	}
 
 	else {
-	Slowdown = 0;
-	speedingUp = 1;
-	//SpeedLinesTextureScript.LinesOff();
-	SpeedLinesMeshScript.LinesOff();
-	mainCamera.audio.pitch = 1;
-	dir = Vector3.zero;
-	FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
+		Slowdown = 0;
+		speedingUp = 1;
+		//SpeedLinesTextureScript.LinesOff();
+		SpeedLinesMeshScript.LinesOff();
+		mainCamera.audio.pitch = 1;
+		dir = Vector3.zero;
+		FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
 	}
 
 //  Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
 //	Debug.Log("You have " + fingerCount + " fingers touching the screen." );
-constantForce.relativeForce = (Vector3.down * Slowdown);
+
+	constantForce.relativeForce = (Vector3.down * Slowdown);
+
 }
 
 function speedsUp () {
