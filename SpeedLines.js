@@ -2,10 +2,15 @@
 
 //public var launchTexture : Texture2D;
 var peakValue : float;
+var speedLinesRenderer : Renderer;
+var speedLinesMaterial : Material;
 
 function Start () {
+	speedLinesRenderer = renderer;
+	speedLinesMaterial = renderer.material;
 	peakValue = renderer.material.color.a;
-	renderer.material.color.a = 0.0;
+	speedLinesMaterial.color.a = 0.0;
+	speedLinesRenderer.enabled = false;
 }
 
 function FadeFlash (timer : float, fadeType : FadeDir) {
@@ -17,24 +22,24 @@ function FadeFlash (timer : float, fadeType : FadeDir) {
 
     while (i <= 1.0) {
         i += step * Time.deltaTime;
-        renderer.material.color.a = Mathf.Lerp(start, end, i);
+        speedLinesMaterial.color.a = Mathf.Lerp(start, end, i);
         yield;
     }
 }
 
 function LinesFlash (timer : float, fadeType : FadeDir) {
 
-    var start = fadeType == FadeDir.In? renderer.material.color.a : peakValue;
+    var start = fadeType == FadeDir.In? speedLinesMaterial.color.a : peakValue;
     var end = fadeType == FadeDir.In? peakValue : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
 	
-	renderer.enabled = true;
+	speedLinesRenderer.enabled = true;
 // if (controllerITween2.speedingUp == 2) {
 // if ((controllerITween2.speedingUp == 2) && (controllerITween2.Slowdown < 1)) {
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        renderer.material.color.a = Mathf.Lerp(start, end, i);
+        speedLinesMaterial.color.a = Mathf.Lerp(start, end, i);
         yield;
         
         if (MoveController.Slowdown < 1) {break;}
@@ -48,18 +53,18 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
 function LinesFlashOut (timer : float, fadeType : FadeDir) {
 
     var start = fadeType == FadeDir.In? 0.0 : peakValue;
-    var end = fadeType == FadeDir.In? renderer.material.color.a : 0.0;
+    var end = fadeType == FadeDir.In? speedLinesMaterial.color.a : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
  
     if (MoveController.speedingUp == 0) { 
  	while (i <= 1.0) {
         i += step * Time.deltaTime;
-        renderer.material.color.a = Mathf.Lerp(end, start, i);
+        speedLinesMaterial.color.a = Mathf.Lerp(end, start, i);
         yield;
 
-        if (MoveController.Slowdown > 1) {break; renderer.enabled = true;}
-        if (i >= 1.0) {renderer.enabled = false;} 
+        if (MoveController.Slowdown > 1) {speedLinesRenderer.enabled = true; break;}
+        if (i >= 1.0) {speedLinesRenderer.enabled = false;} 
     	}
     yield WaitForSeconds (timer/3);
     MoveController.speedingUp = 1;
@@ -68,6 +73,6 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
 }
 
 function LinesOff () {
-        renderer.material.color.a = 0;
-        renderer.enabled = false;
+        speedLinesMaterial.color.a = 0;
+        speedLinesRenderer.enabled = false;
 }
