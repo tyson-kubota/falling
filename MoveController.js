@@ -18,21 +18,19 @@ static var speedingUp:int = 1;
 
 var mainCamera : GameObject;
 var script : ScoreController;
-script = GetComponent("ScoreController");
 
 var SpeedLinesTexture : GameObject;
-
 var SpeedLinesTextureScript : GUITextureLaunch;
-SpeedLinesTextureScript = SpeedLinesTexture.GetComponent("GUITextureLaunch");
 
 var SpeedLinesMesh : GameObject;
-
 var SpeedLinesMeshScript : SpeedLines;
-SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
 
 
 function Awake() {
 	myTransform = transform;
+	script = GetComponent("ScoreController");
+	SpeedLinesTextureScript = SpeedLinesTexture.GetComponent("GUITextureLaunch");
+	SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
 }
 
 
