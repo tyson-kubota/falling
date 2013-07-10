@@ -59,6 +59,9 @@ var whiteFader : FadeInOutAlt;
 var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
 
+var audioScore : AudioSource;
+var audioDeath : AudioSource;
+
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
 
@@ -196,6 +199,8 @@ function OnCollisionEnter (collision : Collision) {
   		UIscriptComponent.HideGUI();
   		FallingLaunch.secondsAlive = (Time.time - lifeStartTime);
   		
+  		if (audioDeath) {audioDeath.Play();}
+  		
   		GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
   		
   		//var deathCollideEvent : GAEvent = new GAEvent("Death", "Collision", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
@@ -203,6 +208,7 @@ function OnCollisionEnter (collision : Collision) {
 		//GoogleAnalytics.instance.Dispatch();
   		//Debug.Log("you died in the area " + FallingLaunch.thisLevelArea);
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
+    	
     	yield DeathRespawn ();
 		//isPausable = true;
 		//UIscriptComponent.UnhideGUI();
@@ -220,7 +226,9 @@ function OnTriggerEnter (other : Collider) {
 
 	script.IncrementScore(6);
 	UIscriptComponent.flashProgressBar(1);
-	if (audio) {audio.Play();}
+	
+	if (audioScore) {audioScore.Play();}
+	
 	yield WaitForSeconds(.2);
 
 //	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?

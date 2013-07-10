@@ -37,11 +37,16 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
 	speedLinesRenderer.enabled = true;
 // if (controllerITween2.speedingUp == 2) {
 // if ((controllerITween2.speedingUp == 2) && (controllerITween2.Slowdown < 1)) {
+
+    if (i == 0.0) {
+    	if (audio) {audio.Play();}
+    }
+    
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         speedLinesMaterial.color.a = Mathf.Lerp(start, end, i);
         yield;
-        
+                
         if (MoveController.Slowdown < 1) {break;}
     	}
     yield WaitForSeconds (timer);
