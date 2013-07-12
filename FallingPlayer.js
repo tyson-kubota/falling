@@ -23,7 +23,7 @@ public var force:float = 1.0;
 var dir : Vector3 = Vector3.zero;
 
 enum FadeDir {In, Out}
-var fadeTime = 0.5;
+var fadeTime = 0.75;
 
 var origMat : Material;
 //var thisOceanCamera : Component;
@@ -129,7 +129,7 @@ function DeathRespawn () {
 	}
 	
 //	fadeOutAudio ();
-  	FadeAudio ((fadeTime/2), FadeDir.Out);
+  	FadeAudio ((fadeTime), FadeDir.Out);
   	      
     script.ResetScore(0);
 
