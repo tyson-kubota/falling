@@ -125,7 +125,7 @@ function fallingSpeed () {
 
 	fingerCount = 0;
 	
-	if (FallingPlayer.isAlive == 1) {
+	if (FallingPlayer.isAlive == 1 && FallingPlayer.isPausable == true) {
 	    for (touch in Input.touches) {
 	    	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
 	    		fingerCount++;

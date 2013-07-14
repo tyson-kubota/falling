@@ -5,6 +5,7 @@ var maxDistance : float = 0f;
 var myTr : Transform = null;
 var aSource : AudioSource = null;
 var distance : float;
+var checkDistance : boolean = false;
 
 function Start () {
 	myTr = transform;
@@ -14,10 +15,25 @@ function Start () {
 	player = GameObject.Find("Player/Camera").transform;
 }
 
+function OnTriggerEnter (other : Collider) {
+	if (other.gameObject.CompareTag ("Player")) {
+		if (checkDistance == false) {checkDistance = true;}
+	}
+}
+
+function OnTriggerExit (other : Collider) {
+	if (other.gameObject.CompareTag ("Player")) {
+		checkDistance = false;
+		aSource.volume = 0;
+	}
+}
+
 function Update () {
-	distance = Vector3.Distance(myTr.position, player.position);
-	if (distance <= maxDistance) {
-		aSource.volume = Mathf.Abs((distance / maxDistance) - 1f);
+	if (checkDistance == true) {
+		distance = Vector3.Distance(myTr.position, player.position);
+		if (distance <= maxDistance) {
+			aSource.volume = Mathf.Abs((distance / maxDistance) - 1f);
+		}
 	}
 }
 
