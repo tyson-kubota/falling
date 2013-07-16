@@ -34,7 +34,7 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
     var start = fadeType == FadeDir.In? speedLinesMaterial.color.a : peakValue;
     var end = fadeType == FadeDir.In? peakValue : 0.0;
     var audioStart = speedLinesAudio2.volume;
-    var audioEnd = .7; 
+    var audioEnd = 1.0; 
     var i = 0.0;
     var step = 1.0/timer;
 	
@@ -43,8 +43,8 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
 // if ((controllerITween2.speedingUp == 2) && (controllerITween2.Slowdown < 1)) {
 
     if (i == 0.0) {
-    	if (speedLinesAudio1) {speedLinesAudio1.Play();}
-    	if (speedLinesAudio2) {speedLinesAudio2.Play();}
+    	if (!speedLinesAudio1.isPlaying) {speedLinesAudio1.Play();}
+    	if (!speedLinesAudio2.isPlaying) {speedLinesAudio2.Play();}
     }
     
     while (i <= 1.0) { 
@@ -74,7 +74,7 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
  	while (i <= 1.0) {
         i += step * Time.deltaTime;
         speedLinesMaterial.color.a = Mathf.Lerp(end, start, i);
-        speedLinesAudio2.volume = Mathf.SmoothStep(audioStart, audioEnd, i);
+        speedLinesAudio2.volume = Mathf.Lerp(audioStart, audioEnd, i);
         yield;
 
         if (MoveController.Slowdown > 1) {speedLinesRenderer.enabled = true; break;}

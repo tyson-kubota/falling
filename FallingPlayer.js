@@ -49,6 +49,7 @@ static var isNewGamePlus : String;
 static var isTiltable : boolean = true;
 
 static var isPausable : boolean = false;
+var isExitingLevel : boolean = false;
 
 var UIscriptName : GameObject;
 static var UIscriptComponent : fallingUITest;
@@ -61,6 +62,7 @@ introComponent = GetComponent("IntroSequence1stPerson");
 
 var audioScore : AudioSource;
 var audioDeath : AudioSource;
+var audioLevelEnd : AudioSource;
 
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
@@ -79,6 +81,7 @@ function Start() {
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
   	lifeStartTime = Time.time;
   	levelStartTime = Time.time;
+  	isExitingLevel = false;
   	FallingLaunch.thisLevel = Application.loadedLevelName;
 	FallingLaunch.thisLevelArea = "0-start";
 	AudioListener.pause = false;
@@ -236,10 +239,15 @@ function OnTriggerEnter (other : Collider) {
 //  Camera.main.SendMessage("flashUp");	  	
 	}
 	
-  if (other.gameObject.CompareTag ("LevelEnd")) {
+  if (other.gameObject.CompareTag ("LevelEnd") && isExitingLevel == false) {
+  	isExitingLevel = true;
+  	isPausable = false;
   	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
+	
+	audioLevelEnd.Play();
+	yield WaitForSeconds (audioLevelEnd.clip.length - 2);
 	
 	UIscriptComponent.LevelComplete();
 // to keep you from dying after you strike the levelend trigger

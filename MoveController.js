@@ -175,7 +175,7 @@ function speedsUp () {
 		//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
 		SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
 		FallingPlayer.UIscriptComponent.showThreatBar(1);
-		if (mainCamera.audio) {lerpPitchUp(.5, 2, .4);}
+		if (mainCamera.audio) {lerpPitchUp(.5, 2, .3);}
 		}
 		else {
 		//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
