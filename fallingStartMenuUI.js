@@ -31,6 +31,8 @@ var level4 : String = "Falling-scene3";
 private var savedTimeScale:float;
 
 var canShowStart : boolean;
+var sceneAudio : AudioListener;
+var fadeTime : float = 1.0;
 
 function Start () {
 //  yield WaitForSeconds(0.5f);
@@ -301,51 +303,79 @@ function BackToPauseMenu() {
 	BackToPauseMenuButton.hidden = true;
 }
 
+function FadeAudio (timer : float) {
 
-function LoadLevel1ViaStart() {
+    var start = 1.0;
+    var end = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        sceneAudio.volume = Mathf.Lerp(start, end, i);
+        yield;
+    }
+}
+
+function StartLevelLoad(levelName: String) {
+	FadeAudio (fadeTime);
+	
+	yield FadeOutLevelButtons (fadeTime);
+	yield WaitForSeconds(fadeTime);
+	
+	Application.LoadLevel(levelName);
+}
+
+function FadeOutLevelButtons(timer : float) {
+	BackToPauseMenuButton.hidden = true;
+	loadLevelOne.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	loadLevelTwo.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	loadLevelThree.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	loadLevelFour.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	rightArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	leftArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	//rightArrow.hidden = true;
+	//leftArrow.hidden = true;
+	openSiteButton.hidden = true;
+	
+	yield WaitForSeconds(timer);
+	
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
-	BackToPauseMenuButton.hidden = true;
-	loadingLabel.hidden = false;
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	
-	Application.LoadLevel(level1);
+	loadingLabel.hidden = false;
+	loadingLabel.alphaFromTo(.5, 0.0f, 1.0f, Easing.Quartic.easeIn);	
+	yield WaitForSeconds(.5);
+	
+}
+
+function LoadLevel1ViaStart() {
+//	loadLevelOne.hidden = true;
+//	loadLevelTwo.hidden = true;
+//	loadLevelThree.hidden = true;
+//	loadLevelFour.hidden = true;
+//	BackToPauseMenuButton.hidden = true;
+//	loadingLabel.hidden = false;
+//	rightArrow.hidden = true;
+//	leftArrow.hidden = true;
+		
+	StartLevelLoad(level1);
 }
 
 function LoadLevel2ViaStart() {
-	loadLevelOne.hidden = true;
-	loadLevelTwo.hidden = true;
-	loadLevelThree.hidden = true;
-	loadLevelFour.hidden = true;
-	BackToPauseMenuButton.hidden = true;
-	loadingLabel.hidden = false;	
-	
-	Application.LoadLevel(level2);
+	StartLevelLoad(level2);
 }
 
 function LoadLevel3ViaStart() {
-	loadLevelOne.hidden = true;
-	loadLevelTwo.hidden = true;
-	loadLevelThree.hidden = true;
-	loadLevelFour.hidden = true;
-	BackToPauseMenuButton.hidden = true;
-	loadingLabel.hidden = false;
-	
-	Application.LoadLevel(level3);
+	StartLevelLoad(level3);
 }
 
 function LoadLevel4ViaStart() {
-	loadLevelOne.hidden = true;
-	loadLevelTwo.hidden = true;
-	loadLevelThree.hidden = true;
-	loadLevelFour.hidden = true;
-	BackToPauseMenuButton.hidden = true;
-	loadingLabel.hidden = false;
-	
-	Application.LoadLevel(level4);
+	StartLevelLoad(level4);
 }
 
 function OpenSite() {
@@ -353,12 +383,12 @@ function OpenSite() {
 }
 
 function HideGUI() {
-		pauseButton.hidden = true;
+	pauseButton.hidden = true;
 }
 
 function UnhideGUI() {
-		pauseButton.hidden = true;
-		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+	pauseButton.hidden = true;
+	pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 }
 
 function fadeInRightArrow() {
@@ -378,7 +408,6 @@ function fadeOutLeftArrow() {
 }
 
 function fadeInLoadNewLevels() {
-
 	loadLevelOne.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	loadLevelTwo.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	loadLevelThree.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
