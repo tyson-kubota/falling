@@ -28,6 +28,7 @@ function PlayOutro () {
 	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
 	GA.API.Design.NewEvent("GameComplete:" + FallingPlayer.isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
 	
+	FallingPlayer.isPausable = false;
 	ScoreController.enabled = false;
 	LifeController.enabled = false;	
 	FallingPlayer.isTiltable = false;			

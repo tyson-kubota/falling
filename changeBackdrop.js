@@ -166,6 +166,7 @@ function enableOceanCamera () {
 }
 
 function OnTriggerExit (other : Collider) {
-	if (other.gameObject.CompareTag ("changeBackdrop")) 
+	if (other.gameObject.CompareTag ("changeBackdrop") && ShouldChangeBackdrop == true)  {
 		transform.Find("plane-close").renderer.materials = [origMat];
+	}
 }

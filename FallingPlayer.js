@@ -218,9 +218,10 @@ function lerpControlOut(timer : float) {
         i += step * Time.deltaTime;
         FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
         yield;
+        
+        if (i >= 1.0) {FallingLaunch.flipMultiplier = start;} 
     	}
     yield WaitForSeconds (timer);
-    FallingLaunch.flipMultiplier = start;
 }
 	 
 function OnCollisionEnter (collision : Collision) {

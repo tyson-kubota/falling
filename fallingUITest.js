@@ -208,6 +208,7 @@ function flashProgressBar(delay : float) {
 }
 
 function showThreatBar(delay : float) {
+	lifeBarThreat.hidden = false;
 	lifeBarThreat.alphaTo( delay, 0.25f, Easing.Sinusoidal.easeInOut);
 }
 
@@ -487,7 +488,7 @@ function UnhideGUI() {
 		circleReticle.hidden = false;
 		lifeBar.hidden = false;
 		lifeBarOutline.hidden = false;
-		lifeBarThreat.hidden = false;
+		lifeBarThreat.hidden = true;
 		
 //		lifeBarThreat.alphaFrom( 1.0f, 0.0f, Easing.Quartic.easeIn);
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
@@ -496,6 +497,7 @@ function UnhideGUI() {
 		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		yield WaitForSeconds (1.0);
 		FallingPlayer.isPausable = true;
+//		lifeBarThreat.hidden = false;
 }
 
 function fadeIn( shouldUnhideGUI : boolean ) {
