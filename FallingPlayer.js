@@ -157,6 +157,7 @@ function DeathRespawn () {
 	rigidbody.isKinematic = false;
 //   	isAlive = 1;
    	UIscriptComponent.fadeIn(true);
+   	lerpControlIn(3);
 }   	
 
 function changeLevelBackdrop () {
@@ -189,6 +190,38 @@ function playerTilt () {
 	                                   Time.deltaTime * smooth);  
     }
 }	 
+
+function lerpControlIn(timer : float) {
+
+    var start = 0.0;
+    var end = FallingLaunch.flipMultiplier;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
+        yield;
+    	}
+    yield WaitForSeconds (timer);
+}
+
+function lerpControlOut(timer : float) {
+
+    var start = FallingLaunch.flipMultiplier;
+    var end = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
+        yield;
+    	}
+    yield WaitForSeconds (timer);
+    FallingLaunch.flipMultiplier = start;
+}
 	 
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
@@ -241,17 +274,19 @@ function OnTriggerEnter (other : Collider) {
 	
   if (other.gameObject.CompareTag ("LevelEnd") && isExitingLevel == false) {
   	isExitingLevel = true;
-  	isPausable = false;
+	isPausable = false;
   	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
-	
-	audioLevelEnd.Play();
-	yield WaitForSeconds (audioLevelEnd.clip.length - 2);
-	
-	UIscriptComponent.LevelComplete();
-// to keep you from dying after you strike the levelend trigger
+
+	// to keep you from dying after you strike the levelend trigger
 	script.IncrementScore(25);
+		
+	audioLevelEnd.Play();
+	lerpControlOut(3);
+	//yield WaitForSeconds (audioLevelEnd.clip.length - 3);
+	//yield WaitForSeconds (1);
+	UIscriptComponent.LevelComplete();
   }	
 }
 			

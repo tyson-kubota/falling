@@ -304,17 +304,18 @@ function LevelComplete() {
 	FallingPlayer.isPausable = false;
 	MoveController.Slowdown = 0;
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.95f, Easing.Sinusoidal.easeIn);
-	fallingPlayerComponent.FadeAudio (.8, FadeDir.Out);
-	yield WaitForSeconds (.5);
+	bgSprite.alphaFromTo( 3.0f, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
+	FallingLaunch.levelEndSlowdown = MoveController.Slowdown;
+	
+	yield WaitForSeconds (3);
 // fade in congrats menu / buttons here 
 
-	FallingLaunch.levelEndSlowdown = MoveController.Slowdown;
     savedTimeScale = Time.timeScale;
 	loadingLabel.hidden = false;
-	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
+	loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
+    fallingPlayerComponent.FadeAudio (.9, FadeDir.Out);
     yield WaitForSeconds (1);
-//    Time.timeScale = 0;
+//  Time.timeScale = 0;
 	player.rigidbody.isKinematic = true;
     AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);

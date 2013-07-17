@@ -31,6 +31,7 @@ var level4 : String = "Falling-scene3";
 private var savedTimeScale:float;
 
 var canShowStart : boolean;
+var aboutToLoad : boolean = false;
 var sceneAudio : AudioListener;
 var fadeTime : float = 1.0;
 
@@ -237,38 +238,6 @@ function PauseGameCheck() {
 	}
 }
 
-function LevelComplete() {
-	FallingPlayer.isPausable = false;
-	MoveController.Slowdown = 0;
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-//	yield WaitForSeconds (.5);
-// fade in congrats menu / buttons here 
-
-    savedTimeScale = Time.timeScale;
-    scriptName.GetComponent(FallingPlayer).FadeAudio (.8, FadeDir.Out);
-    scriptName.rigidbody.isKinematic = true;
-    yield WaitForSeconds (1);
-//    Time.timeScale = 0;
-    AudioListener.pause = true;	
-	loadingLabel.hidden = false;
-	Application.LoadLevel(levelToLoad);
-	Time.timeScale = savedTimeScale;
-}
-
-function LoadNewLevelViaMenu() {
-	loadLevelOne.hidden = true;
-	loadLevelTwo.hidden = true;
-	loadLevelThree.hidden = true;
-	loadLevelFour.hidden = true;
-	BackToPauseMenuButton.hidden = true;
-	loadingLabel.hidden = false;
-
-	FallingLaunch.levelEndSlowdown = 0;
-	Application.LoadLevel(levelToLoad);
-	Time.timeScale = savedTimeScale;
-}
-
 function LevelSelect() {
 	leftArrow.hidden = true;
 	rightArrow.hidden = true;
@@ -318,12 +287,15 @@ function FadeAudio (timer : float) {
 }
 
 function StartLevelLoad(levelName: String) {
-	FadeAudio (fadeTime);
+	if (aboutToLoad == false) {
+		aboutToLoad = true;
+		FadeAudio (fadeTime);
 	
-	yield FadeOutLevelButtons (fadeTime);
-	yield WaitForSeconds(fadeTime);
+		yield FadeOutLevelButtons (fadeTime);
+		yield WaitForSeconds(fadeTime);
 	
-	Application.LoadLevel(levelName);
+		Application.LoadLevel(levelName);
+	}
 }
 
 function FadeOutLevelButtons(timer : float) {
@@ -420,34 +392,50 @@ function fadeInPauseMenu() {
 }
 
 function downLevel1() {
-	loadLevelOne.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelOne.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 function downLevel2() {
-	loadLevelTwo.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelTwo.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 function downLevel3() {
-	loadLevelThree.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelThree.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 function downLevel4() {
-	loadLevelFour.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelFour.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 
 function upLevel1() {
-	loadLevelOne.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelOne.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 function upLevel2() {
-	loadLevelTwo.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelTwo.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 function upLevel3() {
-	loadLevelThree.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelThree.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	}
 }
 
 function upLevel4() {
-	loadLevelFour.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	if (aboutToLoad == false) {
+		loadLevelFour.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
+	}
 }
