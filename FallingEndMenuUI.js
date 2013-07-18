@@ -1,6 +1,7 @@
 #pragma strict
 
 var endGameSprite : UISprite;
+var EndMenuLogoCamera : GameObject;
 
 var aboutButton : UIButton;
 var homeButton : UIButton;
@@ -85,8 +86,10 @@ function LoadHome() {
 	continueButton.hidden = true;
 	homeButton.hidden = true;
 	endGameSprite.hidden = true;
-	
-//	fallingUITest.loadingLabel.hidden = false;
+
+	EndMenuLogoCamera.GetComponent(Camera).enabled = false;
+
+	fallingUITest.loadingLabel.hidden = false;
 	FallingPlayer.isTiltable = true;
 	Application.LoadLevel(homeLevel);
 //	Time.timeScale = savedTimeScale;
@@ -98,6 +101,8 @@ function continueLevel() {
 	continueButton.hidden = true;
 	homeButton.hidden = true;
 	endGameSprite.hidden = true;
+	
+	EndMenuLogoCamera.GetComponent(Camera).enabled = false;
 	
 	fallingUITest.loadingLabel.hidden = false;
 	FallingPlayer.isTiltable = true;
