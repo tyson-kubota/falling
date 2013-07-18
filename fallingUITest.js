@@ -294,6 +294,9 @@ function RestartLevel() {
 	FallingPlayer.isPausable = false;	
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
+	
+	GA.API.Design.NewEvent("GUI:RestartLevel:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	
 	Respawn.currentRespawn = initialRespawn;
 	HideGUI();
 	fallingPlayerComponent.DeathRespawn ();
