@@ -355,7 +355,7 @@ function GameComplete() {
 function GameCompleteUI() {
 	bgSprite.hidden = false;
 	bgSprite.alphaFromTo( 2f, 0.0f, 0.8f, Easing.Sinusoidal.easeIn);
-	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
+	// fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
 	
 	// add anything else that requires main uitoolkit instance
 }

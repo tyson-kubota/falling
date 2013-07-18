@@ -43,3 +43,7 @@ function findPlayer() {
 //		player = GameObject.Find("Player");
 //	}
 }
+
+function falsifyCheckDistance() {
+	checkDistance = false;
+}

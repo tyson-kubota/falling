@@ -7,6 +7,10 @@ var EndTriggerName : GameObject;
 var EndTriggerComponent : EndSequenceTrigger;
 var EndMenuLogoObject : GameObject;
 var EndMenuLogoCamera : GameObject;
+var OutroMusic : AudioSource;
+var OutroMusicBedObject : GameObject;
+var OutroMusicBed : AudioSource;
+var MusicBedInterpolated : AudioVolumeInterpolate;
 
 var UIscriptEndMenuName : GameObject;
 var UIscriptEndMenuComponent : FallingEndMenuUI;
@@ -19,6 +23,7 @@ function Start () {
 	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
+	MusicBedInterpolated = OutroMusicBedObject.GetComponent("AudioVolumeInterpolate");
 	UIscriptEndMenuComponent = UIscriptEndMenuName.GetComponent("FallingEndMenuUI");
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
 }
@@ -33,7 +38,8 @@ function PlayOutro () {
 	LifeController.enabled = false;	
 	FallingPlayer.isTiltable = false;			
 	PlayerController.lerpSlowdown(1);
-	PlayerController.SpeedLinesOff(1);
+	OutroMusic.Play();
+	//PlayerController.SpeedLinesOff(1);
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
 	FallingPlayer.UIscriptComponent.BeginOutroUI();
@@ -43,6 +49,8 @@ function PlayOutro () {
     RotateTowardsDiamond(10);
 	yield WaitForSeconds (10);
 	//LerpIntoDiamond(14);
+	MusicBedInterpolated.falsifyCheckDistance();
+	FadeMusic(8, OutroMusicBed);
 	animation.Play("end-player-anim");
 	EndTriggerComponent.AddDiamondCore(5);
 	yield WaitForSeconds (1);
@@ -56,6 +64,7 @@ function PlayOutro () {
 	lifeCountdown.inOutro = false;
 	FallingPlayer.UIscriptComponent.GameCompleteUI();
 	UIscriptEndMenuComponent.ShowEndGameUI();
+	FadeAudioListener (4);
 	yield WaitForSeconds(1);
 	FadeEndMenuLogo(3);
 	FallingLaunch.NewGamePlus = true;
@@ -135,4 +144,33 @@ function FadeEndMenuLogo(timer:float){
     	}
     	
     yield WaitForSeconds (timer);
+}
+
+
+function FadeMusic (timer : float, source : AudioSource) {
+
+    var audioStart = source.volume;
+    var audioEnd = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        source.volume = Mathf.Lerp(audioStart, audioEnd, i);        
+        yield;
+    }
+}
+
+
+function FadeAudioListener(timer : float) {
+    var start = AudioListener.volume;
+    var end = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+    
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        AudioListener.volume = Mathf.Lerp(start, end, i);
+        yield;
+    }
 }
