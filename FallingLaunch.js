@@ -8,6 +8,8 @@ static var NewGamePlus:boolean = false;
 var targetFPS : int = 30;
 static var isTablet : boolean = false;
 
+var testFlightToken : String;
+
 //GameAnalytics variables
 static var secondsAlive : float = 0;
 static var secondsInLevel : float = 0;
@@ -26,6 +28,8 @@ enum iPads {
 
 function Awake () {
 	if (!alreadyLaunched) {
+		
+		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
 		
 		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 			flipMultiplier = -1;
