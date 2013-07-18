@@ -291,7 +291,7 @@ function StartLevelLoad(levelName: String) {
 		aboutToLoad = true;
 		FadeAudio (fadeTime);
 	
-		yield FadeOutLevelButtons (fadeTime);
+		yield FadeOutLevelButtons (fadeTime/2);
 		yield WaitForSeconds(fadeTime);
 	
 		Application.LoadLevel(levelName);
