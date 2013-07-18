@@ -27,6 +27,7 @@ var SpeedLinesTextureScript : GUITextureLaunch;
 var SpeedLinesMesh : GameObject;
 var SpeedLinesMeshScript : SpeedLines;
 
+var changingPitch : boolean = false;
 
 function Awake() {
 	myTransform = transform;
@@ -159,7 +160,7 @@ function fallingSpeed () {
 		SpeedLinesMeshScript.LinesOff();
 		//mainCamera.audio.pitch = 1;
 		//mainCamera.audio.volume = 1;
-		lerpPitchDown(.5, 1, 1);
+		if (changingPitch == false) {lerpPitchDown(.5, 1, 1);}
 		dir = Vector3.zero;
 		FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
 	}
@@ -183,7 +184,7 @@ function speedsUp () {
 		//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
 		SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
 		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-		if (mainCamera.audio) {lerpPitchDown(1, 1, 1);}
+		if (mainCamera.audio && changingPitch == false) {lerpPitchDown(1, 1, 1);}
 }		
 }
 
@@ -261,6 +262,8 @@ function lerpPitchUp (timer : float, endPitch : float, endVolume : float) {
 
 function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
     
+    changingPitch = true;
+
     var startVol = mainCamera.audio.volume;
     var endVol = endVolume;
     
@@ -269,16 +272,17 @@ function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
     var i = 0.0;
     var step = 1.0/timer;
  
-
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         mainCamera.audio.pitch = Mathf.Lerp(start, end, i);
         mainCamera.audio.volume = Mathf.SmoothStep(startVol, endVol, i);
         yield;
 
-        if (Slowdown > 17999) {break;}        
+        if (Slowdown > 17999) {changingPitch = false; break;}        
     	}
-    yield WaitForSeconds (timer);
+    
+    yield WaitForSeconds (timer);    
+    changingPitch = false;
 }
 
 function SpeedLinesOff (timer : float) {
