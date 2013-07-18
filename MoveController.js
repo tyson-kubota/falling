@@ -25,7 +25,7 @@ var SpeedLinesTexture : GameObject;
 var SpeedLinesTextureScript : GUITextureLaunch;
 
 var SpeedLinesMesh : GameObject;
-var SpeedLinesMeshScript : SpeedLines;
+static var SpeedLinesMeshScript : SpeedLines;
 
 var changingPitch : boolean = false;
 

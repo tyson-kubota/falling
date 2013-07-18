@@ -87,9 +87,29 @@ function LinesFlashOut (timer : float, fadeType : FadeDir) {
     }
 }
 
+function LinesLerpOut (timer : float) {
+
+    var start = speedLinesMaterial.color.a;
+    var end = 0.0;
+    var audioStart = speedLinesAudio2.volume;
+    var audioEnd = 0.0;      
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        speedLinesMaterial.color.a = Mathf.Lerp(start, end, i);
+        speedLinesAudio2.volume = Mathf.Lerp(audioStart, audioEnd, i);        
+        yield;
+    }
+}
+
 function LinesOff () {
+	if (!lifeCountdown.inOutro) {
         speedLinesMaterial.color.a = 0;
         speedLinesRenderer.enabled = false;
         //speedLinesAudio2.Stop();
         speedLinesAudio2.volume = 0;
+    }
+    else {return;}
 }

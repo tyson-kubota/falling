@@ -17,6 +17,9 @@ function Awake () {
 function OnTriggerEnter (other : Collider) {
 	if (other.gameObject.CompareTag ("Player") && lifeCountdown.inOutro == false) {
 		lifeCountdown.inOutro = true;
+		
+		MoveController.SpeedLinesMeshScript.LinesLerpOut(3);
+		
 		if (EndScriptComponent) {
 		EndScriptComponent.PlayOutro();
 		}

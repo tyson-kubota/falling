@@ -26,7 +26,10 @@ function Start () {
     }
     else if (FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = true;
-		FallingPlayer.UIscriptComponent.HideGUI();
+		ScoreController.enabled = true;
+		LifeController.enabled = true;
+		//FallingPlayer.UIscriptComponent.HideGUI();
+		FallingPlayer.UIscriptComponent.UnhideGUI();
     }
 
     
@@ -36,7 +39,10 @@ function EndIntro () {
 	PlayerController.enabled = true;
 	ScoreController.enabled = true;
 	LifeController.enabled = true;
-	FallingPlayer.UIscriptComponent.UnhideGUI();
+	
+	if (!FallingLaunch.NewGamePlus) {
+		FallingPlayer.UIscriptComponent.UnhideGUI();
+	}
 	
     for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
         destructible = shard.GetComponent(ProjectileDestroy);
