@@ -13,8 +13,10 @@ private var startTime : float;
 
 static var Slowdown : int = 0;
 var speed : float = 2.4;
-static var isSlowing:boolean = false;
-static var speedingUp:int = 1;
+static var isSlowing : boolean = false;
+static var speedingUp : int = 1;
+
+static var controlMultiplier : float = 1;
 
 var mainCamera : GameObject;
 var script : ScoreController;
@@ -73,8 +75,8 @@ function FixedUpdate () {
 //			dir.Normalize();
 
 if (FallingPlayer.isAlive == 1) {
-	dir.x = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-	dir.z = 2 * FallingPlayer.isAlive * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
+	dir.x = 2 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
+	dir.z = 2 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
 	// .:. not necessary in fixedupdate
@@ -288,14 +290,14 @@ function SpeedLinesOff (timer : float) {
 function lerpControl(timer : float) {
 
     var start = 0.0;
-    var end = FallingLaunch.flipMultiplier;
+    var end = controlMultiplier;
     var i = 0.0;
     var step = 1.0/timer;
  
 
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
+        controlMultiplier = Mathf.Lerp(start, end, i);
         yield;
 		//Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
     	}

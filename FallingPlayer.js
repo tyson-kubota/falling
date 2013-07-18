@@ -156,6 +156,9 @@ function DeathRespawn () {
 //	thisOceanCamera.SendMessage("fadeIn");
 	rigidbody.isKinematic = false;
 //   	isAlive = 1;
+	
+	MoveController.controlMultiplier = 1;
+
    	UIscriptComponent.fadeIn(true);
    	lerpControlIn(3);
 }   	
@@ -192,34 +195,42 @@ function playerTilt () {
 }	 
 
 function lerpControlIn(timer : float) {
-
+	
+	//Debug.Log("your flip multiplier is " + FallingLaunch.flipMultiplier);
+	//Debug.Log("your control multiplier is " + MoveController.controlMultiplier);
+    
     var start = 0.0;
-    var end = FallingLaunch.flipMultiplier;
+    var end = MoveController.controlMultiplier;
     var i = 0.0;
     var step = 1.0/timer;
  
 
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
-        yield;
+        MoveController.controlMultiplier = Mathf.Lerp(start, end, i);
+        if (isAlive == 0) {MoveController.controlMultiplier = end; break;}        
+		yield;
+        
+        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = end; break;}        
     	}
     yield WaitForSeconds (timer);
 }
 
 function lerpControlOut(timer : float) {
 
-    var start = FallingLaunch.flipMultiplier;
+    var start = MoveController.controlMultiplier;
     var end = 0.0;
     var i = 0.0;
     var step = 1.0/timer;
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        FallingLaunch.flipMultiplier = Mathf.Lerp(start, end, i);
-        yield;
+        MoveController.controlMultiplier = Mathf.Lerp(start, end, i);
+        if (isAlive == 0) {MoveController.controlMultiplier = start; break;}        
         
-        if (i >= 1.0) {FallingLaunch.flipMultiplier = start;} 
+        yield;
+
+        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = start; break;} 
     	}
     yield WaitForSeconds (timer);
 }
