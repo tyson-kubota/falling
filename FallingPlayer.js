@@ -289,8 +289,10 @@ function OnTriggerEnter (other : Collider) {
 	isPausable = false;
   	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
+	
 	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
-
+	TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
+	
 	// to keep you from dying after you strike the levelend trigger
 	script.IncrementScore(25);
 		
