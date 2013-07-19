@@ -33,8 +33,8 @@ function PlayOutro () {
 	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
 	GA.API.Design.NewEvent("GameComplete:" + FallingPlayer.isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
 	
-	TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
-	TestFlight.PassCheckpoint( "GameComplete");
+	TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
+	TestFlightUnity.TestFlight.PassCheckpoint( "GameComplete");
 
 	FallingPlayer.isPausable = false;
 	ScoreController.enabled = false;
