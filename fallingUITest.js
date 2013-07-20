@@ -23,12 +23,15 @@ var loadLevelFour : UIButton;
 var openSiteButton : UIButton;
 static var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
+var BackToHomeMenuButton : UIButton;
 
 static var spriteEdgeSize : int;
 var buttonScaleFactor : float;
 var initialRespawn : Respawn;
 
 var levelToLoad : String = "";
+
+var homeLevel : String = "Falling-scene-menu";
 
 var level1 : String = "Falling-scene-tutorial";
 var level2 : String = "Falling-scene2";
@@ -105,6 +108,14 @@ function Start () {
 	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+
+	BackToHomeMenuButton = UIButton.create("homeWhite.png","homeWhite.png", 40, 40);
+	//BackToHomeMenuButton.positionFromBottom(.05f);
+	BackToHomeMenuButton.positionFromBottomRight(.05f, .05f);
+	BackToHomeMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToHomeMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToHomeMenuButton.onTouchUpInside += LoadHomeViaMenu;
+	BackToHomeMenuButton.hidden = true;
 
 	if (level1 == Application.loadedLevelName) {
 	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
@@ -403,6 +414,8 @@ function LevelSelect() {
 	loadLevelThree.hidden = false;
 	loadLevelFour.hidden = false;
 	
+	BackToHomeMenuButton.hidden = false;
+
 	loadNewLevelButton.hidden = true;	
 	BackToPauseMenuButton.hidden = false;
 }
@@ -417,6 +430,8 @@ function BackToPauseMenu() {
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	
+	BackToHomeMenuButton.hidden = true;
+
 	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
 }
@@ -427,6 +442,7 @@ function LoadLevel1ViaMenu() {
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
+	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level1);
@@ -439,6 +455,7 @@ function LoadLevel2ViaMenu() {
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
+	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;	
 	
 	Application.LoadLevel(level2);
@@ -451,6 +468,7 @@ function LoadLevel3ViaMenu() {
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
+	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level3);
@@ -463,11 +481,26 @@ function LoadLevel4ViaMenu() {
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
+	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
 	Application.LoadLevel(level4);
 	Time.timeScale = savedTimeScale;
 }
+
+function LoadHomeViaMenu() {
+	loadLevelOne.hidden = true;
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
+	BackToPauseMenuButton.hidden = true;
+	BackToHomeMenuButton.hidden = true;
+	loadingLabel.hidden = false;
+	
+	Application.LoadLevel(homeLevel);
+	Time.timeScale = savedTimeScale;
+}
+
 
 function OpenSite() {
 	Application.OpenURL ("http://tysonkubota.net/");

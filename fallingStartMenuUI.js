@@ -28,6 +28,8 @@ var level2 : String = "Falling-scene2";
 var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
+var aboutButtonStart : UIButton;
+
 private var savedTimeScale:float;
 
 var canShowStart : boolean;
@@ -151,6 +153,16 @@ function Start () {
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
 
+	aboutButtonStart = UIButton.create("aboutWhite.png","aboutWhite.png", 40, 40);
+	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	aboutButtonStart.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	aboutButtonStart.centerize();
+	aboutButtonStart.positionFromBottom(.05f);
+//	aboutButtonStart.onTouchUpInside += OpenAbout;
+// 	aboutButtonStart.onTouchUp += fadeOutAbout;	
+// 	aboutButtonStart.onTouchDown += fadeInAbout;
+	aboutButtonStart.hidden = true;
+
  	yield WaitForSeconds (4);
 	bgSpriteStart.alphaTo( 3.0f, 0.85f, Easing.Sinusoidal.easeOut);
 	yield WaitForSeconds (1);
@@ -163,8 +175,10 @@ function ShowStart() {
 	
 	rightArrow.hidden = false;
 	leftArrow.hidden = false;
+	aboutButtonStart.hidden = false;
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
+	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
 }
 
@@ -261,8 +275,10 @@ function LevelSelect() {
 	leftArrow.hidden = true;
 	rightArrow.hidden = true;
 	pauseButton.hidden = true;
+	aboutButtonStart.hidden = true;
+
 	openSiteButton.hidden = false;
-		
+
 	loadLevelOne.hidden = false;
 	loadLevelTwo.hidden = false;
 	loadLevelThree.hidden = false;
@@ -277,6 +293,8 @@ function LevelSelect() {
 function BackToPauseMenu() {
 	leftArrow.hidden = false;
 	rightArrow.hidden = false;
+	aboutButtonStart.hidden = false;
+
 //	pauseButton.hidden = false;
 	openSiteButton.hidden = true;
 	
@@ -323,8 +341,9 @@ function FadeOutLevelButtons(timer : float) {
 	loadLevelTwo.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
 	loadLevelThree.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
 	loadLevelFour.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
-	rightArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
-	leftArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
+	rightArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+	leftArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+	aboutButtonStart.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	//rightArrow.hidden = true;
 	//leftArrow.hidden = true;
 	openSiteButton.hidden = true;
@@ -408,6 +427,7 @@ function fadeInLoadNewLevels() {
 function fadeInPauseMenu() {
 	rightArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
 	leftArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
+	aboutButtonStart.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 }
 
 function downLevel1() {

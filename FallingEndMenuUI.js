@@ -43,6 +43,8 @@ function Start () {
 	homeButton = UIButton.create("home.png","home.png", 40, 40);
 	homeButton.centerize();
 //	homeButton.pixelsFromBottom (- fallingUITest.spriteEdgeSize * 3);
+	homeButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	homeButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	homeButton.pixelsFromBottom(textHeight);
 	homeButton.onTouchUpInside += LoadHome;
 	homeButton.onTouchUp += fadeOutHome;	
