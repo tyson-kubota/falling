@@ -76,8 +76,11 @@ function FixedUpdate () {
 //			dir.Normalize();
 
 if (FallingPlayer.isAlive == 1) {
-	dir.x = 2 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-	dir.z = 2 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
+	dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
+	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
+
+	dir.x = Mathf.Clamp(dir.x, -2.0, 2.0);
+	dir.z = Mathf.Clamp(dir.z, -2.0, 2.0);
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
 	// .:. not necessary in fixedupdate
