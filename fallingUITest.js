@@ -580,7 +580,8 @@ function PauseGameNow() {
 	circleReticle.hidden = true;
 	lifeBar.hidden = true;
 	lifeBarOutline.hidden = true;
-
+	lifeBarThreat.hidden = true;
+	
     origPauseButtonArea = MoveController.pauseButtonArea;
     MoveController.pauseButtonArea = Rect(0, 0, Screen.width, Screen.height);
     
