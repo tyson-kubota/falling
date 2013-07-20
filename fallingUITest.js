@@ -39,6 +39,7 @@ var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
 static var holdingPauseButton : boolean = false;
+static var origPauseButtonArea : Rect;
 
 private var savedTimeScale:float;
 //var x:float;
@@ -253,6 +254,9 @@ function PauseGame() {
 		lifeBarOutline.hidden = true;
 	    lifeBarThreat.hidden = true;
 	    
+	    origPauseButtonArea = MoveController.pauseButtonArea;
+	    MoveController.pauseButtonArea = Rect(0, 0, Screen.width, Screen.height);
+
 	    savedTimeScale = Time.timeScale;
 		fallingPlayerComponent.FadeAudio (.09, FadeDir.Out);
 	    yield WaitForSeconds (.1);
@@ -290,6 +294,7 @@ function UnPauseGame(resume : boolean) {
 	openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
 	holdingPauseButton = false;
+	MoveController.pauseButtonArea = origPauseButtonArea;
     }
     
 function IsGamePaused() {
@@ -575,6 +580,9 @@ function PauseGameNow() {
 	circleReticle.hidden = true;
 	lifeBar.hidden = true;
 	lifeBarOutline.hidden = true;
+
+    origPauseButtonArea = MoveController.pauseButtonArea;
+    MoveController.pauseButtonArea = Rect(0, 0, Screen.width, Screen.height);
     
 //	savedTimeScale = Time.timeScale;
     Time.timeScale = 0;

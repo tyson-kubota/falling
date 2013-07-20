@@ -29,6 +29,8 @@ static var SpeedLinesMeshScript : SpeedLines;
 
 var changingPitch : boolean = false;
 
+static var pauseButtonArea : Rect;
+
 function Awake() {
 	myTransform = transform;
 	script = GetComponent("ScoreController");
@@ -47,6 +49,8 @@ function Start() {
 	lerpSlowdown(.5);
 	lerpControl(3);
 	mainCamera = transform.FindChild("Camera").gameObject;
+	//pauseButtonArea = Rect(0, 0, Screen.width / 2, Screen.height / 2);
+	pauseButtonArea = Rect(Screen.width * .85, Screen.height * .8, Screen.width * .15, Screen.height * .2);
 }
 
 function FixedUpdate () {
@@ -119,7 +123,7 @@ isSlowing = false;
 }
 
 function Update () {
-	if (!fallingUITest.holdingPauseButton) {fallingSpeed();}
+	fallingSpeed();
 //	Debug.Log("Slowdown = " + Slowdown);
 }
 
@@ -135,6 +139,18 @@ function fallingSpeed () {
 	    for (touch in Input.touches) {
 	    	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
 	    		fingerCount++;
+
+				if (pauseButtonArea.Contains(touch.position)) {
+					// Debug.Log("Returning!");
+					return;
+				}
+
+	    		// if (pauseButtonArea.Contains(touch.position)) {
+	    		// 	Debug.Log("Touching pause area!");
+	    		// }
+	    		// else {
+	    		// 	Debug.Log("Not in pause area.");
+	    		// }	    		
 	    	}
 		}
 	
