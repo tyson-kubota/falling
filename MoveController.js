@@ -119,7 +119,7 @@ isSlowing = false;
 }
 
 function Update () {
-	fallingSpeed();
+	if (!fallingUITest.holdingPauseButton) {fallingSpeed();}
 //	Debug.Log("Slowdown = " + Slowdown);
 }
 
@@ -137,8 +137,9 @@ function fallingSpeed () {
 	    		fingerCount++;
 	    	}
 		}
+	
 			
-		if (fingerCount > 1) { 	
+		if (fingerCount > 0) { 	
 			//speedUp();
 			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; speedsUp();
 				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
@@ -147,7 +148,7 @@ function fallingSpeed () {
 			//{speedingUp = 2; speedsUp(); Slowdown = 18000; }
 			
 		}
-	    else if (fingerCount < 2) {
+	    else if (fingerCount < 1) {
 	//    	slowDown();
 			//if (Slowdown > 0) {speedDown(); yield;}
 			//Slowdown = 0;

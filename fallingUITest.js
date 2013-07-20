@@ -35,6 +35,8 @@ var level2 : String = "Falling-scene2";
 var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
+static var holdingPauseButton : boolean = false;
+
 private var savedTimeScale:float;
 //var x:float;
 //var y:float;
@@ -83,6 +85,8 @@ function Start () {
 	pauseButton.pixelsFromTopRight( 5, 5 );
 	pauseButton.highlightedTouchOffsets = new UIEdgeOffsets(30);
 	pauseButton.onTouchUpInside += PauseGameCheck;
+	pauseButton.onTouchDown += setHoldingPauseButtonTrue;
+	pauseButton.onTouchUp += setHoldingPauseButtonFalse;
 
 	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
@@ -272,6 +276,7 @@ function UnPauseGame(resume : boolean) {
 	loadNewLevelButton.hidden = true;
 	openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
+	holdingPauseButton = false;
     }
     
 function IsGamePaused() {
@@ -279,6 +284,9 @@ function IsGamePaused() {
 }
 
 function PauseGameCheck() {
+
+	holdingPauseButton = true;
+	
 	if (FallingPlayer.isPausable == true) {
 		if (Time.timeScale == 0) {
 	//	if (AudioListener.pause == true) {
@@ -553,4 +561,12 @@ function PauseGameBackgroundCheck() {
 			PauseGameNow();
 		}
 	}
+}
+
+function setHoldingPauseButtonTrue() {
+	holdingPauseButton = true;
+}
+
+function setHoldingPauseButtonFalse() {
+	holdingPauseButton = false;
 }
