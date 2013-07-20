@@ -88,6 +88,8 @@ function Start () {
 	pauseButton.onTouchDown += setHoldingPauseButtonTrue;
 	pauseButton.onTouchUp += setHoldingPauseButtonFalse;
 
+	holdingPauseButton = false;
+
 	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
 	rightArrow.onTouchUpInside += PauseGameCheck;
