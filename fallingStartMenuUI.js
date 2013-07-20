@@ -35,6 +35,11 @@ var aboutToLoad : boolean = false;
 var sceneAudio : AudioListener;
 var fadeTime : float = 1.0;
 
+var bgCamera : Camera;
+
+var bgColor1 : Color;
+var bgColor2 : Color = Color.red;
+
 function Start () {
 //  yield WaitForSeconds(0.5f);
 
@@ -46,6 +51,9 @@ function Start () {
 //	Screen.orientation = ScreenOrientation.LandscapeRight;}
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
 	Camera.main.SendMessage("fadeIn");
+
+	bgColor1 = bgCamera.backgroundColor;
+
     bgSpriteStart = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSpriteStart.positionCenter();
 	bgSpriteStart.scaleTo( 0.0001f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
@@ -183,9 +191,20 @@ function ShowTiltWarning() {
 function Update () {
 	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .4) && (Mathf.Abs(Input.acceleration.y) < .4)) {
 		CheckTiltAngle();
+		bgCamera.backgroundColor = bgColor1;
 	}
 	else if (canShowStart == true) {
 		ShowTiltWarning();
+
+    	var duration = 1.0;
+    	        
+        bgCamera.backgroundColor = Color.Lerp (bgColor1, bgColor2, 1.0);
+
+    	//var t : float = Mathf.Repeat (Time.time, duration) / duration;        
+        
+        //var t : float = Mathf.PingPong (Time.time, duration) / duration;
+        //bgCamera.backgroundColor = Color.Lerp (bgColor1, bgColor2, t);
+
 	}
 //	Debug.Log ("your input accel y is " + Input.acceleration.y + " and input accel x is " + Input.acceleration.x);
 }
