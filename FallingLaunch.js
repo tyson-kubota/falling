@@ -69,6 +69,10 @@ function Awake () {
 			}
 		}
 		
+		if (!Input.gyro.enabled) {
+			Debug.Log("Your device doesn't have a gyroscope...");
+		}
+
 	//	if ((iOSGen && 
 	//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
 		
@@ -77,6 +81,7 @@ function Awake () {
 		DontDestroyOnLoad (this);
 		alreadyLaunched = true;
 		Application.targetFrameRate = targetFPS;
+		
 		Application.LoadLevel("Falling-scene-menu");
 	}
 	else {
