@@ -136,11 +136,13 @@ function fallingSpeed () {
 	fingerCount = 0;
 	
 	if (FallingPlayer.isAlive == 1 && FallingPlayer.isPausable == true) {
-	    for (touch in Input.touches) {
-	    	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
+	    //for (touch in Input.touches) {
+	    //	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
+	    for (var i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {	    		
 	    		fingerCount++;
 
-				if (pauseButtonArea.Contains(touch.position)) {
+				if (pauseButtonArea.Contains(Input.GetTouch(i).position)) {
 					// Debug.Log("Returning!");
 					return;
 				}
