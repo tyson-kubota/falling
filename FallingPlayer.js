@@ -64,6 +64,8 @@ var audioScore : AudioSource;
 var audioDeath : AudioSource;
 var audioLevelEnd : AudioSource;
 
+private var myTransform : Transform;
+
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
 
@@ -71,12 +73,13 @@ function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
 //}
+	myTransform = transform;
 }
 
 function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-	startingCameraFarClipPlane = transform.FindChild("Camera").camera.farClipPlane;
+	startingCameraFarClipPlane = myTransform.FindChild("Camera").camera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
   	lifeStartTime = Time.time;
@@ -149,7 +152,7 @@ function DeathRespawn () {
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
 	collider.attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
-	transform.position = respawnPosition; // + Vector3.up;
+	myTransform.position = respawnPosition; // + Vector3.up;
 //	Camera.main.SendMessage("fadeIn");
 
   	FadeAudio (fadeTime, FadeDir.In);
@@ -172,8 +175,8 @@ function changeLevelBackdrop () {
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 //	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	transform.FindChild("Camera").camera.farClipPlane = startingCameraFarClipPlane;
-	transform.FindChild("plane-close").renderer.materials = [origMat];
+  	myTransform.FindChild("Camera").camera.farClipPlane = startingCameraFarClipPlane;
+	myTransform.FindChild("plane-close").renderer.materials = [origMat];
 	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});			   	
 	}
 	   		   	
@@ -189,7 +192,7 @@ function playerTilt () {
 	
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation
-	    transform.rotation = Quaternion.Lerp(transform.rotation, target,
+	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,
 	                                   Time.deltaTime * smooth);  
     }
 }	 
@@ -249,7 +252,7 @@ function OnCollisionEnter (collision : Collision) {
   		
   		if (audioDeath) {audioDeath.Play();}
   		
-  		GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
+  		GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, myTransform.position);
   		
   		//var deathCollideEvent : GAEvent = new GAEvent("Death", "Collision", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
 		//GoogleAnalytics.instance.Add(deathCollideEvent);
@@ -290,7 +293,7 @@ function OnTriggerEnter (other : Collider) {
   	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	
-	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
+	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, myTransform.position);
 	TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
 	
 	// to keep you from dying after you strike the levelend trigger
