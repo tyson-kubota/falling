@@ -5,15 +5,14 @@
 //--------------------------------------------------------------------
 
 public var fadeOutTexture : Texture2D;
-public var fadeSpeed = 0.3;
-//var canFade : boolean = false;
-var drawDepth = -1000;
+public var fadeSpeed = 0.5;
+var drawDepth = -1001;
 
 //--------------------------------------------------------------------
 //                       Private variables
 //--------------------------------------------------------------------
 
-private var alpha = 0.0; 
+private var alpha = 0.1; 
 
 private var fadeDir = -1;
 //private var fadeDirHalf = .5;
@@ -38,21 +37,17 @@ function OnGUI(){
 
 //--------------------------------------------------------------------
 
-function fadeIn(){
+function fadeInAlt(){
     fadeDir = -1;   
 }
 
 //--------------------------------------------------------------------
 
-function fadeOut(){
+function fadeOutAlt(){
     fadeDir = 1;    
 }
 
 function Start(){
     alpha=1;
-    fadeIn();
-}
-
-function fadeOutHalf(){
-	fadeDir = .5;
+    fadeInAlt();
 }

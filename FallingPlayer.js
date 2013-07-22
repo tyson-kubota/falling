@@ -14,12 +14,16 @@ var changeBackdrop : changeBackdrop;
 changeBackdrop = GetComponent("changeBackdrop");
 var levelChangeBackdrop : boolean = false;
 
+var ScoreFlashTexture : GameObject;
+
+static var ScoreFlashTextureScript : GUITextureLaunch;
+ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
+
 public var force:float = 1.0;
 var dir : Vector3 = Vector3.zero;
-public var touchingSomething:boolean = false;
 
 enum FadeDir {In, Out}
-var fadeTime = 0.5;
+var fadeTime = 0.75;
 
 var origMat : Material;
 //var thisOceanCamera : Component;
@@ -29,35 +33,78 @@ var speed = 5.0;
 var target : Transform;
 var smooth = 2.0;
 var tiltAngle = 30.0;
-var flipMultiplier : int = 1;
+//var flipMultiplier : int = 1;
+//var flipMultiplier = FallingLaunch.flipMultiplier;
 
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-static var isAlive : boolean;
+static var isAlive : int = 0;
+isAlive = lifeCountdown.isAlive;
+
+static var lifeStartTime : float = 0;
+static var levelStartTime : float = 0;
+static var isNewGamePlus : String;
+  	  	
+static var isTiltable : boolean = true;
+
+static var isPausable : boolean = false;
+var isExitingLevel : boolean = false;
+
+var UIscriptName : GameObject;
+static var UIscriptComponent : fallingUITest;
+
+var clearDestroyedObjects : boolean = false;
+
+var whiteFader : FadeInOutAlt;
+var introComponent : IntroSequence1stPerson;
+introComponent = GetComponent("IntroSequence1stPerson");
+
+var audioScore : AudioSource;
+var audioDeath : AudioSource;
+var audioLevelEnd : AudioSource;
+
+private var myTransform : Transform;
+
+private var BackdropMist : GameObject;
+BackdropMist = transform.FindChild("Cylinder").gameObject;
 
 function Awake() {
-	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+//	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
-}
+//}
+	myTransform = transform;
 }
 
 function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
-
+	startingCameraFarClipPlane = myTransform.FindChild("Camera").camera.farClipPlane;
+  	isAlive = 1;
+  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
+  	lifeStartTime = Time.time;
+  	levelStartTime = Time.time;
+  	isExitingLevel = false;
+  	FallingLaunch.thisLevel = Application.loadedLevelName;
+	FallingLaunch.thisLevelArea = "0-start";
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
- 
-// for Unity 4's autorotation  	 	
-  		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-//			flipMultiplier = -1;
-}
-	
+	isPausable = false;  
+	rigidbody.isKinematic = false;
+	if (!introComponent) {
+	UIscriptComponent.UnhideGUI();
+	}
+	introFade();
 }
 
+function introFade() {
+	// this disables (unchecks) the script FadeInOutAlt after three seconds,
+	// so OnGui is only called at the start of each level load.
+	yield WaitForSeconds (3);
+	whiteFader = Camera.main.GetComponent(FadeInOutAlt);
+	whiteFader.enabled = false;
+}
 
 function FadeAudio (timer : float, fadeType : FadeDir) {
 
@@ -75,27 +122,49 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 
 
 function DeathRespawn () {
+	isPausable = false;
+	rigidbody.isKinematic = true;
+	lifeStartTime = Time.time;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
-  	Camera.main.SendMessage("fadeOut");
-  	isAlive = true;
+	
+	UIscriptComponent.fadeOut();
+// 	Camera.main.SendMessage("fadeOut");
 
 	if (levelChangeBackdrop == true) {
 		changeLevelBackdrop ();
 	}
 	
 //	fadeOutAudio ();
-  	FadeAudio ((fadeTime/2), FadeDir.Out);
+  	FadeAudio ((fadeTime), FadeDir.Out);
   	      
-    gameObject.SendMessage ("ResetScore", 0);
+    script.ResetScore(0);
+
   	yield WaitForSeconds(1);
+
+//	if you want to clear destroyed projectiles...
+	if (clearDestroyedObjects == true) {
+  		Resources.UnloadUnusedAssets();
+	}
+
+	isAlive = 1;
+	RenderSettings.fogEndDistance = startingFogEndDistance;
+  	
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
 	collider.attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
-	transform.position = respawnPosition; // + Vector3.up;
-	Camera.main.SendMessage("fadeIn");
+	myTransform.position = respawnPosition; // + Vector3.up;
+//	Camera.main.SendMessage("fadeIn");
+
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
- }   	
+	rigidbody.isKinematic = false;
+//   	isAlive = 1;
+	
+	MoveController.controlMultiplier = 1;
+
+   	UIscriptComponent.fadeIn(true);
+   	lerpControlIn(3);
+}   	
 
 function changeLevelBackdrop () {
   	changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
@@ -104,60 +173,138 @@ function changeLevelBackdrop () {
 	changeBackdrop.endSphereRenderer.enabled = false;
 
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
-	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
+//	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	gameObject.Find("Camera").camera.farClipPlane = startingCameraFarClipPlane;
-	transform.Find("plane-close").renderer.materials = [origMat];
-	var BackdropMist = gameObject.Find("Cylinder");
-	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});
-			   	
+  	myTransform.FindChild("Camera").camera.farClipPlane = startingCameraFarClipPlane;
+	myTransform.FindChild("plane-close").renderer.materials = [origMat];
+	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});			   	
 	}
 	   		   	
 function Update () {
-    var dir : Vector3 = Vector3.zero;
-
-// for unity 3.5.x
-//	var tiltAroundZ = (flipMultiplier * (-Input.acceleration.y * tiltAngle));
-//    var tiltAroundX = (flipMultiplier * (-Input.acceleration.x * tiltAngle));
-
-// a version for unity 4
-	var tiltAroundZ = (flipMultiplier * (Input.acceleration.x * tiltAngle));
-    var tiltAroundX = (flipMultiplier * (-Input.acceleration.y * tiltAngle));
-
-
-    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
-                // Dampen towards the target rotation
-    transform.rotation = Quaternion.Slerp(transform.rotation, target,
-                                   Time.deltaTime * smooth);  
-	  }
+	playerTilt ();
+}
 	  
-var deadlyObjectName : String = "DeathByFire";
-var initialRespawn : Respawn;	// set this to the initial respawn point for the level.
+function playerTilt () {
+	if (isTiltable == true) {
+	    var dir : Vector3 = Vector3.zero;
+		var tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle)), -tiltAngle, tiltAngle);
+	    var tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle)), -tiltAngle, tiltAngle);
+	
+	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
+	                // Dampen towards the target rotation
+	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,
+	                                   Time.deltaTime * smooth);  
+    }
+}	 
 
-// textfield to hold the score and score variable
-private var textfield:GUIText;
-private var score:int;
+function lerpControlIn(timer : float) {
+	
+	//Debug.Log("your flip multiplier is " + FallingLaunch.flipMultiplier);
+	//Debug.Log("your control multiplier is " + MoveController.controlMultiplier);
+    
+    var start = 0.0;
+    var end = MoveController.controlMultiplier;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        MoveController.controlMultiplier = Mathf.Lerp(start, end, i);
+        if (isAlive == 0) {MoveController.controlMultiplier = end; break;}        
+		yield;
+        
+        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = end; break;}        
+    	}
+    yield WaitForSeconds (timer);
+}
+
+function lerpControlOut(timer : float) {
+
+    var start = MoveController.controlMultiplier;
+    var end = 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        MoveController.controlMultiplier = Mathf.Lerp(start, end, i);
+        if (isAlive == 0) {MoveController.controlMultiplier = start; break;}        
+        
+        yield;
+
+        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = start; break;} 
+    	}
+    yield WaitForSeconds (timer);
+}
+	 
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
- Screen.sleepTimeout = 0.0f;
+// Screen.sleepTimeout = 0.0f;
 
-  if (collision.gameObject.CompareTag ("Death")) {
-	DeathRespawn ();
+  if (collision.gameObject.CompareTag ("Death") && isAlive == 1) {
+  	if (isPausable == true || collision.gameObject.layer == 17 ) {
+  		isAlive = 0;
+  		isPausable = false;
+  		lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+  		UIscriptComponent.HideGUI();
+  		FallingLaunch.secondsAlive = (Time.time - lifeStartTime);
+  		
+  		if (audioDeath) {audioDeath.Play();}
+  		
+  		GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, myTransform.position);
+  		
+  		//var deathCollideEvent : GAEvent = new GAEvent("Death", "Collision", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
+		//GoogleAnalytics.instance.Add(deathCollideEvent);
+		//GoogleAnalytics.instance.Dispatch();
+  		//Debug.Log("you died in the area " + FallingLaunch.thisLevelArea);
+  		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
+    	
+    	yield DeathRespawn ();
+		//isPausable = true;
+		//UIscriptComponent.UnhideGUI();
+	}
   }
+
 }
 
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){
 
 //  Debug.Log("You scored!"); 
-    Camera.main.SendMessage("flashOut");
+//    Camera.main.SendMessage("flashOut");
+	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
+
+	script.IncrementScore(6);
+	UIscriptComponent.flashProgressBar(1);
 	
-	gameObject.SendMessage ("IncrementScore", 10);
-	if (audio) {audio.Play();}
+	if (audioScore) {audioScore.Play();}
+	
 	yield WaitForSeconds(.2);
-  	Camera.main.SendMessage("flashUp");	  	
+
+//	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?
+
+//  Camera.main.SendMessage("flashUp");	  	
 	}
+	
+  if (other.gameObject.CompareTag ("LevelEnd") && isExitingLevel == false) {
+  	isExitingLevel = true;
+	isPausable = false;
+  	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
+	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
+	
+	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, myTransform.position);
+	TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
+	
+	// to keep you from dying after you strike the levelend trigger
+	script.IncrementScore(25);
+		
+	audioLevelEnd.Play();
+	lerpControlOut(3);
+	//yield WaitForSeconds (audioLevelEnd.clip.length - 3);
+	//yield WaitForSeconds (1);
+	UIscriptComponent.LevelComplete();
+  }	
 }
 			
 @script AddComponentMenu("Scripts/FallingPlayer")

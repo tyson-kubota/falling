@@ -1,86 +1,46 @@
 #pragma strict
 
-var customscore : GUIStyle;
-//var myscore = visibleScore.ToString();
-
-// Keep track of the players main score
+// Keep track of the player's main score
 static var currentScore : float = 20f;
 static var maxScore = 25f;
 
 // Keep track of the currently visible score
 static var visibleScore : float = 20f;
 
-// Animate score changes using iTween's ValueTo
-function AnimateVisibleScore () {
-
-    iTween.ValueTo ( gameObject,
-        {
-            "from" : visibleScore,
-            "to" : currentScore,
-            "onupdate" : "ChangeVisibleScore",
-            "time" : 1
-        }
-    );
-
+function Start() {
+	ResetScore (25);
 }
 
-function AnimateVisibleScoreNow () {
+function LerpVisibleScore (start : float, end : float, timer : float) {
 
-    iTween.ValueTo ( gameObject,
-        {
-            "from" : visibleScore,
-            "to" : currentScore,
-            "onupdate" : "ChangeVisibleScore",
-            "time" : 0.25
-        }
-    );
+    var i = 0.0;
+    var step = 1.0/timer;
 
+    while (i < 1.0) {
+        i += step * Time.deltaTime;
+        visibleScore = Mathf.Lerp(start, end, i);
+        yield;
+    }
 }
 
-// Change the currently visible score. Called every time iTween changes my
-// visibleScore variable
-function ChangeVisibleScore ( i : float ) {
-    visibleScore = i;
-}
-
-// Increment Score
 function IncrementScore ( i : float ) {
-    currentScore += i;
-    if (currentScore > maxScore) {
-    	currentScore = maxScore;
-    	}
-	AnimateVisibleScore ();
+	currentScore = (currentScore + i);
+    if (currentScore > maxScore) {currentScore = maxScore;}
 }
 
-// Increment Score immediately
-function IncrementScoreNow ( i : float ) {
-    currentScore += i;
-    if (currentScore > maxScore) {
-    	currentScore = maxScore;
- 	   	}    
-	AnimateVisibleScoreNow ();
-}
-
-// Decrement Score
 function DecrementScore ( i : float ) {
     currentScore -= i;
-	AnimateVisibleScore ();
-}
-
-// Decrement Score immediately
-function DecrementScoreNow ( i : float ) {
-    currentScore -= i;
-	AnimateVisibleScoreNow ();
+//	LerpVisibleScore(visibleScore, currentScore, i);
 }
 
 function ZeroScore ( i : float ) {
     currentScore = 0;
-//        currentScore = (currentScore - visibleScore);
-	AnimateVisibleScore ();
+//	AnimateVisibleScore ();
 }
 
-function ResetScore ( i : float ) {
-    currentScore = 20;
-//        currentScore = (currentScore - visibleScore);
-	AnimateVisibleScore ();
+function ScoreUpdate ( timer : float) {
+	LerpVisibleScore(visibleScore, currentScore, timer);
+//	Debug.Log("Your visibleScore is: " + visibleScore + " and your currentScore is: " + currentScore);
 }
+
+function ResetScore ( i : float ) {currentScore = maxScore;}
