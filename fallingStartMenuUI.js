@@ -28,6 +28,10 @@ var level2 : String = "Falling-scene2";
 var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
+var helpIcon1: UISprite;
+var helpIcon2: UISprite;
+var helpIcon3: UISprite;
+
 var aboutButtonStart : UIButton;
 
 private var savedTimeScale:float;
@@ -162,6 +166,18 @@ function Start () {
 // 	aboutButtonStart.onTouchUp += fadeOutAbout;	
 // 	aboutButtonStart.onTouchDown += fadeInAbout;
 	aboutButtonStart.hidden = true;
+
+	aboutButtonStart.onTouchUpInside += OpenHowTo;
+
+	helpIcon1 = UI.firstToolkit.addSprite( "tiltText.png", 0, 0, 0 );
+	helpIcon2 = UI.firstToolkit.addSprite( "spheresText.png", 0, 0, 0 );
+	helpIcon3 = UI.firstToolkit.addSprite( "boostText.png", 0, 0, 0 );
+	helpIcon1.positionFromTop(.3f);
+	helpIcon2.positionCenter();
+	helpIcon3.positionFromBottom(.3f);
+	helpIcon1.hidden = true;
+	helpIcon2.hidden = true;
+	helpIcon3.hidden = true;
 
  	yield WaitForSeconds (4);
 	bgSpriteStart.alphaTo( 3.0f, 0.85f, Easing.Sinusoidal.easeOut);
@@ -304,7 +320,11 @@ function BackToPauseMenu() {
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
-	
+
+	helpIcon1.hidden = true;
+	helpIcon2.hidden = true;
+	helpIcon3.hidden = true;
+
 //	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
 }
@@ -361,6 +381,22 @@ function FadeOutLevelButtons(timer : float) {
 	loadingLabel.alphaFromTo(.5, 0.0f, 1.0f, Easing.Quartic.easeIn);	
 	yield WaitForSeconds(.5);
 	
+}
+
+function OpenHowTo() {
+
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	aboutButtonStart.hidden = true;
+	
+	BackToPauseMenuButton.hidden = false;
+
+	helpIcon1.hidden = false;
+	helpIcon2.hidden = false;
+	helpIcon3.hidden = false;	
+	helpIcon1.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	helpIcon2.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	helpIcon3.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 }
 
 function LoadLevel1ViaStart() {
