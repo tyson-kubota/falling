@@ -4,8 +4,10 @@ var player : Transform = null;
 var maxDistance : float = 0f;
 var myTr : Transform = null;
 var aSource : AudioSource = null;
-var distance : float;
+private var distance : Vector3;
 var checkDistance : boolean = false;
+private var sqrDist : float;
+private var sqrRtDist : float;
 
 function Start () {
 	myTr = transform;
@@ -30,9 +32,13 @@ function OnTriggerExit (other : Collider) {
 
 function Update () {
 	if (checkDistance == true) {
-		distance = Vector3.Distance(myTr.position, player.position);
-		if (distance <= maxDistance) {
-			aSource.volume = Mathf.Abs((distance / maxDistance) - 1f);
+
+		//distance = Vector3.Distance(myTr.position, player.position);
+		distance = myTr.position - player.position;
+		sqrDist = distance.sqrMagnitude;
+		sqrRtDist = Mathf.Sqrt(sqrDist);
+		if (sqrDist <= maxDistance*maxDistance) {
+			aSource.volume = Mathf.Abs((sqrRtDist / maxDistance) - 1f);
 		}
 	}
 }
