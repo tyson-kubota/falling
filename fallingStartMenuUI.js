@@ -33,6 +33,14 @@ var helpIcon2: UISprite;
 var helpIcon3: UISprite;
 
 var aboutButtonStart : UIButton;
+var howToButton : UIButton;
+
+var boldText : UIText;
+var thinText : UIText;
+var text1 : UITextInstance;
+var text2 : UITextInstance;
+var text3 : UITextInstance;
+var openSiteButtonText : UIButton;
 
 private var savedTimeScale:float;
 
@@ -84,6 +92,48 @@ function Start () {
 	else {
 	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 	}
+
+	boldText = new UIText( "font-bold", "font-bold.png" );
+	thinText = new UIText( "font-thin", "font-thin.png" );
+		
+	boldText.alignMode = UITextAlignMode.Center;
+	boldText.verticalAlignMode = UITextVerticalAlignMode.Middle;
+    boldText.wrapMode = UITextLineWrapMode.MinimumLength;
+
+	thinText.alignMode = UITextAlignMode.Center;
+	thinText.verticalAlignMode = UITextVerticalAlignMode.Middle;
+    thinText.wrapMode = UITextLineWrapMode.None;
+
+	text1 = thinText.addTextInstance( "CREATED BY TYSON KUBOTA", 0, 0 );
+    //text1.positionFromTop(.3f);
+    //text1.positionFromCenter(-.1f,0f);
+    text1.pixelsFromCenter( -25, 0 );
+
+	text2 = boldText.addTextInstance( "tysonkubota.net/falling", 0, 0);
+    text2.positionCenter();
+
+	//text3 = thinText.addTextInstance( "Music by Evan Kubota\nTextures: nobiax\nSound effects: freesound.org", 0, 0 );
+    text3 = thinText.addTextInstance( "MUSIC BY EVAN KUBOTA\n\nSOUND EFFECTS: freesound.org", 
+	0, 0, 0.8f, 1, Color.white, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
+    text3.positionFromBottom(.3f);
+
+	//var wrapText = new UIText( "font-thin", "font-thin.png" );
+	//wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
+	//wrapText.lineWrapWidth = 100.0f;
+	//var textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.\n\nAnd manual L/B.", 
+	//0, 0, 0.5f, 1, Color.white, UITextAlignMode.Left, UITextVerticalAlignMode.Bottom );
+    //textWrap1.positionFromBottomLeft( 0.05f, 0.05f );
+	
+	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
+	openSiteButtonText.positionFromCenter(0,0);
+	openSiteButtonText.hidden = true;
+	openSiteButtonText.onTouchUpInside += OpenFallingSite;	
+	openSiteButtonText.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+	openSiteButtonText.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+	
+	text1.hidden = true;
+	text2.hidden = true;
+	text3.hidden = true;
 
 	tiltWarning = UIButton.create("tiltwarning.png","tiltwarning.png", 0, 0);
 	tiltWarning.positionFromTop(buttonScaleFactor);
@@ -161,13 +211,19 @@ function Start () {
 	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.centerize();
-	aboutButtonStart.positionFromBottom(.05f);
-//	aboutButtonStart.onTouchUpInside += OpenAbout;
+	aboutButtonStart.positionFromBottomLeft(.05f, .05f);	
+	aboutButtonStart.onTouchUpInside += OpenAbout;
 // 	aboutButtonStart.onTouchUp += fadeOutAbout;	
 // 	aboutButtonStart.onTouchDown += fadeInAbout;
 	aboutButtonStart.hidden = true;
 
-	aboutButtonStart.onTouchUpInside += OpenHowTo;
+	howToButton = UIButton.create("howToPlayWhite.png","howToPlayWhite.png", 40, 40);
+	howToButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	howToButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	howToButton.centerize();
+	howToButton.positionFromBottomRight(.05f, .05f);	
+	howToButton.onTouchUpInside += OpenHowTo;
+	howToButton.hidden = true;
 
 	helpIcon1 = UI.firstToolkit.addSprite( "tiltText.png", 0, 0, 0 );
 	helpIcon2 = UI.firstToolkit.addSprite( "spheresText.png", 0, 0, 0 );
@@ -192,9 +248,11 @@ function ShowStart() {
 	rightArrow.hidden = false;
 	leftArrow.hidden = false;
 	aboutButtonStart.hidden = false;
+	howToButton.hidden = false;
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	howToButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
 }
 
@@ -292,6 +350,7 @@ function LevelSelect() {
 	rightArrow.hidden = true;
 	pauseButton.hidden = true;
 	aboutButtonStart.hidden = true;
+	howToButton.hidden = true;
 
 	openSiteButton.hidden = false;
 
@@ -310,6 +369,7 @@ function BackToPauseMenu() {
 	leftArrow.hidden = false;
 	rightArrow.hidden = false;
 	aboutButtonStart.hidden = false;
+	howToButton.hidden = false;
 
 //	pauseButton.hidden = false;
 	openSiteButton.hidden = true;
@@ -324,6 +384,11 @@ function BackToPauseMenu() {
 	helpIcon1.hidden = true;
 	helpIcon2.hidden = true;
 	helpIcon3.hidden = true;
+
+	text1.hidden = true;
+	text2.hidden = true;
+	text3.hidden = true;
+	openSiteButtonText.hidden = true;
 
 //	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
@@ -364,6 +429,7 @@ function FadeOutLevelButtons(timer : float) {
 	rightArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	leftArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	aboutButtonStart.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	//rightArrow.hidden = true;
 	//leftArrow.hidden = true;
 	openSiteButton.hidden = true;
@@ -388,6 +454,7 @@ function OpenHowTo() {
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	aboutButtonStart.hidden = true;
+	howToButton.hidden = true;
 	
 	BackToPauseMenuButton.hidden = false;
 
@@ -397,6 +464,25 @@ function OpenHowTo() {
 	helpIcon1.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	helpIcon2.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	helpIcon3.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+}
+
+function OpenAbout() {
+
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	aboutButtonStart.hidden = true;
+	howToButton.hidden = true;
+
+	BackToPauseMenuButton.hidden = false;
+
+	openSiteButtonText.hidden = false;
+	text1.hidden = false;
+	text2.hidden = false;
+	text3.hidden = false;
+	text1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	text2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
+
 }
 
 function LoadLevel1ViaStart() {
@@ -426,6 +512,10 @@ function LoadLevel4ViaStart() {
 
 function OpenSite() {
 	Application.OpenURL ("http://tysonkubota.net/");
+}
+
+function OpenFallingSite() {
+	Application.OpenURL ("http://tysonkubota.net/falling");
 }
 
 function HideGUI() {
@@ -464,6 +554,7 @@ function fadeInPauseMenu() {
 	rightArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
 	leftArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
 	aboutButtonStart.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	howToButton.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 }
 
 function downLevel1() {
