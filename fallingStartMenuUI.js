@@ -515,7 +515,7 @@ function OpenSite() {
 }
 
 function OpenFallingSite() {
-	Application.OpenURL ("http://tysonkubota.net/falling");
+	Application.OpenURL ("http://tysonkubota.net/falling?utm_source=falling-game&utm_medium=ios&utm_campaign=falling-gui");
 }
 
 function HideGUI() {
