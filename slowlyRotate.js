@@ -4,7 +4,7 @@ var dir:float = 1;
 var shouldRotate : boolean = false;
 private var myTransform : Transform = null;
 
-function Start () 
+function Start () {
 	myTransform = transform;
 }
 

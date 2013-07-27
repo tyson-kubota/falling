@@ -202,10 +202,10 @@ function Start () {
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
 	
-	openSiteButton = UIButton.create("website.png","website.png", 40, 40);
-	openSiteButton.positionFromBottomRight(.05f, .05f);	
-	openSiteButton.onTouchUpInside += OpenSite;
-	openSiteButton.hidden = true;
+	// openSiteButton = UIButton.create("website.png","website.png", 40, 40);
+	// openSiteButton.positionFromBottomRight(.05f, .05f);	
+	// openSiteButton.onTouchUpInside += OpenSite;
+	// openSiteButton.hidden = true;
 
 	aboutButtonStart = UIButton.create("aboutWhite.png","aboutWhite.png", 40, 40);
 	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
@@ -304,7 +304,7 @@ function PauseGame() {
 		leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
-		openSiteButton.hidden = false;
+		//openSiteButton.hidden = false;
 			    
 	    savedTimeScale = Time.timeScale;
 //		scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
@@ -325,7 +325,7 @@ function UnPauseGame(resume : boolean) {
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	loadNewLevelButton.hidden = true;
-	openSiteButton.hidden = true;
+	//openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
     }
     
@@ -352,7 +352,7 @@ function LevelSelect() {
 	aboutButtonStart.hidden = true;
 	howToButton.hidden = true;
 
-	openSiteButton.hidden = false;
+	//openSiteButton.hidden = false;
 
 	loadLevelOne.hidden = false;
 	loadLevelTwo.hidden = false;
@@ -372,7 +372,7 @@ function BackToPauseMenu() {
 	howToButton.hidden = false;
 
 //	pauseButton.hidden = false;
-	openSiteButton.hidden = true;
+	//openSiteButton.hidden = true;
 	
 	fadeInPauseMenu();
 		
@@ -432,7 +432,7 @@ function FadeOutLevelButtons(timer : float) {
 	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	//rightArrow.hidden = true;
 	//leftArrow.hidden = true;
-	openSiteButton.hidden = true;
+	//openSiteButton.hidden = true;
 	
 	yield WaitForSeconds(timer);
 	
@@ -461,9 +461,9 @@ function OpenHowTo() {
 	helpIcon1.hidden = false;
 	helpIcon2.hidden = false;
 	helpIcon3.hidden = false;	
-	helpIcon1.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	helpIcon2.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	helpIcon3.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	helpIcon1.alphaFromTo(.5f, 0.0f, 0.9f, Easing.Sinusoidal.easeOut);
+	helpIcon2.alphaFromTo(.75f, 0.0f, 0.9f, Easing.Sinusoidal.easeInOut);
+	helpIcon3.alphaFromTo(1.5f, 0.0f, 0.9f, Easing.Sinusoidal.easeInOut);
 }
 
 function OpenAbout() {
