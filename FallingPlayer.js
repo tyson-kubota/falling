@@ -61,8 +61,11 @@ var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
 
 var audioScore : AudioSource;
+var audioScoreAlt : AudioSource;
 var audioDeath : AudioSource;
 var audioLevelEnd : AudioSource;
+var myVol : float;
+var peakVol : float;
 
 private var myTransform : Transform;
 
@@ -88,6 +91,8 @@ function Start() {
   	FallingLaunch.thisLevel = Application.loadedLevelName;
 	FallingLaunch.thisLevelArea = "0-start";
 	AudioListener.pause = false;
+	myVol = audioScore.volume;
+	peakVol = audioScore.volume;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = false;  
@@ -182,6 +187,7 @@ function changeLevelBackdrop () {
 	   		   	
 function Update () {
 	playerTilt ();
+	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
 }
 	  
 function playerTilt () {
@@ -278,7 +284,16 @@ function OnTriggerEnter (other : Collider) {
 	script.IncrementScore(6);
 	UIscriptComponent.flashProgressBar(1);
 	
-	if (audioScore) {audioScore.Play();}
+	if (audioScore) {
+		//Debug.Log(Random.Range(0,2));
+		var clipToPlay : int = Random.Range(0, 2);
+		var audioToPlay : AudioSource;
+		if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
+		else {audioToPlay = audioScore;}
+		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
+		audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
+		audioToPlay.Play();
+	}
 	
 	yield WaitForSeconds(.2);
 

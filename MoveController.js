@@ -12,6 +12,7 @@ private var myTransform : Transform;
 private var startTime : float;
 
 static var Slowdown : int = 0;
+static var maxSlowdown : float = 18000.0;
 var speed : float = 2.4;
 static var isSlowing : boolean = false;
 static var speedingUp : int = 1;
@@ -102,7 +103,7 @@ function SmoothSlowdown () {
 	isSlowing = true;    
     iTween.ValueTo ( gameObject,
         {
-            "from" : 18000,
+            "from" : maxSlowdown,
             "to" : 0,
             "onupdate" : "ChangeSpeed",
             "time" : 1,
@@ -159,11 +160,11 @@ function fallingSpeed () {
 			
 		if (fingerCount > 0) { 	
 			//speedUp();
-			if (Slowdown < 1) {speedingUp = 2; Slowdown = 18000; speedsUp();
+			if (Slowdown < 1) {speedingUp = 2; Slowdown = maxSlowdown; speedsUp();
 				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
 			}
 			//if (Slowdown < 1) 
-			//{speedingUp = 2; speedsUp(); Slowdown = 18000; }
+			//{speedingUp = 2; speedsUp(); Slowdown = maxSlowdown; }
 			
 		}
 	    else if (fingerCount < 1) {
@@ -211,7 +212,7 @@ function speedsUp () {
 }
 
 function speedUp () {
-		Slowdown = 18000;        
+		Slowdown = maxSlowdown;        
 		Camera.main.SendMessage("speedLinesUp");
 //		SendMessage is slow; rephrase if I ever use this speedUp method again.
 
