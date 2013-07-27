@@ -363,6 +363,7 @@ function LevelSelect() {
 	
 	loadNewLevelButton.hidden = true;	
 	BackToPauseMenuButton.hidden = false;
+	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);	
 }
 
 function BackToPauseMenu() {
@@ -371,7 +372,10 @@ function BackToPauseMenu() {
 	aboutButtonStart.hidden = false;
 	howToButton.hidden = false;
 
-//	pauseButton.hidden = false;
+	aboutButtonStart.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	howToButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+
+	//pauseButton.hidden = false;
 	//openSiteButton.hidden = true;
 	
 	fadeInPauseMenu();
@@ -457,6 +461,7 @@ function OpenHowTo() {
 	howToButton.hidden = true;
 	
 	BackToPauseMenuButton.hidden = false;
+	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 
 	helpIcon1.hidden = false;
 	helpIcon2.hidden = false;
@@ -474,7 +479,8 @@ function OpenAbout() {
 	howToButton.hidden = true;
 
 	BackToPauseMenuButton.hidden = false;
-
+	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	
 	openSiteButtonText.hidden = false;
 	text1.hidden = false;
 	text2.hidden = false;
@@ -544,10 +550,10 @@ function fadeOutLeftArrow() {
 }
 
 function fadeInLoadNewLevels() {
-	loadLevelOne.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	loadLevelTwo.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	loadLevelThree.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	loadLevelFour.alphaFromTo(.25f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelOne.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelTwo.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelThree.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelFour.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 }
 
 function fadeInPauseMenu() {
