@@ -12,6 +12,14 @@ var textHeight : int;
 var homeLevel : String = "Falling-scene-menu";
 var level1 : String = "Falling-scene-tutorial";
 
+var boldText : UIText;
+var thinText : UIText;
+var text1 : UITextInstance;
+var text2 : UITextInstance;
+var text3 : UITextInstance;
+var openSiteButtonText : UIButton;
+var BackToEndMenuButton : UIButton;
+
 function Start () {
 
 	textHeight = (UI.isHD == true) ? 18 : 18;
@@ -24,7 +32,7 @@ function Start () {
 	aboutButton.pixelsFromBottomLeft(textHeight, textHeight);
 	aboutButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-//	aboutButton.onTouchUpInside += OpenAbout;
+	aboutButton.onTouchUpInside += OpenAbout;
 	aboutButton.onTouchUp += fadeOutAbout;	
 	aboutButton.onTouchDown += fadeInAbout;
 	aboutButton.hidden = true;
@@ -52,6 +60,48 @@ function Start () {
 	homeButton.hidden = true;
 //	homeButton.alphaTo( 0.01f, 0.5f, Easing.Sinusoidal.easeOut);
 
+	BackToEndMenuButton = UIButton.create("back.png","back.png", 40, 40);
+	BackToEndMenuButton.positionFromBottomLeft(.05f, .05f);
+	BackToEndMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToEndMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToEndMenuButton.onTouchUpInside += BackToEndMenu;	
+	BackToEndMenuButton.hidden = true;
+
+	boldText = new UIText( "font-bold", "font-bold.png" );
+	thinText = new UIText( "font-thin", "font-thin.png" );
+		
+	boldText.alignMode = UITextAlignMode.Center;
+	boldText.verticalAlignMode = UITextVerticalAlignMode.Middle;
+    boldText.wrapMode = UITextLineWrapMode.MinimumLength;
+
+	thinText.alignMode = UITextAlignMode.Center;
+	thinText.verticalAlignMode = UITextVerticalAlignMode.Middle;
+    thinText.wrapMode = UITextLineWrapMode.None;
+
+	text1 = thinText.addTextInstance( "CREATED BY TYSON KUBOTA", 0, 0 );
+    //text1.positionFromTop(.3f);
+    //text1.positionFromCenter(-.1f,0f);
+    text1.pixelsFromCenter( -25, 0 );
+
+	text2 = boldText.addTextInstance( "tysonkubota.net/falling", 0, 0);
+    text2.positionCenter();
+
+	//text3 = thinText.addTextInstance( "Music by Evan Kubota\nTextures: nobiax\nSound effects: freesound.org", 0, 0 );
+    text3 = thinText.addTextInstance( "MUSIC BY EVAN KUBOTA\n\nSOUND EFFECTS: freesound.org", 
+	0, 0, 0.8f, 1, Color.white, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
+    text3.positionFromBottom(.3f);
+
+	text1.hidden = true;
+	text2.hidden = true;
+	text3.hidden = true;
+
+	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
+	openSiteButtonText.positionFromCenter(0,0);
+	openSiteButtonText.onTouchUpInside += OpenFallingSite;	
+	openSiteButtonText.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+	openSiteButtonText.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+	openSiteButtonText.hidden = true;
+
 }
 
 function ShowEndGameUI() {
@@ -72,6 +122,20 @@ function ShowEndGameUI() {
 	// add anything else that requires main uitoolkit instance
 }
 
+
+function ReturnEndGameUI() {
+	aboutButton.hidden = false;
+	continueButton.hidden = false;
+	homeButton.hidden = false;
+	endGameSprite.hidden = false;
+
+	aboutButton.alphaFromTo( 1.5f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
+	continueButton.alphaFromTo( 1.5f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
+	homeButton.alphaFromTo( 1.5f, 0.0f, 0.5f, Easing.Sinusoidal.easeIn);
+	endGameSprite.alphaFromTo( 1.0f, 0f, 0.25f, Easing.Sinusoidal.easeInOut);
+	
+	EndMenuLogoCamera.GetComponent(Camera).enabled = true;
+}
 
 function LoadHome() {
 
@@ -111,6 +175,39 @@ function continueLevel() {
 	Application.LoadLevel(level1);
 }
 
+function OpenAbout() {
+
+	aboutButton.hidden = true;
+	continueButton.hidden = true;
+	homeButton.hidden = true;
+	endGameSprite.hidden = true;
+
+	BackToEndMenuButton.hidden = false;
+	BackToEndMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	
+	EndMenuLogoCamera.GetComponent(Camera).enabled = false;
+
+	openSiteButtonText.hidden = false;
+	text1.hidden = false;
+	text2.hidden = false;
+	text3.hidden = false;
+	text1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	text2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
+
+}
+
+function BackToEndMenu() {
+
+	BackToEndMenuButton.hidden = true;
+
+	text1.hidden = true;
+	text2.hidden = true;
+	text3.hidden = true;
+
+	ReturnEndGameUI();
+}
+
 function fadeInAbout() {
 	aboutButton.alphaTo( .05f, 1.0f, Easing.Sinusoidal.easeOut);
 }
@@ -132,4 +229,8 @@ function fadeOutHome() {
 
 function fadeOutContinue() {
 	continueButton.alphaTo( .25f, 0.5f, Easing.Sinusoidal.easeOut);
+}
+
+function OpenFallingSite() {
+	Application.OpenURL ("http://tysonkubota.net/falling?utm_source=falling-game&utm_medium=ios&utm_campaign=falling-gui");
 }
