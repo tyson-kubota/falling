@@ -166,10 +166,16 @@ function DeathRespawn () {
 //   	isAlive = 1;
 	
 	MoveController.controlMultiplier = 1;
-
-   	UIscriptComponent.fadeIn(true);
+   	
    	lerpControlIn(3);
+   	yield UIscriptComponent.fadeIn(true);
 }   	
+
+function ShowHelpAfterDeath() {
+   	if (introComponent) {
+	introComponent.DeathHelp();
+	}
+}
 
 function changeLevelBackdrop () {
   	changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;

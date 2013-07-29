@@ -87,3 +87,8 @@ function tutorialSpritePosition(timer : float) {
 	yield WaitForSeconds (2);
 	tutorialSprite.hidden = true;
 }
+
+function ShowHelpAfterDeath() {
+		fallingIntroUIComponent.ShowIcon(helpIcon, 2, tutorialSprite);
+		tutorialSpritePosition(2);
+}

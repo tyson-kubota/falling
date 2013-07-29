@@ -68,7 +68,7 @@ function TickingAway (delay : float) {
 		   	//GoogleAnalytics.instance.Dispatch();
 		   	
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
-
+			GetComponent(FallingPlayer).ShowHelpAfterDeath();
 			// GameAnalytics syntax: GA.API.Design.NewEvent(String eventName, float eventValue, Vector3 trackPosition); 
 
 		}

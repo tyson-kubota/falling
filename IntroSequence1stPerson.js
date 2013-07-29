@@ -3,6 +3,7 @@
 var PlayerController : MoveController;
 var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
+var DeathGUITrigger : IntroUITrigger;
 var destructible : ProjectileDestroy;
 var shardColor : Color;
 
@@ -64,4 +65,8 @@ function EndIntro () {
         shard.renderer.material.color = Color.Lerp(start, end, i);
         yield;
     	}
+}
+
+function DeathHelp() {
+	DeathGUITrigger.ShowHelpAfterDeath();
 }
