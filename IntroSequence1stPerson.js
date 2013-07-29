@@ -48,6 +48,7 @@ function EndIntro () {
         destructible = shard.GetComponent(ProjectileDestroy);
     	shard.rigidbody.isKinematic = false;
     	//yield WaitForSeconds(.25);
+    	if (shard.audio) {shard.audio.Play();}
     	shard.renderer.enabled = true;
     	destructible.enabled = true;
     }
