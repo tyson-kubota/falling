@@ -287,18 +287,18 @@ function OnTriggerEnter (other : Collider) {
 	if (audioScore) {
 		//Debug.Log(Random.Range(0,2));
 		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
-		var clipToPlay : float = Random.Range(0.4f, 0.9f);
+		var clipToPlay : float = Random.Range(0.3f, 0.9f);
 		var audioToPlay : AudioSource;
 		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
 		if (clipToPlay > 0.6f) {
 			audioToPlay = audioScore;
-			audioToPlay.pan = -clipToPlay;
-			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .7), peakVol);
+			audioToPlay.pan = (-clipToPlay/2);
+			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .6), peakVol);
 		}
 		else {
 			audioToPlay = audioScoreAlt;
 			audioToPlay.volume = clipToPlay;
-			audioToPlay.pan = clipToPlay;
+			audioToPlay.pan = (clipToPlay/2);
 		}
 		
 		//audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
