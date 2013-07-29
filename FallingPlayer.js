@@ -286,16 +286,26 @@ function OnTriggerEnter (other : Collider) {
 	
 	if (audioScore) {
 		//Debug.Log(Random.Range(0,2));
-		var clipToPlay : int = Random.Range(0, 2);
-		var audioToPlay : AudioSource;
-		if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
-		else {audioToPlay = audioScore;}
 		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
-		audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
+		var clipToPlay : float = Random.Range(0.4f, 0.9f);
+		var audioToPlay : AudioSource;
+		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
+		if (clipToPlay > 0.6f) {
+			audioToPlay = audioScore;
+			audioToPlay.pan = -clipToPlay;
+			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .7), peakVol);
+		}
+		else {
+			audioToPlay = audioScoreAlt;
+			audioToPlay.volume = clipToPlay;
+			audioToPlay.pan = clipToPlay;
+		}
+		
+		//audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
 		audioToPlay.Play();
 	}
 	
-	yield WaitForSeconds(.2);
+	//yield WaitForSeconds(.2);
 
 //	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?
 
