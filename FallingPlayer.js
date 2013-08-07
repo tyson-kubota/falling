@@ -171,7 +171,7 @@ function DeathRespawn () {
    	yield UIscriptComponent.fadeIn(true);
 }   	
 
-function ShowHelpAfterDeath() {
+function ShowDeathHelp() {
    	if (introComponent) {
 	introComponent.DeathHelp();
 	}
