@@ -86,9 +86,6 @@ if (FallingPlayer.isAlive == 1) {
 	//dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
 	//dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
 
-	dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
-
 	dir.x = Mathf.Clamp(dir.x, -2.0, 2.0);
 	dir.z = Mathf.Clamp(dir.z, -2.0, 2.0);
 
@@ -96,40 +93,18 @@ if (FallingPlayer.isAlive == 1) {
 	// .:. not necessary in fixedupdate
     // dir *= Time.deltaTime;
     // print("Your dir is: " + dir);     
-
-    //var angle = 0.0;
-	//var axis = Vector3.zero;
-	//transform.rotation.ToAngleAxis(angle, axis);
-	
-	//var targetRot = OVRCamera.globalRot.eulerAngles;	
-    //Debug.Log(targetRot.x + ", " + targetRot.z);
-    //var angle : float = Quaternion.Angle(Quaternion.identity, OVRCamera.globalRot);
-    
-    //dir.x = targetRot.x/360;
-    //dir.z = targetRot.z/360;
-    
-    //dir.x = ( 4 * (Quaternion.Dot (OVRCamera.globalRot, Quaternion.AngleAxis(90, Vector3.up)) - .5));
-    //dir.z = ( 4 * (Quaternion.Dot (OVRCamera.globalRot, Quaternion.AngleAxis(90, Vector3.left)) - 0));
+ 
     var targetDir = transform.up - oculusCameraTarget.forward;
-	//var angle = Vector3.Angle(targetDir, transform.up);
 	var angleUpDown = (Quaternion.Dot (OVRCamera.globalRot, Quaternion.AngleAxis(90, Vector3.left)));
-	//var angleSideToSide = 0;
 	var angleSideToSide = (Quaternion.Dot (OVRCamera.globalRot, Quaternion.AngleAxis(180, Vector3.up)));
 	
-	Debug.Log(angleUpDown + " and " + angleSideToSide );	
+	//Debug.Log(angleUpDown + " and " + angleSideToSide );	
 	
 	dir.x = angleSideToSide * controlMultiplier * 6;
 	dir.z = angleUpDown * controlMultiplier * 6;
 	
-    //Debug.Log("Your dot product is " + Quaternion.Dot (OVRCamera.globalRot, Quaternion.identity));
-    //Debug.Log("Your dir X and Z are " + dir.x + " and " + dir.z);
-    
     myTransform.Translate (dir * speed, Space.World);
     
-    //var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
-    //myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target, Time.deltaTime * smooth);  
-        
-    //myTransform.Translate (dir * speed, Space.World);
 }
 else {dir = Vector3.zero;}
 
