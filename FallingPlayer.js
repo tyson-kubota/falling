@@ -192,7 +192,7 @@ function changeLevelBackdrop () {
 	}
 	   		   	
 function Update () {
-	playerTilt ();
+	//playerTilt ();
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
 }
 	  
@@ -202,6 +202,8 @@ function playerTilt () {
 		var tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle)), -tiltAngle, tiltAngle);
 	    var tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle)), -tiltAngle, tiltAngle);
 	
+	    //var target = OVRCamera.globalRot;
+	    //Debug.Log(target);
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation
 	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,

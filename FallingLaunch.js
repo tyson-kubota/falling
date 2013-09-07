@@ -40,6 +40,9 @@ function Awake () {
 			flipMultiplier = 1;
 		}
 		
+		//for Unity 4
+		Input.compensateSensors = false;
+
 		var iOSGen = iPhone.generation;
 		
 	//	Debug.Log("this is an " + iOSGen  + " device!");
