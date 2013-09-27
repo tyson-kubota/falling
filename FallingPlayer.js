@@ -33,6 +33,9 @@ var speed = 5.0;
 var target : Transform;
 var smooth = 2.0;
 var tiltAngle = 30.0;
+
+var tiltAroundZ : float;
+var tiltAroundX : float;
 //var flipMultiplier : int = 1;
 //var flipMultiplier = FallingLaunch.flipMultiplier;
 
@@ -194,14 +197,21 @@ function changeLevelBackdrop () {
 function Update () {
 	playerTilt ();
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
+	Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
 }
 	  
 function playerTilt () {
 	if (isTiltable == true) {
 	    var dir : Vector3 = Vector3.zero;
-		var tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle)), -tiltAngle, tiltAngle);
-	    var tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle)), -tiltAngle, tiltAngle);
-	
+
+	    if (FallingLaunch.hasSetAccel == true) {
+			tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.y * tiltAngle)), -tiltAngle, tiltAngle);
+    		tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.x * tiltAngle)), -tiltAngle, tiltAngle);
+		}
+	    else {
+			tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle)), -tiltAngle, tiltAngle);
+    		tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle)), -tiltAngle, tiltAngle);
+		}
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation
 	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,

@@ -405,6 +405,7 @@ function LoadNewLevelViaMenu() {
 	loadingLabel.hidden = false;
 	
 	FallingLaunch.levelEndSlowdown = 0;
+
 	Application.LoadLevel(levelToLoad);
 	Time.timeScale = savedTimeScale;
 }
@@ -450,6 +451,7 @@ function LoadLevel1ViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
+	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level1);
 	Time.timeScale = savedTimeScale;
 }
@@ -463,6 +465,7 @@ function LoadLevel2ViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;	
 	
+	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level2);
 	Time.timeScale = savedTimeScale;
 }
@@ -476,6 +479,7 @@ function LoadLevel3ViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
+	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level3);
 	Time.timeScale = savedTimeScale;
 }
@@ -489,6 +493,7 @@ function LoadLevel4ViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
+	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level4);
 	Time.timeScale = savedTimeScale;
 }
@@ -502,6 +507,7 @@ function LoadHomeViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
+	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(homeLevel);
 	Time.timeScale = savedTimeScale;
 }

@@ -47,6 +47,9 @@ function Start() {
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
+
+	Calibrate();
+
 	lerpSlowdown(.5);
 	lerpControl(3);
 	mainCamera = transform.FindChild("Camera").gameObject;
@@ -80,20 +83,27 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
-if (FallingPlayer.isAlive == 1) {
-	dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((Input.acceleration.y) * Mathf.Abs(Input.acceleration.y));
-	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((Input.acceleration.x) * Mathf.Abs(Input.acceleration.x));
-
-	dir.x = Mathf.Clamp(dir.x, -2.0, 2.0);
-	dir.z = Mathf.Clamp(dir.z, -2.0, 2.0);
+if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
 
 	// Make it move 10 meters per second instead of 10 meters per frame...
 	// .:. not necessary in fixedupdate
     // dir *= Time.deltaTime;
     // print("Your dir is: " + dir);     
     
+    //myTransform.Translate (dir * speed, Space.World);
+    FallingLaunch.hasSetAccel = true;
+	FallingLaunch.accelerator = Input.acceleration;
+    FallingLaunch.accelerator = FallingLaunch.calibrationRotation * FallingLaunch.accelerator;
+
+    dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
+	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
+
+	dir.x = Mathf.Clamp(dir.x, -2.0, 2.0);
+	dir.z = Mathf.Clamp(dir.z, -2.0, 2.0);
+
     myTransform.Translate (dir * speed, Space.World);
 }
+
 else {dir = Vector3.zero;}
 
 }
@@ -329,4 +339,11 @@ function lerpControl(timer : float) {
 		//Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
     	}
     yield WaitForSeconds (timer);
+}
+
+function Calibrate () {
+	FallingLaunch.tiltable = false;
+	var acceleratorSnapshot = Input.acceleration;
+	FallingLaunch.calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, FallingLaunch.restPosition);
+	FallingLaunch.tiltable = true;
 }

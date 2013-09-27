@@ -420,6 +420,7 @@ function StartLevelLoad(levelName: String) {
 		yield FadeOutLevelButtons (fadeTime/2);
 		yield WaitForSeconds(fadeTime);
 	
+		FallingLaunch.hasSetAccel = false;
 		Application.LoadLevel(levelName);
 	}
 }

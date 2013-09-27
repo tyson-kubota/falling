@@ -8,6 +8,12 @@ static var NewGamePlus:boolean = false;
 var targetFPS : int = 30;
 static var isTablet : boolean = false;
 
+static var tiltable : boolean = false;
+static var hasSetAccel : boolean = false;
+static var restPosition : Vector3 = Vector3(0,0,-1);
+static var accelerator : Vector3;
+static var calibrationRotation : Quaternion;
+
 var testFlightToken : String;
 
 //GameAnalytics variables
@@ -92,6 +98,7 @@ function Awake () {
 function Start () {
 //		myTimer = new GAUserTimer("Timer", "Session Length");
 //		myTimer.Start();
+	Calibrate();
 }
 
 function OnApplicationPause(pauseStatus: boolean) {
@@ -110,4 +117,11 @@ function OnLevelWasLoaded (level : int) {
 //	GoogleAnalytics.instance.Dispatch();
 	
 	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
+}
+
+function Calibrate () {
+	tiltable = false;
+	var acceleratorSnapshot = Input.acceleration;
+	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
+	tiltable = true;
 }
