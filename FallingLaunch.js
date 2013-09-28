@@ -10,7 +10,9 @@ static var isTablet : boolean = false;
 
 static var tiltable : boolean = false;
 static var hasSetAccel : boolean = false;
-static var restPosition : Vector3 = Vector3(0,0,-1);
+static var restPosition : Vector3;
+static var neutralPosFlat : Vector3 = Vector3(0,0,-1);
+static var neutralPosTilted : Vector3 = Vector3(.6,0,-.9);
 static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
 
@@ -121,6 +123,8 @@ function OnLevelWasLoaded (level : int) {
 
 function Calibrate () {
 	tiltable = false;
+	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
+		else {restPosition = neutralPosFlat;}
 	var acceleratorSnapshot = Input.acceleration;
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
 	tiltable = true;

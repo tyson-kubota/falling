@@ -48,7 +48,7 @@ function Start() {
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
 
-	Calibrate();
+	//Calibrate();
 
 	lerpSlowdown(.5);
 	lerpControl(3);
@@ -92,8 +92,7 @@ if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
     
     //myTransform.Translate (dir * speed, Space.World);
     FallingLaunch.hasSetAccel = true;
-	FallingLaunch.accelerator = Input.acceleration;
-    FallingLaunch.accelerator = FallingLaunch.calibrationRotation * FallingLaunch.accelerator;
+    FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
 
     dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
 	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
