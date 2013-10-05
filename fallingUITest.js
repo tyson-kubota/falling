@@ -24,8 +24,9 @@ var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
 
 var changeTiltButton : UIButton;
-var angledTiltLabel : UISprite;
-var flatTiltLabel : UISprite;
+var angledTiltLabel : UIButton;
+var flatTiltLabel : UIButton;
+var TogglingTiltNeutral : boolean = false;
 
 var openSiteButton : UIButton;
 static var loadingLabel : UIButton;
@@ -196,12 +197,14 @@ function Start () {
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
 	
-	angledTiltLabel = UI.firstToolkit.addSprite( "neutralAngle45.png", 0, 0, 0 );
+	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 40, 40 );
 	angledTiltLabel.positionFromBottomRight(.05f, .05f);
+	angledTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltLabel.hidden = true;
 
-	flatTiltLabel = UI.firstToolkit.addSprite( "neutralAngleFlat.png", 0, 0, 0 );
+	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 40, 40 );
 	flatTiltLabel.positionFromBottomRight(.05f, .05f);
+	flatTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltLabel.hidden = true;
 
 
@@ -666,15 +669,23 @@ function setHoldingPauseButtonFalse() {
 }
 
 function ToggleTiltNeutral () {
-	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-		fallingLaunchComponent.ChangeTilt(true);
-		flatTiltLabel.hidden = false;
-		angledTiltLabel.hidden = true;
-	}
-	else {
-		fallingLaunchComponent.ChangeTilt(false);
-		angledTiltLabel.hidden = false;
-		flatTiltLabel.hidden = true;
+	if (TogglingTiltNeutral == false) {
+		
+		TogglingTiltNeutral = true;
+		
+		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+			fallingLaunchComponent.ChangeTilt(true);
+			flatTiltLabel.hidden = false;
+			angledTiltLabel.hidden = true;
+		}
+		else {
+			fallingLaunchComponent.ChangeTilt(false);
+			angledTiltLabel.hidden = false;
+			flatTiltLabel.hidden = true;
+		}
+
+		TogglingTiltNeutral = false;
+
 	}
 }
 
