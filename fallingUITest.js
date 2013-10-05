@@ -82,6 +82,7 @@ function Start () {
 	changeTiltButton.onTouchUpInside += ToggleTiltNeutral;
 	changeTiltButton.alphaTo( 0.01f, 0.5f, Easing.Sinusoidal.easeOut);
 	changeTiltButton.hidden = true;
+	//changeTiltButton.positionFromBottomRight(.1f, .05f);
 
 	var tiltPlacementRatio : float;
 
@@ -89,14 +90,14 @@ function Start () {
 		spriteEdgeSize = 4;
 		buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
 		tiltPlacementRatio = (196.0/Screen.width);
-		changeTiltButton.positionFromBottomRight(.05f, Mathf.Clamp(tiltPlacementRatio, .15f, .5f));
 	}
 	else {
 		spriteEdgeSize = 2;
 		buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 		tiltPlacementRatio = (98.0/Screen.width);
-		changeTiltButton.positionFromBottomRight(.05f, Mathf.Clamp(tiltPlacementRatio, .15f, .5f));
 	}
+	
+	changeTiltButton.positionFromBottomRight(.05f, Mathf.Clamp(tiltPlacementRatio, .15f, .5f));
 	
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
 //	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
@@ -198,12 +199,16 @@ function Start () {
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
 	
-	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 80, 80 );
+	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
+	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	angledTiltLabel.positionFromBottomRight(.05f, .05f);
 	angledTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltLabel.hidden = true;
 
-	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 80, 80 );
+	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 0, 0 );
+	flatTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	flatTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	flatTiltLabel.positionFromBottomRight(.05f, .05f);
 	flatTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltLabel.hidden = true;
