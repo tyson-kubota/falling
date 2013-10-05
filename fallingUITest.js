@@ -80,6 +80,7 @@ function Start () {
 	changeTiltButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	changeTiltButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	changeTiltButton.onTouchUpInside += ToggleTiltNeutral;
+	changeTiltButton.alphaTo( 0.01f, 0.5f, Easing.Sinusoidal.easeOut);
 	changeTiltButton.hidden = true;
 
 	var tiltPlacementRatio : float;
@@ -197,12 +198,12 @@ function Start () {
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
 	
-	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 40, 40 );
+	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 80, 80 );
 	angledTiltLabel.positionFromBottomRight(.05f, .05f);
 	angledTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltLabel.hidden = true;
 
-	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 40, 40 );
+	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 80, 80 );
 	flatTiltLabel.positionFromBottomRight(.05f, .05f);
 	flatTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltLabel.hidden = true;

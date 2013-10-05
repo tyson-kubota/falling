@@ -101,7 +101,9 @@ function Awake () {
 function Start () {
 //		myTimer = new GAUserTimer("Timer", "Session Length");
 //		myTimer.Start();
-	Calibrate();
+	//Calibrate();
+	//Calibrating in Start here was unwise, in case the user is swinging 
+	//the device around and the accelerometer readings haven't settled yet.
 }
 
 function OnApplicationPause(pauseStatus: boolean) {

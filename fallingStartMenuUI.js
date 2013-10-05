@@ -54,7 +54,14 @@ var bgCamera : Camera;
 var bgColor1 : Color;
 var bgColor2 : Color = Color.red;
 
+var fallingLaunch : GameObject;
+var fallingLaunchComponent : FallingLaunch;
+
 function Start () {
+
+	fallingLaunch = GameObject.Find("LaunchGameObject");
+	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
+
 //  yield WaitForSeconds(0.5f);
 
 //	  Testing to see if disabling this hard coded screen.orientation will allow auto detection of landscape 
@@ -254,6 +261,7 @@ function ShowStart() {
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
+	fallingLaunchComponent.Calibrate();
 }
 
 function CheckTiltAngle() {
