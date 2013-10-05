@@ -300,14 +300,7 @@ function PauseGame() {
 		bgSprite.hidden = false;
 		//openSiteButton.hidden = false;
 
-		changeTiltButton.hidden = false;
-
-		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-			angledTiltLabel.hidden = false;
-		}
-		else {
-			flatTiltLabel.hidden = false;
-		}
+		DisplayTiltOnPause();
 		//clear any unused stuff in pause menu. 
 		//audio and video should be stopped, so any hiccuping won't be as obvious.
 		Resources.UnloadUnusedAssets();
@@ -650,6 +643,7 @@ function PauseGameNow() {
 	leftArrow.hidden = false;
 	loadNewLevelButton.hidden = false;
 	bgSprite.hidden = false;
+	DisplayTiltOnPause();
 }
 
 function PauseGameBackgroundCheck() {
@@ -686,11 +680,22 @@ function ToggleTiltNeutral () {
 
 function DisplayTilt () {
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+		flatTiltLabel.hidden = true;
+		angledTiltLabel.hidden = false;
+	}
+	else {
 		flatTiltLabel.hidden = false;
 		angledTiltLabel.hidden = true;
 	}
-	else {
-		angledTiltLabel.hidden = false;
-		flatTiltLabel.hidden = true;
-	}
+}
+
+function DisplayTiltOnPause () {
+		changeTiltButton.hidden = false;
+
+		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+			angledTiltLabel.hidden = false;
+		}
+		else {
+			flatTiltLabel.hidden = false;
+		}
 }
