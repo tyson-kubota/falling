@@ -129,6 +129,7 @@ function Calibrate () {
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
 		else {restPosition = neutralPosFlat;}
 	acceleratorSnapshot = Input.acceleration;
+	acceleratorSnapshot.y = 0.0;
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
 	tiltable = true;
 }
