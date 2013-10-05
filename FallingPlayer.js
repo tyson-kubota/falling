@@ -197,7 +197,7 @@ function changeLevelBackdrop () {
 function Update () {
 	playerTilt ();
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
-	Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
+	//Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
 }
 	  
 function playerTilt () {

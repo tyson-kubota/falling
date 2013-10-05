@@ -2,6 +2,8 @@
 
 var player : GameObject;
 var fallingPlayerComponent : FallingPlayer;
+var fallingLaunch : GameObject;
+var fallingLaunchComponent : FallingLaunch;
 
 var value : float = 0.5f;
 var bgSprite : UISprite;
@@ -20,6 +22,11 @@ var loadLevelOne : UIButton;
 var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
+
+var changeTiltButton : UIButton;
+var angledTiltLabel : UISprite;
+var flatTiltLabel : UISprite;
+
 var openSiteButton : UIButton;
 static var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
@@ -58,20 +65,35 @@ function Start () {
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
 	
 	fallingPlayerComponent = player.GetComponent("FallingPlayer");
-
+	//moveControllerComponent = player.GetComponent("MoveController");
+	fallingLaunch = GameObject.Find("LaunchGameObject");
+	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
+	
     bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
 
+	changeTiltButton = UIButton.create("neutralAngle.png","neutralAngle.png", 40, 40);
+	changeTiltButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	changeTiltButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	changeTiltButton.onTouchUpInside += ToggleTiltNeutral;
+	changeTiltButton.hidden = true;
+
+	var tiltPlacementRatio : float;
+
 	if (UI.isHD == true) {
 		spriteEdgeSize = 4;
 		buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
+		tiltPlacementRatio = (196.0/Screen.width);
+		changeTiltButton.positionFromBottomRight(.05f, Mathf.Clamp(tiltPlacementRatio, .15f, .5f));
 	}
 	else {
 		spriteEdgeSize = 2;
 		buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
+		tiltPlacementRatio = (98.0/Screen.width);
+		changeTiltButton.positionFromBottomRight(.05f, Mathf.Clamp(tiltPlacementRatio, .15f, .5f));
 	}
 	
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
@@ -174,6 +196,15 @@ function Start () {
 	openSiteButton.onTouchUpInside += OpenSite;
 	openSiteButton.hidden = true;
 	
+	angledTiltLabel = UI.firstToolkit.addSprite( "neutralAngle45.png", 0, 0, 0 );
+	angledTiltLabel.positionFromBottomRight(.05f, .05f);
+	angledTiltLabel.hidden = true;
+
+	flatTiltLabel = UI.firstToolkit.addSprite( "neutralAngleFlat.png", 0, 0, 0 );
+	flatTiltLabel.positionFromBottomRight(.05f, .05f);
+	flatTiltLabel.hidden = true;
+
+
 	circleReticle = UIButton.create("circle-reticle.png","circle-reticle.png", 0, 0);
 	circleReticle.positionCenter();
 	
@@ -269,6 +300,14 @@ function PauseGame() {
 		bgSprite.hidden = false;
 		//openSiteButton.hidden = false;
 
+		changeTiltButton.hidden = false;
+
+		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+			angledTiltLabel.hidden = false;
+		}
+		else {
+			flatTiltLabel.hidden = false;
+		}
 		//clear any unused stuff in pause menu. 
 		//audio and video should be stopped, so any hiccuping won't be as obvious.
 		Resources.UnloadUnusedAssets();
@@ -291,6 +330,11 @@ function UnPauseGame(resume : boolean) {
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	loadNewLevelButton.hidden = true;
+
+	changeTiltButton.hidden = true;
+	angledTiltLabel.hidden = true;
+	flatTiltLabel.hidden = true;
+
 	openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
 	holdingPauseButton = false;
@@ -421,6 +465,10 @@ function LevelSelect() {
 	loadLevelFour.hidden = false;
 	
 	BackToHomeMenuButton.hidden = false;
+	
+	changeTiltButton.hidden = true;
+	angledTiltLabel.hidden = true;
+	flatTiltLabel.hidden = true;
 
 	loadNewLevelButton.hidden = true;	
 	BackToPauseMenuButton.hidden = false;
@@ -440,6 +488,8 @@ function BackToPauseMenu() {
 
 	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
+	changeTiltButton.hidden = false;
+	DisplayTilt();
 }
 
 function LoadLevel1ViaMenu() {
@@ -619,4 +669,28 @@ function setHoldingPauseButtonTrue() {
 
 function setHoldingPauseButtonFalse() {
 	holdingPauseButton = false;
+}
+
+function ToggleTiltNeutral () {
+	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+		fallingLaunchComponent.ChangeTilt(true);
+		flatTiltLabel.hidden = false;
+		angledTiltLabel.hidden = true;
+	}
+	else {
+		fallingLaunchComponent.ChangeTilt(false);
+		angledTiltLabel.hidden = false;
+		flatTiltLabel.hidden = true;
+	}
+}
+
+function DisplayTilt () {
+	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+		flatTiltLabel.hidden = false;
+		angledTiltLabel.hidden = true;
+	}
+	else {
+		angledTiltLabel.hidden = false;
+		flatTiltLabel.hidden = true;
+	}
 }
