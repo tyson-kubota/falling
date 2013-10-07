@@ -63,6 +63,9 @@ var whiteFader : FadeInOutAlt;
 var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
 
+var clipToPlay : float;
+var audioToPlay : AudioSource;
+
 var audioScore : AudioSource;
 var audioScoreAlt : AudioSource;
 var audioDeath : AudioSource;
@@ -303,8 +306,8 @@ function OnTriggerEnter (other : Collider) {
 	if (audioScore) {
 		//Debug.Log(Random.Range(0,2));
 		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
-		var clipToPlay : float = Random.Range(0.3f, 0.9f);
-		var audioToPlay : AudioSource;
+		clipToPlay = Random.Range(0.3f, 0.9f);
+		
 		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
 		if (clipToPlay > 0.6f) {
 			audioToPlay = audioScore;
