@@ -49,6 +49,9 @@ function Awake () {
 			flipMultiplier = 1;
 		}
 		
+		//this is necessary to override Unity 4's auto-orientation code
+		Input.compensateSensors = false;
+
 		var iOSGen = iPhone.generation;
 		
 	//	Debug.Log("this is an " + iOSGen  + " device!");
