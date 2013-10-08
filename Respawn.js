@@ -40,6 +40,9 @@ private var respawnLight: Light;
 // The currently active respawn point. Static, so all instances of this script will share this variable.
 static var currentRespawn : Respawn;
 
+var myCheckpoint : String;
+var mainRespawnScript : boolean = false;
+
 function Start()
 {	
 	// Get some of the objects we need later.
@@ -58,9 +61,32 @@ function Start()
 	
 	// Assign the respawn point to be this one - Since the player is positioned on top of a respawn point, it will come in and overwrite it.
 	// This is just to make sure that we always have a respawn point.
-	currentRespawn = initialRespawn;
-	if (currentRespawn == this)
-		SetActive();
+
+	//mainRespawnScript boolean is to keep multiple instances of Respawn from all trying to write 
+	//to PlayerPrefs within a single Update call.
+	if (mainRespawnScript) {	
+		if (PlayerPrefs.HasKey("LatestLevel") && PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName)
+		{	
+			myCheckpoint = PlayerPrefs.GetString("LatestCheckpoint");
+			currentRespawn = GameObject.Find(myCheckpoint).GetComponent(Respawn);
+			var tempPlayer : GameObject = GameObject.Find("Player");
+			var tempPlayerComponent : FallingPlayer = tempPlayer.GetComponent("FallingPlayer");
+			var IntroScriptComponent : IntroSequence1stPerson = tempPlayer.GetComponent("IntroSequence1stPerson");
+			var LifeControllerComponent : lifeCountdown = tempPlayer.GetComponent("lifeCountdown");
+
+			if (IntroScriptComponent) {
+				IntroScriptComponent.EndIntro();
+				LifeControllerComponent.enabled = true;
+			}
+			tempPlayerComponent.DeathRespawn ();
+		}
+		else {
+			currentRespawn = initialRespawn;
+		}		
+	}
+	// else {
+	// 	currentRespawn = initialRespawn;
+	// }
 }
 
 function OnTriggerEnter(other : Collider)
@@ -69,7 +95,7 @@ function OnTriggerEnter(other : Collider)
 		if (currentRespawn != this)		// make sure we're not respawning or re-activating an already active pad!
 		{
 			// turn the old respawn point off
-			currentRespawn.SetInactive ();
+			//currentRespawn.SetInactive ();
 			
 			// play the "Activated" one-shot sound effect if one has been supplied:
 			if (SFXRespawnActivate)
@@ -77,45 +103,17 @@ function OnTriggerEnter(other : Collider)
 	
 			// Set the current respawn point to be us and make it visible.
 			currentRespawn = this;
-			
-			SetActive ();
+			//SetActive ();
 		}
 	}
 }
 
-function SetActive () 
-{
-//	emitterActive.emit = true;
-//	emitterInactive.emit = false;
-//	respawnLight.intensity = 1.5;	
-
-//	audio.Play();		// start playing the sound clip assigned in the inspector
+function OnApplicationPause(pauseStatus: boolean) {
+    if (pauseStatus && mainRespawnScript) {
+    	myCheckpoint = currentRespawn.transform.name;
+    	PlayerPrefs.SetString("LatestCheckpoint", myCheckpoint);
+    	PlayerPrefs.SetString("LatestLevel", Application.loadedLevelName);
+    	PlayerPrefs.Save();
+    }
 }
 
-function SetInactive () 
-{
-//	emitterActive.emit = false;
-//	emitterInactive.emit = true;
-//	respawnLight.intensity = 1.5;		
-
-//	audio.Stop();	// stop playing the active sound clip.			
-}
-
-function FireEffect () 
-{
-	// Launch all 3 sets of particle systems.
-	emitterRespawn1.Emit();
-	emitterRespawn2.Emit();
-	emitterRespawn3.Emit();
-
-	respawnLight.intensity = 3.5;
-		
-	if (SFXPlayerRespawn)
-	{	// if we have a 'player is respawning' sound effect, play it now.
-		AudioSource.PlayClipAtPoint(SFXPlayerRespawn, transform.position, SFXVolume);
-	}
-	
-	yield WaitForSeconds (2);
-	
-	respawnLight.intensity = 2.0;
-}
