@@ -106,7 +106,17 @@ function Start() {
 	if (!introComponent) {
 	UIscriptComponent.UnhideGUI();
 	}
-	introFade();
+
+	LevelStartFade();
+}
+
+function LevelStartFade () {
+	if (PlayerPrefs.HasKey("LatestLevel") && PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName)
+	{FallingLaunch.LoadedLatestLevel = true;}
+
+	if (FallingLaunch.LoadedLatestLevel == false) {
+		introFade();
+	}
 }
 
 function introFade() {
@@ -116,6 +126,15 @@ function introFade() {
 	whiteFader = Camera.main.GetComponent(FadeInOutAlt);
 	whiteFader.enabled = false;
 }
+
+function introNow() {
+	LatestCheckpointRespawn();
+	yield WaitForSeconds (3);	
+	FallingLaunch.LoadedLatestLevel = false;
+	whiteFader = Camera.main.GetComponent(FadeInOutAlt);
+	whiteFader.enabled = false;
+}
+
 
 function FadeAudio (timer : float, fadeType : FadeDir) {
 
@@ -176,6 +195,33 @@ function DeathRespawn () {
    	lerpControlIn(3);
    	yield UIscriptComponent.fadeIn(true);
 }   	
+
+function LatestCheckpointRespawn () {
+	isPausable = false;
+	rigidbody.isKinematic = true;
+   	var respawnPosition = Respawn.currentRespawn.transform.position;
+	//UIscriptComponent.fadeOut();
+
+	if (levelChangeBackdrop == true) {
+		changeLevelBackdrop ();
+	}
+//  	yield WaitForSeconds(1);
+
+	isAlive = 1;
+	RenderSettings.fogEndDistance = startingFogEndDistance;
+  	
+	collider.attachedRigidbody.transform.Translate(respawnPosition);
+	myTransform.position = respawnPosition; // + Vector3.up;
+
+  	FadeAudio (fadeTime, FadeDir.In);
+	rigidbody.isKinematic = false;
+	
+	MoveController.controlMultiplier = 1;
+   	
+   	lerpControlIn(3);
+   	//yield UIscriptComponent.fadeIn(true);
+   	UIscriptComponent.UnhideGUI();
+}   
 
 function ShowDeathHelp() {
    	if (introComponent) {

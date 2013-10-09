@@ -78,7 +78,8 @@ function Start()
 				IntroScriptComponent.EndIntro();
 				LifeControllerComponent.enabled = true;
 			}
-			tempPlayerComponent.DeathRespawn ();
+			FallingLaunch.LoadedLatestLevel = true;
+			tempPlayerComponent.introNow();
 		}
 		else {
 			currentRespawn = initialRespawn;

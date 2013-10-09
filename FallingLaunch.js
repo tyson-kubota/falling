@@ -17,6 +17,8 @@ static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
 static var acceleratorSnapshot : Vector3;
 
+static var LoadedLatestLevel : boolean = false;
+
 var testFlightToken : String;
 
 //GameAnalytics variables
