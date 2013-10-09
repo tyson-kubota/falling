@@ -147,7 +147,7 @@ function Start () {
 	
 	rightArrow = UIButton.create("startDown.png","startDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
-	rightArrow.onTouchUpInside += LoadLevel1ViaStart;
+	rightArrow.onTouchUpInside += ResumeGame;
 	rightArrow.onTouchDown += fadeInRightArrow;
 	rightArrow.onTouchUp += fadeOutRightArrow;
 
@@ -418,6 +418,15 @@ function FadeAudio (timer : float) {
         sceneAudio.volume = Mathf.Lerp(start, end, i);
         yield;
     }
+}
+
+function ResumeGame() {
+	if (PlayerPrefs.HasKey("LatestLevel")) {
+		 StartLevelLoad(PlayerPrefs.GetString("LatestLevel"));
+	}
+	else {		
+		StartLevelLoad(level1);
+	}
 }
 
 function StartLevelLoad(levelName: String) {

@@ -87,6 +87,8 @@ function Start()
 	// else {
 	// 	currentRespawn = initialRespawn;
 	// }
+
+	SaveCheckpoint();
 }
 
 function OnTriggerEnter(other : Collider)

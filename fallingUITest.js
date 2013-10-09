@@ -397,6 +397,7 @@ function LevelComplete() {
 	player.rigidbody.isKinematic = true;
     AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);
+//	PlayerPrefs.SetString("LatestLevel", levelToLoad);
 	Time.timeScale = savedTimeScale;
 }
 
