@@ -314,6 +314,8 @@ function PauseGame() {
 		//audio and video should be stopped, so any hiccuping won't be as obvious.
 		Resources.UnloadUnusedAssets();
 
+		initialRespawn.SaveCheckpoint();
+
 	    FallingPlayer.isPausable = true;
     }
 }

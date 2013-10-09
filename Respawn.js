@@ -109,7 +109,13 @@ function OnTriggerEnter(other : Collider)
 }
 
 function OnApplicationPause(pauseStatus: boolean) {
-    if (pauseStatus && mainRespawnScript) {
+    if (pauseStatus) {
+		SaveCheckpoint();
+    }
+}
+
+function SaveCheckpoint() {
+	if (mainRespawnScript) {
     	myCheckpoint = currentRespawn.transform.name;
     	PlayerPrefs.SetString("LatestCheckpoint", myCheckpoint);
     	PlayerPrefs.SetString("LatestLevel", Application.loadedLevelName);
