@@ -379,6 +379,7 @@ function LevelComplete() {
 	player.rigidbody.isKinematic = true;
     AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);
+//  not necessary because Respawn.js resets the latest checkpoint in its Start	
 //	PlayerPrefs.SetString("LatestLevel", levelToLoad);
 	Time.timeScale = savedTimeScale;
 }
