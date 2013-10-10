@@ -28,7 +28,6 @@ var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
 var TogglingTiltNeutral : boolean = false;
 
-var openSiteButton : UIButton;
 static var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 var BackToHomeMenuButton : UIButton;
@@ -119,12 +118,12 @@ function Start () {
 
 	holdingPauseButton = false;
 
-	rightArrow = UIButton.create("rightArrow.png","rightArrowDown.png", 0, 0);
+	rightArrow = UIButton.create("start.png","startDown.png", 0, 0);
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
 	rightArrow.onTouchUpInside += PauseGameCheck;
-	
-	leftArrow = UIButton.create("restart.png","restartDown.png", 0, 0);
-	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
+
+	leftArrow = UIButton.create("restart.png","restart.png", 0, 0);
+	leftArrow.positionFromBottomLeft(.05f, .05f);
 	leftArrow.onTouchUpInside += RestartLevel;
 
 	rightArrow.hidden = true;
@@ -133,11 +132,13 @@ function Start () {
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
 	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );	
+	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;	
+	BackToPauseMenuButton.hidden = true;
 
-	BackToHomeMenuButton = UIButton.create("homeWhite.png","homeWhite.png", 40, 40);
+	BackToHomeMenuButton = UIButton.create("homeArrows.png","homeArrows.png", 40, 40);
 	//BackToHomeMenuButton.positionFromBottom(.05f);
-	BackToHomeMenuButton.positionFromBottomRight(.05f, .05f);
+	BackToHomeMenuButton.positionFromTopLeft(.05f, .05f);
 	BackToHomeMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToHomeMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToHomeMenuButton.onTouchUpInside += LoadHomeViaMenu;
@@ -179,26 +180,18 @@ function Start () {
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
-		
-	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;	
-	BackToPauseMenuButton.hidden = true;
 	
 	loadingLabel = UIButton.create("loading.png","loading.png", 20, 20);
 	loadingLabel.positionCenter();
 	loadingLabel.hidden = true;
 	
-	loadNewLevelButton = UIButton.create("newlevel.png","newlevel.png", 40, 40);
-	loadNewLevelButton.positionFromBottomLeft(.05f, .05f);
+	loadNewLevelButton = UIButton.create("chooselevel.png","chooselevelDown.png", 40, 40);
+	loadNewLevelButton.	positionFromTopLeft(buttonScaleFactor,0.2f);
 	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
-	
-	openSiteButton = UIButton.create("website.png","website.png", 40, 40);
-	openSiteButton.positionFromBottomRight(.05f, .05f);	
-	openSiteButton.onTouchUpInside += OpenSite;
-	openSiteButton.hidden = true;
-	
+
 	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
 	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
@@ -307,7 +300,6 @@ function PauseGame() {
 		leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
-		//openSiteButton.hidden = false;
 
 		DisplayTiltOnPause();
 		//clear any unused stuff in pause menu. 
@@ -339,7 +331,6 @@ function UnPauseGame(resume : boolean) {
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
 
-	openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
 	holdingPauseButton = false;
 	MoveController.pauseButtonArea = origPauseButtonArea;

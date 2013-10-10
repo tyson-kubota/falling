@@ -12,7 +12,7 @@ var loadLevelOne : UIButton;
 var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
-var openSiteButton : UIButton;
+
 var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
 var tiltWarning : UIButton;
@@ -209,26 +209,21 @@ function Start () {
 	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
 	
-	// openSiteButton = UIButton.create("website.png","website.png", 40, 40);
-	// openSiteButton.positionFromBottomRight(.05f, .05f);	
-	// openSiteButton.onTouchUpInside += OpenSite;
-	// openSiteButton.hidden = true;
-
-	aboutButtonStart = UIButton.create("aboutWhite.png","aboutWhite.png", 40, 40);
+	aboutButtonStart = UIButton.create("aboutDots.png","aboutDots.png", 40, 40);
 	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.centerize();
-	aboutButtonStart.positionFromBottomLeft(.05f, .05f);	
+	aboutButtonStart.positionFromTopLeft(.05f, .05f);	
 	aboutButtonStart.onTouchUpInside += OpenAbout;
 // 	aboutButtonStart.onTouchUp += fadeOutAbout;	
 // 	aboutButtonStart.onTouchDown += fadeInAbout;
 	aboutButtonStart.hidden = true;
 
-	howToButton = UIButton.create("howToPlayWhite.png","howToPlayWhite.png", 40, 40);
+	howToButton = UIButton.create("howToPlay.png","howToPlay.png", 40, 40);
 	howToButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	howToButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	howToButton.centerize();
-	howToButton.positionFromBottomRight(.05f, .05f);	
+	howToButton.positionFromBottomLeft(.05f, .05f);	
 	howToButton.onTouchUpInside += OpenHowTo;
 	howToButton.hidden = true;
 
@@ -312,7 +307,6 @@ function PauseGame() {
 		leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
-		//openSiteButton.hidden = false;
 			    
 	    savedTimeScale = Time.timeScale;
 //		scriptName.GetComponent(FallingPlayer).FadeAudio (.09, FadeDir.Out);
@@ -333,7 +327,6 @@ function UnPauseGame(resume : boolean) {
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	loadNewLevelButton.hidden = true;
-	//openSiteButton.hidden = true;
 	FallingPlayer.isPausable = resume;	
     }
     
@@ -360,8 +353,6 @@ function LevelSelect() {
 	aboutButtonStart.hidden = true;
 	howToButton.hidden = true;
 
-	//openSiteButton.hidden = false;
-
 	loadLevelOne.hidden = false;
 	loadLevelTwo.hidden = false;
 	loadLevelThree.hidden = false;
@@ -384,7 +375,6 @@ function BackToPauseMenu() {
 	howToButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 
 	//pauseButton.hidden = false;
-	//openSiteButton.hidden = true;
 	
 	fadeInPauseMenu();
 		
