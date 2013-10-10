@@ -23,7 +23,6 @@ var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
 
-var changeTiltButton : UIButton;
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
 var TogglingTiltNeutral : boolean = false;
@@ -75,13 +74,6 @@ function Start () {
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
 
-	changeTiltButton = UIButton.create("neutralAngle.png","neutralAngle.png", 40, 40);
-	changeTiltButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	changeTiltButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	changeTiltButton.onTouchUpInside += ToggleTiltNeutral;
-	changeTiltButton.alphaTo( 0.01f, 0.5f, Easing.Sinusoidal.easeOut);
-	changeTiltButton.hidden = true;
-	//changeTiltButton.positionFromBottomRight(.1f, .05f);
 
 	var tiltPlacementRatio : float;
 
@@ -95,9 +87,7 @@ function Start () {
 		buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 		tiltPlacementRatio = (98.0/Screen.width);
 	}
-	
-	changeTiltButton.positionFromBottomRight(.05f, Mathf.Clamp(tiltPlacementRatio, .15f, .5f));
-	
+		
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
 //	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
 //	tutorialSprite.hidden = true;
@@ -297,8 +287,9 @@ function PauseGame() {
 	    AudioListener.pause = true;
 
    		rightArrow.hidden = false;
-		leftArrow.hidden = false;
+		//leftArrow.hidden = false;
 		loadNewLevelButton.hidden = false;
+		BackToHomeMenuButton.hidden = false;
 		bgSprite.hidden = false;
 
 		DisplayTiltOnPause();
@@ -326,8 +317,8 @@ function UnPauseGame(resume : boolean) {
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
 	loadNewLevelButton.hidden = true;
+	BackToHomeMenuButton.hidden = true;
 
-	changeTiltButton.hidden = true;
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
 
@@ -462,7 +453,6 @@ function LevelSelect() {
 	
 	BackToHomeMenuButton.hidden = false;
 	
-	changeTiltButton.hidden = true;
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
 
@@ -471,7 +461,7 @@ function LevelSelect() {
 }
 
 function BackToPauseMenu() {
-	leftArrow.hidden = false;
+	//leftArrow.hidden = false;
 	rightArrow.hidden = false;
 	pauseButton.hidden = false;
 	
@@ -480,11 +470,10 @@ function BackToPauseMenu() {
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	
-	BackToHomeMenuButton.hidden = true;
+	//BackToHomeMenuButton.hidden = true;
 
 	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
-	changeTiltButton.hidden = false;
 	DisplayTilt();
 }
 
@@ -553,6 +542,14 @@ function LoadHomeViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+
+	loadNewLevelButton.hidden = true;
+
+	angledTiltLabel.hidden = true;
+	flatTiltLabel.hidden = true;
+
 	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(homeLevel);
 	Time.timeScale = savedTimeScale;
@@ -643,7 +640,7 @@ function PauseGameNow() {
     AudioListener.pause = true;
 
 	rightArrow.hidden = false;
-	leftArrow.hidden = false;
+	//leftArrow.hidden = false;
 	loadNewLevelButton.hidden = false;
 	bgSprite.hidden = false;
 	DisplayTiltOnPause();
@@ -701,7 +698,6 @@ function DisplayTilt () {
 }
 
 function DisplayTiltOnPause () {
-		changeTiltButton.hidden = false;
 
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
 			angledTiltLabel.hidden = false;
