@@ -358,7 +358,7 @@ function OnTriggerEnter (other : Collider) {
 		if (clipToPlay > 0.6f) {
 			audioToPlay = audioScore;
 			audioToPlay.pan = (-clipToPlay/2);
-			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .6), peakVol);
+			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
 		}
 		else {
 			audioToPlay = audioScoreAlt;
