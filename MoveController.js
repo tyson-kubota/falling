@@ -93,7 +93,7 @@ if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
     //myTransform.Translate (dir * speed, Space.World);
     FallingLaunch.hasSetAccel = true;
     FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
-
+    //Debug.Log(FallingLaunch.accelerator);
     dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
 	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
 

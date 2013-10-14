@@ -1,9 +1,9 @@
 #pragma strict
 static var flipMultiplier : float = -1;
-static var landscapeFlipped:boolean = false;
-static var levelEndSlowdown:int = 0;
-static var alreadyLaunched:boolean = false;
-static var NewGamePlus:boolean = false;
+static var landscapeFlipped : boolean = false;
+static var levelEndSlowdown : int = 0;
+static var alreadyLaunched : boolean = false;
+static var NewGamePlus : boolean = false;
 
 var targetFPS : int = 30;
 static var isTablet : boolean = false;
@@ -12,7 +12,9 @@ static var tiltable : boolean = false;
 static var hasSetAccel : boolean = false;
 static var restPosition : Vector3;
 static var neutralPosFlat : Vector3 = Vector3(0,0,-1.0);
-static var neutralPosTilted : Vector3 = Vector3(.6,0,-.9);
+static var neutralPosTiltedRegular : Vector3 = Vector3(.6,0,-.9);
+static var neutralPosTiltedFlipped : Vector3 = Vector3(-.6,0,-.9);
+static var neutralPosTilted : Vector3;
 static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
 static var acceleratorSnapshot : Vector3;
@@ -43,19 +45,23 @@ function Awake () {
 	if (!alreadyLaunched) {
 		
 		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
-		
+		//Debug.Log("Your screen orientation is " + iPhoneInput.orientation + "!");
 		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 			flipMultiplier = -1;
+			//Debug.Log("I'm in LandscapeRight!");
 			Screen.orientation = ScreenOrientation.LandscapeRight;
 			landscapeFlipped = true;
+			neutralPosTilted = neutralPosTiltedFlipped;
 		}
 		else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
 			flipMultiplier = 1;
-		}
-		
+			//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
+			neutralPosTilted = neutralPosTiltedRegular;
+		}	
+
 		//this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;
-
+	
 		var iOSGen = iPhone.generation;
 		
 	//	Debug.Log("this is an " + iOSGen  + " device!");
