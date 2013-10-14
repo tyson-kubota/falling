@@ -31,6 +31,7 @@ var level4 : String = "Falling-scene3";
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
 var level4Unlocked : boolean = false;
+var debugMode : boolean = true;
 
 var helpIcon1: UISprite;
 var helpIcon2: UISprite;
@@ -100,6 +101,12 @@ function Start () {
 		level2Unlocked = true;
 	}
 
+	if (debugMode) {
+		level2Unlocked = true;
+		level3Unlocked = true;
+		level4Unlocked = true;
+	}
+	
     bgSpriteStart = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSpriteStart.positionCenter();
 	bgSpriteStart.scaleTo( 0.0001f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);

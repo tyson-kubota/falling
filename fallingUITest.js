@@ -47,6 +47,7 @@ var level4 : String = "Falling-scene3";
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
 var level4Unlocked : boolean = false;
+var debugMode : boolean = true;
 
 static var holdingPauseButton : boolean = false;
 static var origPauseButtonArea : Rect;
@@ -93,6 +94,11 @@ function Start () {
 		level2Unlocked = true;
 	}
 
+	if (debugMode) {
+		level2Unlocked = true;
+		level3Unlocked = true;
+		level4Unlocked = true;
+	}
 
 	var tiltPlacementRatio : float;
 
