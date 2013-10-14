@@ -305,7 +305,7 @@ function CheckTiltAngle() {
 	canShowStart = false;
 	
 	yield WaitForSeconds (.75);
-	if ((Mathf.Abs(Input.acceleration.x) < .4) && (Mathf.Abs(Input.acceleration.y) < .4)) {
+	if ((Mathf.Abs(Input.acceleration.x) < .75) && (Mathf.Abs(Input.acceleration.y) < .75)) {
 		ShowStart();}
 	else {canShowStart = true;}
 }
@@ -322,7 +322,7 @@ function ShowTiltWarning() {
 }
 
 function Update () {
-	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .4) && (Mathf.Abs(Input.acceleration.y) < .4)) {
+	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .7) && (Mathf.Abs(Input.acceleration.y) < .7)) {
 		CheckTiltAngle();
 		bgCamera.backgroundColor = bgColor1;
 	}
