@@ -28,9 +28,9 @@ var level2 : String = "Falling-scene2";
 var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
-static var level2Unlocked : boolean = false;
-static var level3Unlocked : boolean = false;
-static var level4Unlocked : boolean = false;
+var level2Unlocked : boolean = false;
+var level3Unlocked : boolean = false;
+var level4Unlocked : boolean = false;
 
 var helpIcon1: UISprite;
 var helpIcon2: UISprite;
@@ -595,16 +595,16 @@ function fadeOutLeftArrow() {
 }
 
 function fadeInLoadNewLevels() {
-	loadLevelOne.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	loadLevelOne.alphaFromTo(.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeOut);
 
-	if (level2Unlocked) {loadLevelTwo.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);} 
-	else {loadLevelTwo.alphaFromTo(.25f, 0.0f, 0.07f, Easing.Sinusoidal.easeOut);}
+	if (level2Unlocked) {loadLevelTwo.alphaFromTo(.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeOut);} 
+	else {loadLevelTwo.alphaFromTo(.25f, 0.0f, 0.05f, Easing.Sinusoidal.easeOut);}
 
-	if (level3Unlocked)	{loadLevelThree.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);}
-	else {loadLevelThree.alphaFromTo(.25f, 0.0f, 0.07f, Easing.Sinusoidal.easeOut);}
+	if (level3Unlocked)	{loadLevelThree.alphaFromTo(.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeOut);}
+	else {loadLevelThree.alphaFromTo(.25f, 0.0f, 0.05f, Easing.Sinusoidal.easeOut);}
 	
-	if (level4Unlocked) {loadLevelFour.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);}
-	else {loadLevelFour.alphaFromTo(.25f, 0.0f, 0.07f, Easing.Sinusoidal.easeOut);}
+	if (level4Unlocked) {loadLevelFour.alphaFromTo(.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeOut);}
+	else {loadLevelFour.alphaFromTo(.25f, 0.0f, 0.05f, Easing.Sinusoidal.easeOut);}
 }
 
 function fadeInPauseMenu() {

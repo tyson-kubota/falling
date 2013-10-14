@@ -44,6 +44,10 @@ var level2 : String = "Falling-scene2";
 var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
+var level2Unlocked : boolean = false;
+var level3Unlocked : boolean = false;
+var level4Unlocked : boolean = false;
+
 static var holdingPauseButton : boolean = false;
 static var origPauseButtonArea : Rect;
 
@@ -73,6 +77,21 @@ function Start () {
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
+
+
+	if (FallingLaunch.levelAchieved == 5) {
+		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+		level2Unlocked = true;
+		level3Unlocked = true;
+		level4Unlocked = true;
+	}
+	else if (FallingLaunch.levelAchieved == 4) {
+		level2Unlocked = true;
+		level3Unlocked = true;
+	}		
+	else if (FallingLaunch.levelAchieved == 3) {
+		level2Unlocked = true;
+	}
 
 
 	var tiltPlacementRatio : float;
@@ -135,51 +154,67 @@ function Start () {
 	BackToHomeMenuButton.hidden = true;
 
 	if (level1 == Application.loadedLevelName) {
-	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
-	loadLevelOne.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
+		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
+		loadLevelOne.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+	}
 	else {				
-	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);}
+		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
+		loadLevelOne.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+	}
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
 	
 	if (level2 == Application.loadedLevelName) {
-	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
-	loadLevelTwo.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
+		loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
+		loadLevelTwo.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+		loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
+	}
 	else {				
 		loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
-			if (fallingStartMenuUI.level2Unlocked == false) {
-				loadLevelTwo.alphaTo( 0.01f, 0.07f, Easing.Sinusoidal.easeOut);
+			if (level2Unlocked == false) {
+				loadLevelTwo.alphaTo( 0.01f, 0.05f, Easing.Sinusoidal.easeOut);
 				loadLevelTwo.onTouchUpInside += DoNothing;}
-			else {loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;}
-		}
+			else {
+				loadLevelTwo.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+				loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
+			}
+	}
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
 	
 	if (level3 == Application.loadedLevelName) {
-	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
-	loadLevelThree.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
+		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
+		loadLevelThree.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+		loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
+	}
 	else {				
 		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
-			if (fallingStartMenuUI.level3Unlocked == false) {
-				loadLevelThree.alphaTo( 0.01f, 0.07f, Easing.Sinusoidal.easeOut);
-				loadLevelThree.onTouchUpInside += DoNothing;
+			if (level3Unlocked == false) {
+				loadLevelThree.alphaTo( 0.01f, 0.05f, Easing.Sinusoidal.easeOut);
+				loadLevelThree.onTouchUpInside += DoNothing;}
+			else {
+				loadLevelThree.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+				loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
 			}
-			else {loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;}
-			}	
+	}
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
-
+	
 	if (level4 == Application.loadedLevelName) {
-	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
-	loadLevelFour.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
+		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
+		loadLevelFour.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+		loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;
+	}
 	else {				
 		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
-			if (fallingStartMenuUI.level4Unlocked == false) {
-				loadLevelFour.alphaTo( 0.01f, 0.07f, Easing.Sinusoidal.easeOut);
-				loadLevelFour.onTouchUpInside += DoNothing;
+			if (level4Unlocked == false) {
+				loadLevelFour.alphaTo( 0.01f, 0.05f, Easing.Sinusoidal.easeOut);
+				loadLevelFour.onTouchUpInside += DoNothing;}
+			else {
+				loadLevelFour.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+				loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;
 			}
-			else {loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;}
-			}
+	}
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
-	
+
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
@@ -190,11 +225,17 @@ function Start () {
 	loadingLabel.hidden = true;
 	
 	loadNewLevelButton = UIButton.create("chooselevel.png","chooselevelDown.png", 40, 40);
-	loadNewLevelButton.	positionFromTopLeft(buttonScaleFactor,0.2f);
+	loadNewLevelButton.positionFromTopLeft(buttonScaleFactor,0.2f);
 	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	loadNewLevelButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	loadNewLevelButton.onTouchUpInside += LevelSelect;
 	loadNewLevelButton.hidden = true;
+
+	if (level2Unlocked) {
+		loadNewLevelButton.onTouchUpInside += LevelSelect;
+	}
+	else {
+		rightArrow.positionFromCenter(0f,0f);
+	}
 
 	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
 	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
@@ -302,7 +343,7 @@ function PauseGame() {
 
    		rightArrow.hidden = false;
 		//leftArrow.hidden = false;
-		loadNewLevelButton.hidden = false;
+		if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 		BackToHomeMenuButton.hidden = false;
 		bgSprite.hidden = false;
 
@@ -490,7 +531,7 @@ function BackToPauseMenu() {
 	
 	//BackToHomeMenuButton.hidden = true;
 
-	loadNewLevelButton.hidden = false;
+	if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 	BackToPauseMenuButton.hidden = true;
 	DisplayTilt();
 }
@@ -663,7 +704,7 @@ function PauseGameNow() {
 
 	rightArrow.hidden = false;
 	//leftArrow.hidden = false;
-	loadNewLevelButton.hidden = false;
+	if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 	bgSprite.hidden = false;
 	DisplayTiltOnPause();
 }
