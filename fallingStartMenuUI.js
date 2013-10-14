@@ -86,6 +86,20 @@ function Start () {
 
 	bgColor1 = bgCamera.backgroundColor;
 
+	if (FallingLaunch.levelAchieved == 5) {
+		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+		level2Unlocked = true;
+		level3Unlocked = true;
+		level4Unlocked = true;
+	}
+	else if (FallingLaunch.levelAchieved == 4) {
+		level2Unlocked = true;
+		level3Unlocked = true;
+	}		
+	else if (FallingLaunch.levelAchieved == 3) {
+		level2Unlocked = true;
+	}
+
     bgSpriteStart = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSpriteStart.positionCenter();
 	bgSpriteStart.scaleTo( 0.0001f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
@@ -175,35 +189,30 @@ function Start () {
 				
 	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
-	loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
-	loadLevelTwo.onTouchUp += upLevel2;
-	loadLevelTwo.onTouchDown += downLevel2;
+	if (level2Unlocked) {
+		loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
+		loadLevelTwo.onTouchUp += upLevel2;
+		loadLevelTwo.onTouchDown += downLevel2;
+	}
+	else {loadLevelTwo.onTouchUpInside += DoNothing;}
 			
 	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
-	loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
-	loadLevelThree.onTouchUp += upLevel3;
-	loadLevelThree.onTouchDown += downLevel3;
-				
+	if (level3Unlocked) {
+		loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
+		loadLevelThree.onTouchUp += upLevel3;
+		loadLevelThree.onTouchDown += downLevel3;		
+	}
+	else {loadLevelThree.onTouchUpInside += DoNothing;}	
+			
 	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
-	loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;		
-	loadLevelFour.onTouchUp += upLevel4;
-	loadLevelFour.onTouchDown += downLevel4;
-
-	if (FallingLaunch.levelAchieved == 5) {
-		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
-		level2Unlocked = true;
-		level3Unlocked = true;
-		level4Unlocked = true;
+	if (level4Unlocked) {
+		loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;
+		loadLevelFour.onTouchUp += upLevel4;
+		loadLevelFour.onTouchDown += downLevel4;
 	}
-	else if (FallingLaunch.levelAchieved == 4) {
-		level2Unlocked = true;
-		level3Unlocked = true;
-	}		
-	else if (FallingLaunch.levelAchieved == 3) {
-		level2Unlocked = true;
-	}
+	else {loadLevelFour.onTouchUpInside += DoNothing;}	
 
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
@@ -387,9 +396,9 @@ function LevelSelect() {
 	howToButton.hidden = true;
 
 	loadLevelOne.hidden = false;
-	if (level2Unlocked) {loadLevelTwo.hidden = false;}
-	if (level3Unlocked) {loadLevelThree.hidden = false;}
-	if (level4Unlocked) {loadLevelFour.hidden = false;}
+	loadLevelTwo.hidden = false;
+	loadLevelThree.hidden = false;
+	loadLevelFour.hidden = false;
 	
 	fadeInLoadNewLevels();
 	
@@ -412,9 +421,9 @@ function BackToPauseMenu() {
 	fadeInPauseMenu();
 		
 	loadLevelOne.hidden = true;
-	if (level2Unlocked) {loadLevelTwo.hidden = false;}
-	if (level3Unlocked) {loadLevelThree.hidden = true;}
-	if (level4Unlocked) {loadLevelFour.hidden = true;}
+	loadLevelTwo.hidden = true;
+	loadLevelThree.hidden = true;
+	loadLevelFour.hidden = true;
 
 	helpIcon1.hidden = true;
 	helpIcon2.hidden = true;
@@ -532,6 +541,10 @@ function OpenAbout() {
 
 }
 
+function DoNothing() {
+	return;
+}
+
 function LoadLevel1ViaStart() {
 	StartLevelLoad(level1);
 }
@@ -583,9 +596,15 @@ function fadeOutLeftArrow() {
 
 function fadeInLoadNewLevels() {
 	loadLevelOne.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	loadLevelTwo.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	loadLevelThree.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	loadLevelFour.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+
+	if (level2Unlocked) {loadLevelTwo.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);} 
+	else {loadLevelTwo.alphaFromTo(.25f, 0.0f, 0.07f, Easing.Sinusoidal.easeOut);}
+
+	if (level3Unlocked)	{loadLevelThree.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);}
+	else {loadLevelThree.alphaFromTo(.25f, 0.0f, 0.07f, Easing.Sinusoidal.easeOut);}
+	
+	if (level4Unlocked) {loadLevelFour.alphaFromTo(.5f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);}
+	else {loadLevelFour.alphaFromTo(.25f, 0.0f, 0.07f, Easing.Sinusoidal.easeOut);}
 }
 
 function fadeInPauseMenu() {

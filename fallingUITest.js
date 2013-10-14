@@ -395,8 +395,8 @@ function LevelComplete() {
 	Application.LoadLevel(levelToLoad);
 //  not necessary because Respawn.js resets the latest checkpoint in its Start	
 //	PlayerPrefs.SetString("LatestLevel", levelToLoad);
-	FallingLaunch.levelAchieved = Application.loadedLevel;
- 	PlayerPrefs.SetInt("HighestLevel", Application.loadedLevel);
+	FallingLaunch.levelAchieved = (Application.loadedLevel + 1);
+ 	PlayerPrefs.SetInt("HighestLevel", (Application.loadedLevel + 1));
 	Time.timeScale = savedTimeScale;
 	PlayerPrefs.Save();
 }
