@@ -136,7 +136,7 @@ function Start () {
 
 	if (level1 == Application.loadedLevelName) {
 	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
-	loadLevelOne.alphaTo( 0.01f, 0.2f, Easing.Sinusoidal.easeOut);}
+	loadLevelOne.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
 	else {				
 	loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);}
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
@@ -144,27 +144,41 @@ function Start () {
 	
 	if (level2 == Application.loadedLevelName) {
 	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
-	loadLevelTwo.alphaTo( 0.01f, 0.2f, Easing.Sinusoidal.easeOut);}
+	loadLevelTwo.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);}
+		loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
+			if (fallingStartMenuUI.level2Unlocked == false) {
+				loadLevelTwo.alphaTo( 0.01f, 0.07f, Easing.Sinusoidal.easeOut);
+				loadLevelTwo.onTouchUpInside += DoNothing;}
+			else {loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;}
+		}
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
-	loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
 	
 	if (level3 == Application.loadedLevelName) {
 	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
-	loadLevelThree.alphaTo( 0.01f, 0.2f, Easing.Sinusoidal.easeOut);}
+	loadLevelThree.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);}
+		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
+			if (fallingStartMenuUI.level3Unlocked == false) {
+				loadLevelThree.alphaTo( 0.01f, 0.07f, Easing.Sinusoidal.easeOut);
+				loadLevelThree.onTouchUpInside += DoNothing;
+			}
+			else {loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;}
+			}	
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
-	loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
-	
+
 	if (level4 == Application.loadedLevelName) {
 	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
-	loadLevelFour.alphaTo( 0.01f, 0.2f, Easing.Sinusoidal.easeOut);}
+	loadLevelFour.alphaTo( 0.01f, 0.25f, Easing.Sinusoidal.easeOut);}
 	else {				
-	loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);}
+		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
+			if (fallingStartMenuUI.level4Unlocked == false) {
+				loadLevelFour.alphaTo( 0.01f, 0.07f, Easing.Sinusoidal.easeOut);
+				loadLevelFour.onTouchUpInside += DoNothing;
+			}
+			else {loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;}
+			}
 	loadLevelFour.positionFromTopRight(buttonScaleFactor,0.05f);
-	loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;		
 	
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
@@ -381,7 +395,10 @@ function LevelComplete() {
 	Application.LoadLevel(levelToLoad);
 //  not necessary because Respawn.js resets the latest checkpoint in its Start	
 //	PlayerPrefs.SetString("LatestLevel", levelToLoad);
+	FallingLaunch.levelAchieved = Application.loadedLevel;
+ 	PlayerPrefs.SetInt("HighestLevel", Application.loadedLevel);
 	Time.timeScale = savedTimeScale;
+	PlayerPrefs.Save();
 }
 
 function BeginOutroUI() {
@@ -476,6 +493,10 @@ function BackToPauseMenu() {
 	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
 	DisplayTilt();
+}
+
+function DoNothing () {
+	return;
 }
 
 function LoadLevel1ViaMenu() {

@@ -28,6 +28,10 @@ var level2 : String = "Falling-scene2";
 var level3 : String = "Falling-scene1-scale";
 var level4 : String = "Falling-scene3";
 
+static var level2Unlocked : boolean = false;
+static var level3Unlocked : boolean = false;
+static var level4Unlocked : boolean = false;
+
 var helpIcon1: UISprite;
 var helpIcon2: UISprite;
 var helpIcon3: UISprite;
@@ -61,6 +65,13 @@ function Start () {
 
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
+
+	if (PlayerPrefs.HasKey("HighestLevel") == false) {
+		 FallingLaunch.levelAchieved = Application.loadedLevel + 1;
+		 PlayerPrefs.SetInt("HighestLevel", FallingLaunch.levelAchieved);
+	}
+	
+	FallingLaunch.levelAchieved = PlayerPrefs.GetInt("HighestLevel");
 
 //  yield WaitForSeconds(0.5f);
 
@@ -151,16 +162,6 @@ function Start () {
 	rightArrow.onTouchDown += fadeInRightArrow;
 	rightArrow.onTouchUp += fadeOutRightArrow;
 
-	leftArrow = UIButton.create("chooselevelDown.png","chooselevelDown.png", 0, 0);
-	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
-	leftArrow.onTouchUpInside += LevelSelect;
-	leftArrow.onTouchDown += fadeInLeftArrow;
-	leftArrow.onTouchUp += fadeOutLeftArrow;
-	
-	tiltWarning.hidden = true;
-	rightArrow.hidden = true;
-	leftArrow.hidden = true;
-	
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
 	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
@@ -189,12 +190,44 @@ function Start () {
 	loadLevelFour.onTouchUpInside += LoadLevel4ViaStart;		
 	loadLevelFour.onTouchUp += upLevel4;
 	loadLevelFour.onTouchDown += downLevel4;
-		
+
+	if (FallingLaunch.levelAchieved == 5) {
+		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+		level2Unlocked = true;
+		level3Unlocked = true;
+		level4Unlocked = true;
+	}
+	else if (FallingLaunch.levelAchieved == 4) {
+		level2Unlocked = true;
+		level3Unlocked = true;
+	}		
+	else if (FallingLaunch.levelAchieved == 3) {
+		level2Unlocked = true;
+	}
+
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
-		
+	
+	leftArrow = UIButton.create("chooselevelDown.png","chooselevelDown.png", 0, 0);
+	leftArrow.positionFromTopLeft(buttonScaleFactor,0.2f);
+	leftArrow.hidden = true;
+	
+	if (level2Unlocked == true) {
+		leftArrow.onTouchUpInside += LevelSelect;
+		leftArrow.onTouchDown += fadeInLeftArrow;
+		leftArrow.onTouchUp += fadeOutLeftArrow;
+	}
+	else {
+		leftArrow.hidden = true;
+		leftArrow.alphaTo(.01f, 0.0f, Easing.Sinusoidal.easeOut);
+		rightArrow.positionFromCenter(0f,0f);
+	}
+
+	tiltWarning.hidden = true;
+	rightArrow.hidden = true;
+
 	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;	
 	BackToPauseMenuButton.hidden = true;
 	
@@ -248,7 +281,7 @@ function ShowStart() {
 	tiltWarning.hidden = true;
 	
 	rightArrow.hidden = false;
-	leftArrow.hidden = false;
+	if (level2Unlocked) {leftArrow.hidden = false;}
 	aboutButtonStart.hidden = false;
 	howToButton.hidden = false;
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
@@ -304,7 +337,7 @@ function PauseGame() {
 	if (FallingPlayer.isPausable == true) {
 		FallingPlayer.isPausable = false;
 		rightArrow.hidden = false;
-		leftArrow.hidden = false;
+		if (level2Unlocked) {leftArrow.hidden = false;}
 		loadNewLevelButton.hidden = false;
 		bgSprite.hidden = false;
 			    
@@ -354,9 +387,9 @@ function LevelSelect() {
 	howToButton.hidden = true;
 
 	loadLevelOne.hidden = false;
-	loadLevelTwo.hidden = false;
-	loadLevelThree.hidden = false;
-	loadLevelFour.hidden = false;
+	if (level2Unlocked) {loadLevelTwo.hidden = false;}
+	if (level3Unlocked) {loadLevelThree.hidden = false;}
+	if (level4Unlocked) {loadLevelFour.hidden = false;}
 	
 	fadeInLoadNewLevels();
 	
@@ -366,7 +399,7 @@ function LevelSelect() {
 }
 
 function BackToPauseMenu() {
-	leftArrow.hidden = false;
+	if (level2Unlocked) {leftArrow.hidden = false;}
 	rightArrow.hidden = false;
 	aboutButtonStart.hidden = false;
 	howToButton.hidden = false;
@@ -379,9 +412,9 @@ function BackToPauseMenu() {
 	fadeInPauseMenu();
 		
 	loadLevelOne.hidden = true;
-	loadLevelTwo.hidden = true;
-	loadLevelThree.hidden = true;
-	loadLevelFour.hidden = true;
+	if (level2Unlocked) {loadLevelTwo.hidden = false;}
+	if (level3Unlocked) {loadLevelThree.hidden = true;}
+	if (level4Unlocked) {loadLevelFour.hidden = true;}
 
 	helpIcon1.hidden = true;
 	helpIcon2.hidden = true;
@@ -500,15 +533,6 @@ function OpenAbout() {
 }
 
 function LoadLevel1ViaStart() {
-//	loadLevelOne.hidden = true;
-//	loadLevelTwo.hidden = true;
-//	loadLevelThree.hidden = true;
-//	loadLevelFour.hidden = true;
-//	BackToPauseMenuButton.hidden = true;
-//	loadingLabel.hidden = false;
-//	rightArrow.hidden = true;
-//	leftArrow.hidden = true;
-		
 	StartLevelLoad(level1);
 }
 

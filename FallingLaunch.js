@@ -19,6 +19,8 @@ static var acceleratorSnapshot : Vector3;
 
 static var LoadedLatestLevel : boolean = false;
 
+static var levelAchieved : int;
+
 var testFlightToken : String;
 
 //GameAnalytics variables
