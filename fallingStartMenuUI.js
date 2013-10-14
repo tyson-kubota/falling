@@ -255,7 +255,7 @@ function Start () {
 	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.centerize();
-	aboutButtonStart.positionFromTopLeft(.05f, .05f);	
+	aboutButtonStart.positionFromBottomRight(.05f, .05f);	
 	aboutButtonStart.onTouchUpInside += OpenAbout;
 // 	aboutButtonStart.onTouchUp += fadeOutAbout;	
 // 	aboutButtonStart.onTouchDown += fadeInAbout;
