@@ -3,6 +3,7 @@ static var flipMultiplier : float = 1;
 static var landscapeFlipped : boolean = false;
 static var levelEndSlowdown : int = 0;
 static var alreadyLaunched : boolean = false;
+static var hasSetOrientation : boolean = false;
 static var NewGamePlus : boolean = false;
 
 var targetFPS : int = 30;

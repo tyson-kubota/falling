@@ -66,7 +66,9 @@ function Awake () {
 	Input.compensateSensors = true;
 	Debug.Log("My orientation is " + Screen.orientation);
 	//Screen.orientation = ScreenOrientation.AutoRotation;
-	AutoOrientToLandscape();
+	if (FallingLaunch.hasSetOrientation == false) {
+		AutoOrientToLandscape();
+	}
 
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
@@ -733,6 +735,7 @@ function AutoOrientToLandscape () {
 			FallingLaunch.flipMultiplier = 1;
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
 		}
+	FallingLaunch.hasSetOrientation = true;		
 }
 
 function StopCompensatingSensors() {
