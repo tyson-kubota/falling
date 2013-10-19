@@ -1,5 +1,5 @@
 #pragma strict
-static var flipMultiplier : float = -1;
+static var flipMultiplier : float = 1;
 static var landscapeFlipped : boolean = false;
 static var levelEndSlowdown : int = 0;
 static var alreadyLaunched : boolean = false;
@@ -46,18 +46,18 @@ function Awake () {
 		
 		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
 		//Debug.Log("Your screen orientation is " + iPhoneInput.orientation + "!");
-		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-			flipMultiplier = -1;
-			//Debug.Log("I'm in LandscapeRight!");
-			Screen.orientation = ScreenOrientation.LandscapeRight;
-			landscapeFlipped = true;
-			neutralPosTilted = neutralPosTiltedFlipped;
-		}
-		else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
-			flipMultiplier = 1;
-			//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
-			neutralPosTilted = neutralPosTiltedRegular;
-		}	
+		// if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+		// 	flipMultiplier = -1;
+		// 	//Debug.Log("I'm in LandscapeRight!");
+		// 	Screen.orientation = ScreenOrientation.LandscapeRight;
+		// 	landscapeFlipped = true;
+		// 	neutralPosTilted = neutralPosTiltedFlipped;
+		// }
+		// else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
+		// 	flipMultiplier = 1;
+		// 	//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
+		// 	neutralPosTilted = neutralPosTiltedRegular;
+		// }	
 
 		//this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;

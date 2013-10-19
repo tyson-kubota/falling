@@ -62,10 +62,18 @@ var bgColor2 : Color = Color.red;
 var fallingLaunch : GameObject;
 var fallingLaunchComponent : FallingLaunch;
 
-function Start () {
+function Awake () {
+	Input.compensateSensors = true;
+	Debug.Log("My orientation is " + Screen.orientation);
+	//Screen.orientation = ScreenOrientation.AutoRotation;
+	AutoOrientToLandscape();
 
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
+
+}
+
+function Start () {
 
 	if (PlayerPrefs.HasKey("HighestLevel") == false) {
 		 FallingLaunch.levelAchieved = Application.loadedLevel + 1;
@@ -305,7 +313,7 @@ function ShowStart() {
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
-	fallingLaunchComponent.Calibrate();
+	yield FixWrongInitialScreenOrientation();
 }
 
 function CheckTiltAngle() {
@@ -329,6 +337,7 @@ function ShowTiltWarning() {
 }
 
 function Update () {
+	//Debug.Log( "Your normalized accel is " + Vector3.Dot(Input.acceleration.normalized, Vector3(1,0,0)) );
 	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .7) && (Mathf.Abs(Input.acceleration.y) < .7)) {
 		CheckTiltAngle();
 		bgCamera.backgroundColor = bgColor1;
@@ -469,6 +478,8 @@ function ResumeGame() {
 }
 
 function StartLevelLoad(levelName: String) {
+	yield StopCompensatingSensors();
+	fallingLaunchComponent.Calibrate();
 	if (aboutToLoad == false) {
 		aboutToLoad = true;
 		FadeAudio (fadeTime);
@@ -493,7 +504,6 @@ function FadeOutLevelButtons(timer : float) {
 	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	//rightArrow.hidden = true;
 	//leftArrow.hidden = true;
-	//openSiteButton.hidden = true;
 	
 	yield WaitForSeconds(timer);
 	
@@ -566,10 +576,6 @@ function LoadLevel3ViaStart() {
 
 function LoadLevel4ViaStart() {
 	StartLevelLoad(level4);
-}
-
-function OpenSite() {
-	Application.OpenURL ("http://tysonkubota.net/");
 }
 
 function OpenFallingSite() {
@@ -668,4 +674,69 @@ function upLevel4() {
 	if (aboutToLoad == false) {
 		loadLevelFour.alphaTo(.25f, 0.8f, Easing.Sinusoidal.easeOut);	
 	}
+}
+
+function SetOrientationNow() {
+	if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
+		Screen.orientation = ScreenOrientation.LandscapeRight;
+		FallingLaunch.flipMultiplier = -1;
+		Debug.Log("I'm in LandscapeRight!");
+		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+	}
+	else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft){
+		Screen.orientation = ScreenOrientation.LandscapeLeft;
+		FallingLaunch.flipMultiplier = 1;
+		Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
+		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+	}	
+
+	//this is necessary to override Unity 4's auto-orientation code
+	Input.compensateSensors = false;
+	yield;
+	return;
+}
+
+
+function FixWrongInitialScreenOrientation () {
+   if ( (Screen.height > Screen.width && Input.deviceOrientation.ToString().ToLower().StartsWith("landscape"))
+     || (Screen.width > Screen.height && Input.deviceOrientation.ToString().ToLower().StartsWith("portrait"))
+   ) {
+     Debug.LogWarning("Fixing wrong screen orientation ("+ Screen.orientation +") to right device orientation: "+ Input.deviceOrientation);
+     switch (Input.deviceOrientation) {
+     case DeviceOrientation.LandscapeLeft:
+      Screen.orientation = ScreenOrientation.LandscapeLeft;
+      break;
+     case DeviceOrientation.LandscapeRight:
+      Screen.orientation = ScreenOrientation.LandscapeRight;
+      break;
+     case DeviceOrientation.PortraitUpsideDown:
+      Screen.orientation = ScreenOrientation.PortraitUpsideDown;
+      break;
+     case DeviceOrientation.Portrait:
+      Screen.orientation = ScreenOrientation.Portrait;
+      break;
+     }
+   }
+   yield;
+}
+
+function AutoOrientToLandscape () {
+	if (Vector3.Dot(Input.acceleration.normalized, Vector3(1,0,0)) > 0) 
+		{
+			Screen.orientation = ScreenOrientation.LandscapeRight;
+			FallingLaunch.flipMultiplier = -1;
+			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+		}
+	else if(Vector3.Dot(Input.acceleration.normalized, Vector3(-1,0,0)) > 0)
+		{
+			Screen.orientation = ScreenOrientation.LandscapeLeft;
+			FallingLaunch.flipMultiplier = 1;
+			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+		}
+}
+
+function StopCompensatingSensors() {
+	//this is necessary to override Unity 4's auto-orientation code	
+	Input.compensateSensors = false;
+	yield;
 }
