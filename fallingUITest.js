@@ -23,6 +23,8 @@ var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
 
+var nextLevelLabel : UISprite;
+
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
 var TogglingTiltNeutral : boolean = false;
@@ -158,6 +160,23 @@ function Start () {
 	BackToHomeMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToHomeMenuButton.onTouchUpInside += LoadHomeViaMenu;
 	BackToHomeMenuButton.hidden = true;
+
+	if (level1 == Application.loadedLevelName) {
+		nextLevelLabel = UI.firstToolkit.addSprite( "level2.png", 0, 0, 0 );
+	}
+	else if (level2 == Application.loadedLevelName) {
+		nextLevelLabel = UI.firstToolkit.addSprite( "level3.png", 0, 0, 0 );	
+	}
+	else if (level3 == Application.loadedLevelName) {
+		nextLevelLabel = UI.firstToolkit.addSprite( "level4.png", 0, 0, 0 );	
+	}
+	else if (level4 == Application.loadedLevelName) {
+		nextLevelLabel = UI.firstToolkit.addSprite( "loading.png", 0, 0, 0 );	
+	}
+
+	//nextLevelLabel.positionFromCenter(.0f);
+	nextLevelLabel.positionCenter();
+	nextLevelLabel.hidden = true;
 
 	if (level1 == Application.loadedLevelName) {
 		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
@@ -432,8 +451,10 @@ function LevelComplete() {
 // fade in congrats menu / buttons here 
 
     savedTimeScale = Time.timeScale;
-	loadingLabel.hidden = false;
-	loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
+	//loadingLabel.hidden = false;
+	//loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
+	nextLevelLabel.hidden = false;
+	nextLevelLabel.alphaFromTo( 1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);    
     fallingPlayerComponent.FadeAudio (.9, FadeDir.Out);
     yield WaitForSeconds (1);
 //  Time.timeScale = 0;
