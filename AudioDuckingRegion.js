@@ -2,6 +2,7 @@
 
 var duckingObject : GameObject;
 var duckingVal : float = .5f;
+var StopAudioOnComplete : boolean = false;
 
 function Start () {
 }
@@ -31,4 +32,6 @@ function lerpDuck (timer : float, endVal : float) {
         yield;        
     	}
     yield WaitForSeconds (timer);
+
+    if (StopAudioOnComplete) {duckingObject.audio.Stop();}
 }
