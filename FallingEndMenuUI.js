@@ -170,9 +170,8 @@ function continueLevel() {
 	
 	EndMenuLogoCamera.GetComponent(Camera).enabled = false;
 	
-	fallingUITest.loadingLabel.hidden = false;
-	FallingPlayer.isTiltable = true;
-	Application.LoadLevel(level1);
+	//fallingUITest.loadingLabel.hidden = false;
+	ShowLevel1Logo();
 }
 
 function OpenAbout() {
@@ -233,4 +232,13 @@ function fadeOutContinue() {
 
 function OpenFallingSite() {
 	Application.OpenURL ("http://tysonkubota.net/falling?utm_source=falling-game&utm_medium=ios&utm_campaign=falling-gui");
+}
+
+
+function ShowLevel1Logo() {
+	fallingUITest.nextLevelLabel.hidden = false;
+	fallingUITest.nextLevelLabel.alphaFromTo( 2.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
+	yield WaitForSeconds(2.0);
+	FallingPlayer.isTiltable = true;
+	Application.LoadLevel(level1);
 }

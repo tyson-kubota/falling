@@ -23,7 +23,7 @@ var loadLevelTwo : UIButton;
 var loadLevelThree : UIButton;
 var loadLevelFour : UIButton;
 
-var nextLevelLabel : UISprite;
+static var nextLevelLabel : UISprite;
 
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
@@ -171,7 +171,7 @@ function Start () {
 		nextLevelLabel = UI.firstToolkit.addSprite( "level4.png", 0, 0, 0 );	
 	}
 	else if (level4 == Application.loadedLevelName) {
-		nextLevelLabel = UI.firstToolkit.addSprite( "loading.png", 0, 0, 0 );	
+		nextLevelLabel = UI.firstToolkit.addSprite( "level1.png", 0, 0, 0 );	
 	}
 
 	//nextLevelLabel.positionFromCenter(.0f);
