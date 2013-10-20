@@ -29,6 +29,7 @@ var SpeedLinesMesh : GameObject;
 static var SpeedLinesMeshScript : SpeedLines;
 
 var changingPitch : boolean = false;
+var shouldChangePitch : boolean = true;
 
 static var pauseButtonArea : Rect;
 
@@ -192,7 +193,7 @@ function fallingSpeed () {
 		SpeedLinesMeshScript.LinesOff();
 		//mainCamera.audio.pitch = 1;
 		//mainCamera.audio.volume = 1;
-		if (changingPitch == false) {lerpPitchDown(.5, 1, 1);}
+		if (shouldChangePitch == true && changingPitch == false) {lerpPitchDown(.5, 1, 1);}
 		dir = Vector3.zero;
 		FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
 	}
@@ -210,13 +211,13 @@ function speedsUp () {
 		//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
 		SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
 		FallingPlayer.UIscriptComponent.showThreatBar(1);
-		if (mainCamera.audio) {lerpPitchUp(.5, 2, .3);}
+		if (mainCamera.audio && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
 		}
 		else {
 		//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
 		SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
 		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-		if (mainCamera.audio && changingPitch == false) {lerpPitchDown(1, 1, 1);}
+		if (mainCamera.audio && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
 }		
 }
 

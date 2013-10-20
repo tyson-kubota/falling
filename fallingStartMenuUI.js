@@ -723,16 +723,38 @@ function FixWrongInitialScreenOrientation () {
 }
 
 function AutoOrientToLandscape () {
+
+	// if (Input.deviceOrientation == DeviceOrientation.FaceUp) {
+	// 	if (Screen.orientation == ScreenOrientation.LandscapeRight) {
+	// 		Debug.Log("Device is FaceUp, and ScreenOrientation is LandscapeRight");
+	// 		FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
+	// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;			
+	// 	}
+	// 	else {
+	// 		Debug.Log("Device is FaceUp, and ScreenOrientation is NOT LandscapeRight");
+	// 		FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
+	// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;			
+	// 	}
+
+	// 	Screen.autorotateToLandscapeRight = false;
+	// 	Screen.autorotateToLandscapeLeft = false;
+	// 	Screen.autorotateToPortrait = false;
+	// 	Screen.autorotateToPortraitUpsideDown = false;
+
+	// }
+
 	if (Vector3.Dot(Input.acceleration.normalized, Vector3(1,0,0)) > 0) 
+	//else if (Input.deviceOrientation == DeviceOrientation.LandscapeRight)
 		{
 			Screen.orientation = ScreenOrientation.LandscapeRight;
-			FallingLaunch.flipMultiplier = -1;
+			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
 		}
 	else if(Vector3.Dot(Input.acceleration.normalized, Vector3(-1,0,0)) > 0)
+	//else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
 		{
 			Screen.orientation = ScreenOrientation.LandscapeLeft;
-			FallingLaunch.flipMultiplier = 1;
+			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
 		}
 	FallingLaunch.hasSetOrientation = true;		
