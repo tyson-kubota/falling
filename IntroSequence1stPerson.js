@@ -36,7 +36,7 @@ function Start () {
     
 }
 
-function EndIntro () {
+function EndIntro (playAudio : boolean) {
 	PlayerController.enabled = true;
 	ScoreController.enabled = true;
 	LifeController.enabled = true;
@@ -49,7 +49,7 @@ function EndIntro () {
         destructible = shard.GetComponent(ProjectileDestroy);
     	shard.rigidbody.isKinematic = false;
     	//yield WaitForSeconds(.25);
-    	if (shard.audio) {shard.audio.Play();}
+    	if (shard.audio && playAudio) {shard.audio.Play();}
     	shard.renderer.enabled = true;
     	destructible.enabled = true;
     }

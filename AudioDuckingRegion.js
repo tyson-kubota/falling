@@ -1,13 +1,14 @@
 #pragma strict
 
 var duckingObject : GameObject;
+var duckingVal : float = .5f;
 
 function Start () {
 }
 
 function OnTriggerEnter (other : Collider) {
 	if (other.gameObject.layer == 16) {
-		if (duckingObject.audio) {lerpDuck(2, .5);}
+		if (duckingObject.audio) {lerpDuck(2, duckingVal);}
 	}
 }
 

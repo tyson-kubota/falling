@@ -75,7 +75,7 @@ function Start()
 			var LifeControllerComponent : lifeCountdown = tempPlayer.GetComponent("lifeCountdown");
 
 			if (IntroScriptComponent) {
-				IntroScriptComponent.EndIntro();
+				IntroScriptComponent.EndIntro(false);
 				LifeControllerComponent.enabled = true;
 			}
 			FallingLaunch.LoadedLatestLevel = true;
