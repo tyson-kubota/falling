@@ -65,6 +65,7 @@ introComponent = GetComponent("IntroSequence1stPerson");
 
 var clipToPlay : float;
 var audioToPlay : AudioSource;
+var pitchRand : float;
 
 var audioScore : AudioSource;
 var audioScoreAlt : AudioSource;
@@ -353,16 +354,19 @@ function OnTriggerEnter (other : Collider) {
 		//Debug.Log(Random.Range(0,2));
 		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
 		clipToPlay = Random.Range(0.3f, 0.9f);
+		pitchRand = Random.Range(0.98f,1.03f);
 		
 		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
 		if (clipToPlay > 0.6f) {
 			audioToPlay = audioScore;
 			audioToPlay.pan = (-clipToPlay/2);
+			audioToPlay.pitch = pitchRand;
 			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
 		}
 		else {
 			audioToPlay = audioScoreAlt;
 			audioToPlay.volume = clipToPlay;
+			audioToPlay.pitch = pitchRand;
 			audioToPlay.pan = (clipToPlay/2);
 		}
 		
