@@ -63,11 +63,29 @@ var fallingLaunch : GameObject;
 var fallingLaunchComponent : FallingLaunch;
 
 function Awake () {
-	Input.compensateSensors = true;
+	//Input.compensateSensors = true;
+	
 	Debug.Log("My orientation is " + Screen.orientation);
 	//Screen.orientation = ScreenOrientation.AutoRotation;
-	if (FallingLaunch.hasSetOrientation == false) {
-		AutoOrientToLandscape();
+	// if (FallingLaunch.hasSetOrientation == false) {
+	// 	AutoOrientToLandscape();
+	// }
+
+	if (!FallingLaunch.hasSetOrientation) {
+		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
+			//Debug.Log("I'm in LandscapeRight!");
+			Screen.orientation = ScreenOrientation.LandscapeRight;
+			FallingLaunch.landscapeFlipped = true;
+			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+		}
+		else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
+			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
+			//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
+			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+		}	
+
+		FallingLaunch.hasSetOrientation = true;
 	}
 
 	fallingLaunch = GameObject.Find("LaunchGameObject");
@@ -480,7 +498,7 @@ function ResumeGame() {
 }
 
 function StartLevelLoad(levelName: String) {
-	yield StopCompensatingSensors();
+	//yield StopCompensatingSensors();
 	fallingLaunchComponent.Calibrate();
 	if (aboutToLoad == false) {
 		aboutToLoad = true;
