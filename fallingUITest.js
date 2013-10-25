@@ -49,7 +49,6 @@ var level4 : String = "Falling-scene3";
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
 var level4Unlocked : boolean = false;
-var debugMode : boolean = true;
 
 static var holdingPauseButton : boolean = false;
 static var origPauseButtonArea : Rect;
@@ -80,7 +79,7 @@ function Start () {
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
-
+	Debug.Log("your highest level achieved is " + FallingLaunch.levelAchieved);
 
 	if (FallingLaunch.levelAchieved == 5) {
 		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
@@ -96,7 +95,7 @@ function Start () {
 		level2Unlocked = true;
 	}
 
-	if (debugMode) {
+	if (FallingLaunch.debugMode) {
 		level2Unlocked = true;
 		level3Unlocked = true;
 		level4Unlocked = true;

@@ -31,7 +31,6 @@ var level4 : String = "Falling-scene3";
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
 var level4Unlocked : boolean = false;
-var debugMode : boolean = true;
 
 var helpIcon1: UISprite;
 var helpIcon2: UISprite;
@@ -129,7 +128,7 @@ function Start () {
 		level2Unlocked = true;
 	}
 
-	if (debugMode) {
+	if (FallingLaunch.debugMode) {
 		level2Unlocked = true;
 		level3Unlocked = true;
 		level4Unlocked = true;
