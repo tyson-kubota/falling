@@ -63,6 +63,7 @@ var whiteFader : FadeInOutAlt;
 var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
 
+var playAltScoreAudio : boolean = false;
 var clipToPlay : float;
 var audioToPlay : AudioSource;
 var pitchRand : float;
@@ -356,17 +357,24 @@ function OnTriggerEnter (other : Collider) {
 		clipToPlay = Random.Range(0.3f, 0.9f);
 		pitchRand = Random.Range(0.98f,1.03f);
 		
-		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
-		if (clipToPlay > 0.6f) {
-			audioToPlay = audioScore;
-			audioToPlay.pan = (-clipToPlay/2);
-			audioToPlay.pitch = pitchRand;
-			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
+		if (playAltScoreAudio) {
+			audioToPlay = audioScoreAlt;
+			playAltScoreAudio = false;
 		}
 		else {
-			audioToPlay = audioScoreAlt;
+			audioToPlay = audioScore;
+			playAltScoreAudio = true;
+		}
+		
+		audioToPlay.pitch = pitchRand;
+
+		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
+		if (clipToPlay > 0.6f) {
+			audioToPlay.pan = (-clipToPlay/2);
+			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol/2), peakVol);
+		}
+		else {
 			audioToPlay.volume = clipToPlay;
-			audioToPlay.pitch = pitchRand;
 			audioToPlay.pan = (clipToPlay/2);
 		}
 		
