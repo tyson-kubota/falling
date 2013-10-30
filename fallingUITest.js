@@ -79,7 +79,7 @@ function Start () {
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
 	bgSprite.hidden = true;
-	Debug.Log("your highest level achieved is " + FallingLaunch.levelAchieved);
+	//Debug.Log("your highest level achieved is " + FallingLaunch.levelAchieved);
 
 	if (FallingLaunch.levelAchieved == 5) {
 		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
