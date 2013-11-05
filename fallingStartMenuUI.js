@@ -332,7 +332,7 @@ function ShowStart() {
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
-	yield FixWrongInitialScreenOrientation();
+	//yield FixWrongInitialScreenOrientation();
 }
 
 function CheckTiltAngle() {
