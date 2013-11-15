@@ -21,6 +21,10 @@ var buttonScaleFactor : float;
 var scriptName : GameObject;
 var initialRespawn : Respawn;
 
+var angledTiltLabel : UIButton;
+var flatTiltLabel : UIButton;
+var TogglingTiltNeutral : boolean = false;
+
 var levelToLoad : String = "";
 
 var level1 : String = "Falling-scene-tutorial";
@@ -44,7 +48,9 @@ var thinText : UIText;
 var text1 : UITextInstance;
 var text2 : UITextInstance;
 var text3 : UITextInstance;
+var tiltText1 : UITextInstance;
 var openSiteButtonText : UIButton;
+
 
 private var savedTimeScale:float;
 
@@ -183,13 +189,25 @@ function Start () {
 	0, 0, 0.8f, 1, Color.white, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
     text3.positionFromBottom(.3f);
 
-	//var wrapText = new UIText( "font-thin", "font-thin.png" );
-	//wrapText.wrapMode = UITextLineWrapMode.MinimumLength;
-	//wrapText.lineWrapWidth = 100.0f;
-	//var textWrap1 = wrapText.addTextInstance( "Testing line wrap width with small words in multiple resolutions.\n\nAnd manual L/B.", 
-	//0, 0, 0.5f, 1, Color.white, UITextAlignMode.Left, UITextVerticalAlignMode.Bottom );
-    //textWrap1.positionFromBottomLeft( 0.05f, 0.05f );
-	
+	tiltText1 = thinText.addTextInstance( "CHOOSE A NEUTRAL TILT POSITION", 0, 0 );
+    tiltText1.pixelsFromCenter( -40, 0 );
+	tiltText1.hidden = true;
+
+	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
+	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	angledTiltLabel.pixelsFromCenter( 0, -90 );
+	angledTiltLabel.onTouchUpInside += AngledTiltNeutral;
+	angledTiltLabel.hidden = true;
+
+	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 0, 0 );
+	flatTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	flatTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	flatTiltLabel.pixelsFromCenter( 0, 90 );
+	flatTiltLabel.onTouchUpInside += FlatTiltNeutral;
+	flatTiltLabel.hidden = true;
+
+
 	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
 	openSiteButtonText.positionFromCenter(0,0);
 	openSiteButtonText.hidden = true;
@@ -488,12 +506,85 @@ function FadeAudio (timer : float) {
 }
 
 function ResumeGame() {
+//	ShowTiltNeutralOptions();
 	if (PlayerPrefs.HasKey("LatestLevel")) {
-		 StartLevelLoad(PlayerPrefs.GetString("LatestLevel"));
+		StartLevelLoad(PlayerPrefs.GetString("LatestLevel"));
 	}
 	else {		
-		StartLevelLoad(level1);
+		ShowTiltNeutralOptions();
 	}
+}
+
+
+function FlatTiltNeutral () {
+	if (TogglingTiltNeutral == false) {
+		
+		TogglingTiltNeutral = true;
+		
+		fallingLaunchComponent.ChangeTilt(true);
+		flatTiltLabel.hidden = false;
+		angledTiltLabel.hidden = true;
+
+		TogglingTiltNeutral = false;
+		
+		fadeAndLoad(true);
+	}
+}
+
+function AngledTiltNeutral () {
+	if (TogglingTiltNeutral == false) {
+		
+		TogglingTiltNeutral = true;
+		
+		fallingLaunchComponent.ChangeTilt(false);
+		angledTiltLabel.hidden = false;
+		flatTiltLabel.hidden = true;
+
+		TogglingTiltNeutral = false;
+		
+		fadeAndLoad(false);
+	}
+}
+
+
+function fadeAndLoad (flatNeutral : boolean) {
+	//StartLevelLoad(level1);
+	tiltText1.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeOut);
+
+	if (flatNeutral) {
+		flatTiltLabel.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeIn);
+		angledTiltLabel.hidden = true;
+	}
+	else {
+		angledTiltLabel.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeIn);
+		flatTiltLabel.hidden = true;
+	}
+
+	yield WaitForSeconds (1.0f);
+	
+	StartLevelLoad(level1);
+
+	//below logic unnecessary for one-time fade and load check
+	// if (PlayerPrefs.HasKey("LatestLevel")) {
+	// 	 StartLevelLoad(PlayerPrefs.GetString("LatestLevel"));
+	// }
+	// else {		
+	// 	StartLevelLoad(level1);
+	// }
+}
+
+function ShowTiltNeutralOptions () {
+	flatTiltLabel.hidden = false;
+	angledTiltLabel.hidden = false;
+	tiltText1.hidden = false;
+
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	aboutButtonStart.hidden = true;
+	howToButton.hidden = true;
+	tiltText1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+	flatTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	angledTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 }
 
 function StartLevelLoad(levelName: String) {
