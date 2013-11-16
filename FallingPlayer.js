@@ -255,14 +255,12 @@ function playerTilt () {
 	if (isTiltable == true) {
 	    var dir : Vector3 = Vector3.zero;
 
-	    if (FallingLaunch.hasSetAccel == true) {
-			tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.y * tiltAngle)), -tiltAngle, tiltAngle);
-    		tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.x * tiltAngle)), -tiltAngle, tiltAngle);
-		}
-	    else {
-			tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.y * tiltAngle)), -tiltAngle, tiltAngle);
-    		tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-Input.acceleration.x * tiltAngle)), -tiltAngle, tiltAngle);
-		}
+	    if (FallingLaunch.hasSetAccel == false) {
+    		FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
+    	}
+		tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.y * tiltAngle)), -tiltAngle, tiltAngle);
+		tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.x * tiltAngle)), -tiltAngle, tiltAngle);
+
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation
 	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,
