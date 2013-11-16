@@ -23,6 +23,8 @@ var initialRespawn : Respawn;
 
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
+var angledTiltChooser : UIButton;
+var flatTiltChooser : UIButton;
 var TogglingTiltNeutral : boolean = false;
 
 var levelToLoad : String = "";
@@ -208,6 +210,21 @@ function Start () {
 	flatTiltLabel.hidden = true;
 
 
+	angledTiltChooser = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
+	angledTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	angledTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	angledTiltChooser.positionFromBottomRight(.05f, .05f);
+	angledTiltChooser.onTouchUpInside += ToggleTiltNeutral;
+	angledTiltChooser.hidden = true;
+
+	flatTiltChooser = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 0, 0 );
+	flatTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	flatTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	flatTiltChooser.positionFromBottomRight(.05f, .05f);
+	flatTiltChooser.onTouchUpInside += ToggleTiltNeutral;
+	flatTiltChooser.hidden = true;
+
+
 	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
 	openSiteButtonText.positionFromCenter(0,0);
 	openSiteButtonText.hidden = true;
@@ -307,7 +324,7 @@ function Start () {
 	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.centerize();
-	aboutButtonStart.positionFromBottomRight(.05f, .05f);	
+	aboutButtonStart.positionFromTopRight(.05f, .05f);	
 	aboutButtonStart.onTouchUpInside += OpenAbout;
 // 	aboutButtonStart.onTouchUp += fadeOutAbout;	
 // 	aboutButtonStart.onTouchDown += fadeInAbout;
@@ -317,7 +334,7 @@ function Start () {
 	howToButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	howToButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	howToButton.centerize();
-	howToButton.positionFromBottomLeft(.05f, .05f);	
+	howToButton.positionFromTopLeft(.05f, .05f);	
 	howToButton.onTouchUpInside += OpenHowTo;
 	howToButton.hidden = true;
 
@@ -342,6 +359,9 @@ function ShowStart() {
 	tiltWarning.hidden = true;
 	
 	rightArrow.hidden = false;
+	if (PlayerPrefs.HasKey("LatestLevel")) {
+		DisplayTiltChooser();
+	}
 	if (level2Unlocked) {leftArrow.hidden = false;}
 	aboutButtonStart.hidden = false;
 	howToButton.hidden = false;
@@ -351,6 +371,31 @@ function ShowStart() {
 	howToButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
 	//yield FixWrongInitialScreenOrientation();
+}
+
+function DisplayTiltChooser () {
+
+		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+			angledTiltChooser.hidden = false;
+			angledTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+		}
+		else {
+			flatTiltChooser.hidden = false;
+			flatTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+		}
+}
+
+function DisplayTilt () {
+	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+		flatTiltChooser.hidden = true;
+		angledTiltChooser.hidden = false;
+		angledTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	}
+	else {
+		flatTiltChooser.hidden = false;
+		angledTiltChooser.hidden = true;
+		flatTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	}
 }
 
 function CheckTiltAngle() {
@@ -442,22 +487,17 @@ function PauseGameCheck() {
 }
 
 function LevelSelect() {
-	leftArrow.hidden = true;
-	rightArrow.hidden = true;
-	pauseButton.hidden = true;
-	aboutButtonStart.hidden = true;
-	howToButton.hidden = true;
 
 	loadLevelOne.hidden = false;
 	loadLevelTwo.hidden = false;
 	loadLevelThree.hidden = false;
 	loadLevelFour.hidden = false;
 	
+	HideStartMenuElements();
+
 	fadeInLoadNewLevels();
 	
-	loadNewLevelButton.hidden = true;	
-	BackToPauseMenuButton.hidden = false;
-	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);	
+	loadNewLevelButton.hidden = true;
 }
 
 function BackToPauseMenu() {
@@ -468,8 +508,6 @@ function BackToPauseMenu() {
 
 	aboutButtonStart.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
-
-	//pauseButton.hidden = false;
 	
 	fadeInPauseMenu();
 		
@@ -486,6 +524,10 @@ function BackToPauseMenu() {
 	text2.hidden = true;
 	text3.hidden = true;
 	openSiteButtonText.hidden = true;
+
+	if (PlayerPrefs.HasKey("LatestLevel")) {
+		DisplayTilt();
+	}
 
 //	loadNewLevelButton.hidden = false;
 	BackToPauseMenuButton.hidden = true;
@@ -515,6 +557,26 @@ function ResumeGame() {
 	}
 }
 
+function ToggleTiltNeutral () {
+	if (TogglingTiltNeutral == false) {
+		
+		TogglingTiltNeutral = true;
+		
+		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+			fallingLaunchComponent.ChangeTilt(true);
+			flatTiltChooser.hidden = false;
+			angledTiltChooser.hidden = true;
+		}
+		else {
+			fallingLaunchComponent.ChangeTilt(false);
+			angledTiltChooser.hidden = false;
+			flatTiltChooser.hidden = true;
+		}
+
+		TogglingTiltNeutral = false;
+
+	}
+}
 
 function FlatTiltNeutral () {
 	if (TogglingTiltNeutral == false) {
@@ -610,6 +672,8 @@ function FadeOutLevelButtons(timer : float) {
 	loadLevelFour.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);	
 	rightArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	leftArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+	angledTiltChooser.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+	flatTiltChooser.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	aboutButtonStart.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	//rightArrow.hidden = true;
@@ -623,6 +687,9 @@ function FadeOutLevelButtons(timer : float) {
 	loadLevelFour.hidden = true;
 	rightArrow.hidden = true;
 	leftArrow.hidden = true;
+
+	angledTiltChooser.hidden = true;
+	flatTiltChooser.hidden = true;
 	
 	loadingLabel.hidden = false;
 	loadingLabel.alphaFromTo(.5, 0.0f, 1.0f, Easing.Quartic.easeIn);	
@@ -632,13 +699,7 @@ function FadeOutLevelButtons(timer : float) {
 
 function OpenHowTo() {
 
-	rightArrow.hidden = true;
-	leftArrow.hidden = true;
-	aboutButtonStart.hidden = true;
-	howToButton.hidden = true;
-	
-	BackToPauseMenuButton.hidden = false;
-	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	HideStartMenuElements();
 
 	helpIcon1.hidden = false;
 	helpIcon2.hidden = false;
@@ -649,15 +710,9 @@ function OpenHowTo() {
 }
 
 function OpenAbout() {
-
-	rightArrow.hidden = true;
-	leftArrow.hidden = true;
-	aboutButtonStart.hidden = true;
-	howToButton.hidden = true;
-
-	BackToPauseMenuButton.hidden = false;
-	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	
+	HideStartMenuElements();
+
 	openSiteButtonText.hidden = false;
 	text1.hidden = false;
 	text2.hidden = false;
@@ -665,7 +720,19 @@ function OpenAbout() {
 	text1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	text2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
+}
 
+function HideStartMenuElements() {
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	aboutButtonStart.hidden = true;
+	howToButton.hidden = true;
+	
+	angledTiltChooser.hidden = true;
+	flatTiltChooser.hidden = true;
+
+	BackToPauseMenuButton.hidden = false;
+	BackToPauseMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 }
 
 function DoNothing() {
