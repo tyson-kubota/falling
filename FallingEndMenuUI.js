@@ -83,7 +83,7 @@ function Start () {
     //text1.positionFromCenter(-.1f,0f);
     text1.pixelsFromCenter( -25, 0 );
 
-	text2 = boldText.addTextInstance( "tysonkubota.net/falling", 0, 0);
+	text2 = boldText.addTextInstance( "tysonkubota.net/skydrift", 0, 0);
     text2.positionCenter();
 
 	//text3 = thinText.addTextInstance( "Music by Evan Kubota\nTextures: nobiax\nSound effects: freesound.org", 0, 0 );
@@ -231,7 +231,7 @@ function fadeOutContinue() {
 }
 
 function OpenFallingSite() {
-	Application.OpenURL ("http://tysonkubota.net/falling?utm_source=falling-game&utm_medium=ios&utm_campaign=falling-gui");
+	Application.OpenURL ("http://tysonkubota.net/skydrift?utm_source=skydrift-game&utm_medium=ios&utm_campaign=skydrift-gui");
 }
 
 
