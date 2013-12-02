@@ -8,6 +8,7 @@
 var folder = "ScreenshotFolder";
 var frameRate = 30;
 var sequenceName = "mySequence";
+var overSampling : int = 2;
  
 function Start () {
     // Set the playback framerate (real time will not relate to game time after this).
@@ -26,5 +27,5 @@ function Update () {
 	// This is useful to produce screenshots for printing.
 
     // Capture the screenshot to the specified file.
-    Application.CaptureScreenshot(name, 2);
+    Application.CaptureScreenshot(name, overSampling);
 }
