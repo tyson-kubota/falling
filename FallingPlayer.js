@@ -258,8 +258,8 @@ function playerTilt () {
 	    if (FallingLaunch.hasSetAccel == false) {
     		FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
     	}
-		tiltAroundZ = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.y * tiltAngle)), -tiltAngle, tiltAngle);
-		tiltAroundX = Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.x * tiltAngle)), -tiltAngle, tiltAngle);
+		tiltAroundZ = invertHorizAxisVal * Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.y * tiltAngle)), -tiltAngle, tiltAngle);
+		tiltAroundX = invertVertAxisVal * Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.x * tiltAngle)), -tiltAngle, tiltAngle);
 
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation
