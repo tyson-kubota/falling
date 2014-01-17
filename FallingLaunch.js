@@ -164,6 +164,10 @@ function CalibrateInLevel () {
 	tiltable = false;
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
 		else {restPosition = neutralPosFlat;}
+	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
+		else {invertHorizAxisVal = 1;}
+	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
+		else {invertVertAxisVal = 1;}		
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
 	tiltable = true;
 }
