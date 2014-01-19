@@ -288,7 +288,8 @@ function Start () {
 
 	optionsButton = UIButton.create("options.png", "options.png", 0,0);
 	optionsButton.positionFromBottomRight( .05f, .05f );
-	optionsButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	optionsButton.normalTouchOffsets = new UIEdgeOffsets( 40 );
+	optionsButton.highlightedTouchOffsets = new UIEdgeOffsets( 40 );
 	optionsButton.onTouchUpInside += ShowOptions;
 	optionsButton.hidden = true;
 
