@@ -25,9 +25,22 @@ var loadLevelFour : UIButton;
 
 static var nextLevelLabel : UISprite;
 
+// OPTIONS MENU STUFF
+
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
 var TogglingTiltNeutral : boolean = false;
+
+var boldText : UIText;
+var thinText : UIText;
+
+var tiltText2 : UITextInstance;
+var invertAxesText1 : UITextInstance;
+var invertAxesText1Yes : UIButton;
+var invertAxesText1No : UIButton;
+
+var optionsButton : UIButton;
+var isSaving : boolean = false;
 
 static var loadingLabel : UIButton;
 var BackToPauseMenuButton : UIButton;
@@ -113,6 +126,18 @@ function Start () {
 		buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 		tiltPlacementRatio = (98.0/Screen.width);
 	}
+
+	boldText = new UIText( "font-bold", "font-bold.png" );
+	thinText = new UIText( "font-thin", "font-thin.png" );
+		
+	boldText.alignMode = UITextAlignMode.Center;
+	boldText.verticalAlignMode = UITextVerticalAlignMode.Middle;
+    boldText.wrapMode = UITextLineWrapMode.MinimumLength;
+
+	thinText.alignMode = UITextAlignMode.Center;
+	thinText.verticalAlignMode = UITextVerticalAlignMode.Middle;
+    thinText.wrapMode = UITextLineWrapMode.None;
+
 		
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
 //	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
@@ -261,17 +286,52 @@ function Start () {
 		rightArrow.positionFromCenter(0f,0f);
 	}
 
+	optionsButton = UIButton.create("options.png", "options.png", 0,0);
+	optionsButton.positionFromBottomRight( .05f, .05f );
+	optionsButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	optionsButton.onTouchUpInside += ShowOptions;
+	optionsButton.hidden = true;
+
+	tiltText2 = thinText.addTextInstance( "NEUTRAL TILT ANGLE", 0, 0 );
+    tiltText2.verticalAlignMode = UITextVerticalAlignMode.Bottom;
+    tiltText2.positionFromRight( -.08f, .55f );
+	tiltText2.hidden = true;
+	invertAxesText1 = thinText.addTextInstance( "X & Y AXES", 0, 0 );
+	invertAxesText1.verticalAlignMode = UITextVerticalAlignMode.Bottom;
+    invertAxesText1.positionFromRight( .08f, .55f );
+	invertAxesText1.hidden = true;
+
+
+	invertAxesText1Yes = UIButton.create("axisInverted.png","axisInverted.png", 0, 0 );
+    invertAxesText1Yes.positionFromLeft( .08f, .55f );
+	invertAxesText1Yes.hidden = true;
+	invertAxesText1Yes.alphaTo(0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+
+	invertAxesText1No = UIButton.create("axisNormal.png","axisNormal.png", 0, 0 );
+    invertAxesText1No.positionFromLeft( .08f, .55f );
+	invertAxesText1No.hidden = true;
+	invertAxesText1No.alphaTo(0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+
+	invertAxesText1Yes.onTouchUpInside += UndoInvertedAxes;
+	invertAxesText1No.onTouchUpInside += DoInvertedAxes;
+
+	invertAxesText1Yes.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	invertAxesText1No.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	invertAxesText1Yes.normalTouchOffsets = new UIEdgeOffsets( 20 );
+	invertAxesText1No.normalTouchOffsets = new UIEdgeOffsets( 20 );
+
+
 	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
 	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	angledTiltLabel.positionFromBottomRight(.05f, .05f);
+	angledTiltLabel.positionFromLeft( -.08f, .55f );	
 	angledTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltLabel.hidden = true;
 
 	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 0, 0 );
 	flatTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	flatTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	flatTiltLabel.positionFromBottomRight(.05f, .05f);
+	flatTiltLabel.positionFromLeft( -.08f, .55f );
 	flatTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltLabel.hidden = true;
 
@@ -300,6 +360,20 @@ function Start () {
 	animateProgressBar (lifeBar);
 //	Loop ();
 
+	GA.API.Design.NewEvent("LevelStarted:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+
+	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
+		GA.API.Design.NewEvent("TiltPreference:" + "FlatTilt" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	}
+	else {
+		GA.API.Design.NewEvent("TiltPreference:" + "45DegreeTilt" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	}
+	if (FallingLaunch.invertAxesVal == 1) {
+		GA.API.Design.NewEvent("AxesPreference:" + "axesNormal" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	}
+	if (FallingLaunch.invertAxesVal == -1) {
+		GA.API.Design.NewEvent("AxesPreference:" + "axesInverted" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	}
 	}
 
 function animateProgressBar(lifeBar : UIProgressBar) {
@@ -369,9 +443,11 @@ function PauseGame() {
 		//leftArrow.hidden = false;
 		if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 		BackToHomeMenuButton.hidden = false;
+		optionsButton.hidden = false;
 		bgSprite.hidden = false;
 
-		DisplayTiltOnPause();
+		//DisplayTiltOnPause();
+
 		//clear any unused stuff in pause menu. 
 		//audio and video should be stopped, so any hiccuping won't be as obvious.
 		Resources.UnloadUnusedAssets();
@@ -397,6 +473,7 @@ function UnPauseGame(resume : boolean) {
 	leftArrow.hidden = true;
 	loadNewLevelButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
+	HideOptionsButton();
 
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
@@ -527,10 +604,7 @@ function LoadNewLevelViaMenu() {
 }
 
 function LevelSelect() {
-	leftArrow.hidden = true;
-	rightArrow.hidden = true;
-	pauseButton.hidden = true;
-	
+	HidePauseMenuElements();
 	loadLevelOne.hidden = false;
 	loadLevelTwo.hidden = false;
 	loadLevelThree.hidden = false;
@@ -542,6 +616,19 @@ function LevelSelect() {
 	flatTiltLabel.hidden = true;
 
 	loadNewLevelButton.hidden = true;	
+	ShowBackButton();
+}
+
+function HidePauseMenuElements() {
+	rightArrow.hidden = true;
+	leftArrow.hidden = true;
+	pauseButton.hidden = true;
+	optionsButton.hidden = true;
+	loadNewLevelButton.hidden = true;
+	
+}
+
+function ShowBackButton() {
 	BackToPauseMenuButton.hidden = false;
 }
 
@@ -554,13 +641,99 @@ function BackToPauseMenu() {
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
+	HideOptions();
 	
+	ShowOptionsButton();
+
 	//BackToHomeMenuButton.hidden = true;
 
 	if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 	BackToPauseMenuButton.hidden = true;
-	DisplayTilt();
+	//DisplayTilt();
 }
+
+
+function ShowOptions() {
+	loadNewLevelButton.hidden = true;
+	fadeInOptions();
+	DisplayTiltChooser();
+	HidePauseMenuElements();
+	ShowBackButton();
+}
+
+function HideOptions() {
+	tiltText2.hidden = true;
+	invertAxesText1.hidden = true;
+
+	invertAxesText1Yes.hidden = true;
+	invertAxesText1No.hidden = true;
+	angledTiltLabel.hidden = true;
+	flatTiltLabel.hidden = true;
+
+	
+}
+
+function ShowOptionsButton () {
+	optionsButton.hidden = false;
+}
+
+function HideOptionsButton () {
+	optionsButton.hidden = true;
+}
+
+function fadeInOptions() {
+	optionsButton.hidden = true;
+	tiltText2.hidden = false;
+	invertAxesText1.hidden = false;
+	
+	if (FallingLaunch.invertAxesVal == -1) {
+		invertAxesText1Yes.hidden = false;
+	}
+	else {
+		invertAxesText1No.hidden = false;
+	}
+	
+}
+
+function DisplayTiltChooser () {
+
+		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+			angledTiltLabel.hidden = false;
+		}
+		else {
+			flatTiltLabel.hidden = false;
+		}
+}
+
+function SaveAxesPrefs( invert : boolean) {
+	if (isSaving == false) {
+		isSaving = true;
+		if (invert == true) {
+			FallingLaunch.invertAxesVal = -1;
+			PlayerPrefs.SetInt("invertAxes", 1);
+			//Debug.Log("Inverted axes!");
+		}
+		else {
+			FallingLaunch.invertAxesVal = 1;
+			PlayerPrefs.SetInt("invertAxes", -1);
+			//Debug.Log("Un-inverted axes!");
+		}
+		isSaving = false;
+	}
+}
+
+function DoInvertedAxes() {
+		SaveAxesPrefs(true);
+		invertAxesText1No.hidden = true;
+		invertAxesText1Yes.hidden = false;	
+}
+
+function UndoInvertedAxes() {
+		SaveAxesPrefs(false);
+		invertAxesText1No.hidden = false;
+		invertAxesText1Yes.hidden = true;
+}
+
 
 function DoNothing () {
 	return;
@@ -631,8 +804,8 @@ function LoadHomeViaMenu() {
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
 	
-	rightArrow.hidden = true;
-	leftArrow.hidden = true;
+	HidePauseMenuElements();
+	HideOptions();
 
 	loadNewLevelButton.hidden = true;
 
@@ -732,7 +905,8 @@ function PauseGameNow() {
 	//leftArrow.hidden = false;
 	if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 	bgSprite.hidden = false;
-	DisplayTiltOnPause();
+	optionsButton.hidden = false;
+	//DisplayTiltOnPause();
 }
 
 function PauseGameBackgroundCheck() {

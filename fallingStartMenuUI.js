@@ -57,6 +57,7 @@ var invertAxesText1Yes : UIButton;
 var invertAxesText1No : UIButton;
 
 var optionsButton : UIButton;
+var isSaving : boolean = false;
 
 var optionsAngledTiltChooser : UIButton;
 var optionsFlatTiltChooser : UIButton;
@@ -791,9 +792,6 @@ function HideOptions() {
 	invertAxesText1No.hidden = true;
 	angledTiltChooser.hidden = true;
 	flatTiltChooser.hidden = true;
-
-	if (FallingLaunch.invertAxesVal == -1) {PlayerPrefs.SetInt("invertAxes", 1);}
-	else {PlayerPrefs.SetInt("invertAxes", -1);}
 	
 	optionsButton.hidden = false;
 	optionsButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
@@ -816,19 +814,33 @@ function fadeInOptions() {
 	
 }
 
+function SaveAxesPrefs( invert : boolean) {
+	if (isSaving == false) {
+		isSaving = true;
+		if (invert == true) {
+			FallingLaunch.invertAxesVal = -1;
+			PlayerPrefs.SetInt("invertAxes", 1);
+			//Debug.Log("Inverted axes!");
+		}
+		else {
+			FallingLaunch.invertAxesVal = 1;
+			PlayerPrefs.SetInt("invertAxes", -1);
+			//Debug.Log("Un-inverted axes!");
+		}
+		isSaving = false;
+	}
+}
 
 function DoInvertedAxes() {
-	FallingLaunch.invertAxesVal = -1;
-	invertAxesText1No.hidden = true;
-	invertAxesText1Yes.hidden = false;	
-	fadeInAxesInverted();
+		SaveAxesPrefs(true);
+		invertAxesText1No.hidden = true;
+		invertAxesText1Yes.hidden = false;	
 }
 
 function UndoInvertedAxes() {
-	FallingLaunch.invertAxesVal = 1;
-	invertAxesText1No.hidden = false;
-	invertAxesText1Yes.hidden = true;
-	fadeInAxesInverted();
+		SaveAxesPrefs(false);
+		invertAxesText1No.hidden = false;
+		invertAxesText1Yes.hidden = true;
 }
 
 
@@ -895,14 +907,6 @@ function fadeOutRightArrow() {
 
 function fadeOutLeftArrow() {
 	leftArrow.alphaTo(.25f, 0.4f, Easing.Sinusoidal.easeOut);
-}
-
-function fadeInAxesInverted() {
-	invertAxesText1Yes.alphaFromTo(0.5f, 0.0f, 0.75f, Easing.Sinusoidal.easeOut);
-}
-
-function fadeInAxesNormal() {
-	invertAxesText1No.alphaFromTo(0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeOut);
 }
 
 function fadeInLoadNewLevels() {
