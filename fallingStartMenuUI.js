@@ -441,18 +441,18 @@ function DisplayTiltChooser () {
 		}
 }
 
-function DisplayTilt () {
-	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-		flatTiltChooser.hidden = true;
-		angledTiltChooser.hidden = false;
-		angledTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	}
-	else {
-		flatTiltChooser.hidden = false;
-		angledTiltChooser.hidden = true;
-		flatTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	}
-}
+// function DisplayTilt () {
+// 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+// 		flatTiltChooser.hidden = true;
+// 		angledTiltChooser.hidden = false;
+// 		angledTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+// 	}
+// 	else {
+// 		flatTiltChooser.hidden = false;
+// 		angledTiltChooser.hidden = true;
+// 		flatTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+// 	}
+// }
 
 function CheckTiltAngle() {
 	canShowStart = false;
@@ -806,11 +806,11 @@ function fadeInOptions() {
 	
 	if (FallingLaunch.invertAxesVal == -1) {
 		invertAxesText1Yes.hidden = false;
-		invertAxesText1Yes.alphaFromTo(0.5f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);		
+		invertAxesText1Yes.alphaFromTo(1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);		
 	}
 	else {
 		invertAxesText1No.hidden = false;
-		invertAxesText1No.alphaFromTo(0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);		
+		invertAxesText1No.alphaFromTo(1.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);		
 	}
 	
 }
@@ -835,7 +835,7 @@ function SaveAxesPrefs( invert : boolean) {
 function DoInvertedAxes() {
 		SaveAxesPrefs(true);
 		invertAxesText1No.hidden = true;
-		invertAxesText1Yes.hidden = false;	
+		invertAxesText1Yes.hidden = false;
 }
 
 function UndoInvertedAxes() {
