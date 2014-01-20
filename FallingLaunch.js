@@ -45,6 +45,11 @@ enum iPads {
 };
 
 function Awake () {
+}
+
+function Start () {
+
+
 	if (!alreadyLaunched) {
 		
 		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
@@ -117,9 +122,7 @@ function Awake () {
 	else {
 		Destroy(this.gameObject);
 	}
-}
-
-function Start () {
+		
 //		myTimer = new GAUserTimer("Timer", "Session Length");
 //		myTimer.Start();
 	//Calibrate();

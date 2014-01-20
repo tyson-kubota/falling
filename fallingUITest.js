@@ -361,19 +361,19 @@ function Start () {
 	animateProgressBar (lifeBar);
 //	Loop ();
 
-	GA.API.Design.NewEvent("LevelStarted:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	GA.API.Design.NewEvent("LevelBegin:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
-		GA.API.Design.NewEvent("TiltPreference:" + "FlatTilt" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 0.0f, transform.parent.position);
 	}
 	else {
-		GA.API.Design.NewEvent("TiltPreference:" + "45DegreeTilt" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 45.0f, transform.parent.position);
 	}
 	if (FallingLaunch.invertAxesVal == 1) {
-		GA.API.Design.NewEvent("AxesPreference:" + "axesNormal" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		GA.API.Design.NewEvent("AxesPreference:" + Application.loadedLevelName, 1.0f, transform.parent.position);
 	}
 	if (FallingLaunch.invertAxesVal == -1) {
-		GA.API.Design.NewEvent("AxesPreference:" + "axesInverted" + ":" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		GA.API.Design.NewEvent("AxesPreference:" + Application.loadedLevelName, -1.0f, transform.parent.position);
 	}
 	}
 
