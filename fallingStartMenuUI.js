@@ -18,6 +18,9 @@ var BackToPauseMenuButton : UIButton;
 var tiltWarning : UIButton;
 
 var buttonScaleFactor : float;
+var ScreenH : float = Screen.height;
+var ScreenW : float = Screen.width;
+var screenAspectRatio : float = ScreenH / ScreenW;
 var scriptName : GameObject;
 var initialRespawn : Respawn;
 
@@ -31,8 +34,8 @@ var levelToLoad : String = "";
 
 var level1 : String = "Falling-scene-tutorial";
 var level2 : String = "Falling-scene2";
-var level3 : String = "Falling-scene1-scale";
-var level4 : String = "Falling-scene3";
+var level3 : String = "Falling-scene3";
+var level4 : String = "Falling-scene4";
 
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
@@ -108,7 +111,7 @@ function Awake () {
 
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
-
+	screenAspectRatio = (ScreenH / ScreenW);
 }
 
 function Start () {
@@ -204,7 +207,9 @@ function Start () {
 
 
 	optionsButton = UIButton.create("options.png", "options.png", 0,0);
-	optionsButton.positionFromBottomRight( .05f, .05f );
+	//optionsButton.positionFromBottomRight( .05f, .05f );
+	//optionsButton.pixelsFromBottomRight ( 14, 14 );
+	optionsButton.positionFromBottomRight ( .05f, (.05f * screenAspectRatio) );
 	optionsButton.normalTouchOffsets = new UIEdgeOffsets( 40 );
 	optionsButton.highlightedTouchOffsets = new UIEdgeOffsets( 40 );
 	optionsButton.onTouchUpInside += ShowOptions;
@@ -213,22 +218,22 @@ function Start () {
 
 	tiltText2 = thinText.addTextInstance( "NEUTRAL TILT ANGLE", 0, 0 );
     tiltText2.verticalAlignMode = UITextVerticalAlignMode.Bottom;
-    tiltText2.positionFromRight( -.08f, .55f );
+    tiltText2.positionFromRight( -.08f, .52f );
 	tiltText2.hidden = true;
 	//public UITextInstance addTextInstance( string text, float xPos, float yPos, 
 	//float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )	
-	invertAxesText1 = thinText.addTextInstance( "X & Y AXES", 0, 0 );
+	invertAxesText1 = thinText.addTextInstance( "TILT AXES", 0, 0 );
 	invertAxesText1.verticalAlignMode = UITextVerticalAlignMode.Bottom;
-    invertAxesText1.positionFromRight( .08f, .55f );
+    invertAxesText1.positionFromRight( .08f, .52f );
 	invertAxesText1.hidden = true;
 
 
 	invertAxesText1Yes = UIButton.create("axisInverted.png","axisInverted.png", 0, 0 );
-    invertAxesText1Yes.positionFromLeft( .08f, .55f );
+    invertAxesText1Yes.positionFromLeft( .08f, .52f );
 	invertAxesText1Yes.hidden = true;
 
 	invertAxesText1No = UIButton.create("axisNormal.png","axisNormal.png", 0, 0 );
-    invertAxesText1No.positionFromLeft( .08f, .55f );
+    invertAxesText1No.positionFromLeft( .08f, .52f );
 	invertAxesText1No.hidden = true;
 
 	invertAxesText1Yes.onTouchUpInside += UndoInvertedAxes;
@@ -266,7 +271,7 @@ function Start () {
 	angledTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 20 );
 	angledTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
 	//angledTiltChooser.positionFromBottomRight(.05f, .05f);
-	angledTiltChooser.positionFromLeft( -.08f, .55f );
+	angledTiltChooser.positionFromLeft( -.08f, .52f );
 	angledTiltChooser.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltChooser.hidden = true;
 
@@ -274,7 +279,7 @@ function Start () {
 	flatTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 20 );
 	flatTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
 	//flatTiltChooser.positionFromBottomRight(.05f, .05f);
-	flatTiltChooser.positionFromLeft( -.08f, .55f );
+	flatTiltChooser.positionFromLeft( -.08f, .52f );
 	flatTiltChooser.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltChooser.hidden = true;
 
@@ -300,7 +305,9 @@ function Start () {
 	rightArrow.onTouchUp += fadeOutRightArrow;
 
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
-	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
+	//BackToPauseMenuButton.pixelsFromBottomLeft ( 14, 14 );
+	BackToPauseMenuButton.positionFromBottomLeft ( .05f, (.05f * screenAspectRatio) );
+	//Debug.Log ("your screen aspect ratio is " + screenAspectRatio);
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 		
@@ -378,7 +385,8 @@ function Start () {
 	aboutButtonStart.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	aboutButtonStart.centerize();
-	aboutButtonStart.positionFromTopRight(.05f, .05f);	
+	//aboutButtonStart.pixelsFromTopRight ( 14, 14 );
+	aboutButtonStart.positionFromTopRight ( .05f, (.05f * screenAspectRatio) );
 	aboutButtonStart.onTouchUpInside += OpenAbout;
 // 	aboutButtonStart.onTouchUp += fadeOutAbout;	
 // 	aboutButtonStart.onTouchDown += fadeInAbout;
@@ -388,7 +396,8 @@ function Start () {
 	howToButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	howToButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	howToButton.centerize();
-	howToButton.positionFromTopLeft(.05f, .05f);	
+	//howToButton.pixelsFromTopLeft ( 14, 14 );	
+	howToButton.positionFromTopLeft ( .05f, (.05f * screenAspectRatio) );
 	howToButton.onTouchUpInside += OpenHowTo;
 	howToButton.hidden = true;
 

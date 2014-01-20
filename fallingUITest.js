@@ -25,6 +25,10 @@ var loadLevelFour : UIButton;
 
 static var nextLevelLabel : UISprite;
 
+var ScreenH : float = Screen.height;
+var ScreenW : float = Screen.width;
+var screenAspectRatio : float = ScreenH / ScreenW;
+
 // OPTIONS MENU STUFF
 
 var angledTiltLabel : UIButton;
@@ -56,8 +60,8 @@ var homeLevel : String = "Falling-scene-menu";
 
 var level1 : String = "Falling-scene-tutorial";
 var level2 : String = "Falling-scene2";
-var level3 : String = "Falling-scene1-scale";
-var level4 : String = "Falling-scene3";
+var level3 : String = "Falling-scene3";
+var level4 : String = "Falling-scene4";
 
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
@@ -70,6 +74,10 @@ private var savedTimeScale:float;
 //var x:float;
 //var y:float;
 // private var lifeBar = UIProgressBar.create( "lifeBarRedTest.png", 0, 0 );
+
+function Awake () {
+	screenAspectRatio = (ScreenH / ScreenW);
+}
 
 function Start () {
 //  yield WaitForSeconds(0.5f);
@@ -171,15 +179,16 @@ function Start () {
 	leftArrow.hidden = true;
 	
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
-	BackToPauseMenuButton.positionFromBottomLeft(.05f, .05f);
+	BackToPauseMenuButton.positionFromBottomLeft ( .05f, (.05f * screenAspectRatio) );
+	//BackToPauseMenuButton.pixelsFromBottomLeft ( 14, 14 );
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );	
 	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;	
 	BackToPauseMenuButton.hidden = true;
 
 	BackToHomeMenuButton = UIButton.create("homeArrows.png","homeArrows.png", 40, 40);
-	//BackToHomeMenuButton.positionFromBottom(.05f);
-	BackToHomeMenuButton.positionFromTopLeft(.05f, .05f);
+	BackToHomeMenuButton.positionFromTopLeft ( .05f, (.05f * screenAspectRatio) );
+	//BackToHomeMenuButton.pixelsFromTopLeft ( 14, 14 );
 	BackToHomeMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToHomeMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
 	BackToHomeMenuButton.onTouchUpInside += LoadHomeViaMenu;
@@ -287,7 +296,8 @@ function Start () {
 	}
 
 	optionsButton = UIButton.create("options.png", "options.png", 0,0);
-	optionsButton.positionFromBottomRight( .05f, .05f );
+	optionsButton.positionFromBottomRight ( .05f, (.05f * screenAspectRatio) );
+	//optionsButton.pixelsFromBottomRight(14,14);
 	optionsButton.normalTouchOffsets = new UIEdgeOffsets( 40 );
 	optionsButton.highlightedTouchOffsets = new UIEdgeOffsets( 40 );
 	optionsButton.onTouchUpInside += ShowOptions;
@@ -295,21 +305,21 @@ function Start () {
 
 	tiltText2 = thinText.addTextInstance( "NEUTRAL TILT ANGLE", 0, 0 );
     tiltText2.verticalAlignMode = UITextVerticalAlignMode.Bottom;
-    tiltText2.positionFromRight( -.08f, .55f );
+    tiltText2.positionFromRight( -.08f, .52f );
 	tiltText2.hidden = true;
-	invertAxesText1 = thinText.addTextInstance( "X & Y AXES", 0, 0 );
+	invertAxesText1 = thinText.addTextInstance( "TILT AXES", 0, 0 );
 	invertAxesText1.verticalAlignMode = UITextVerticalAlignMode.Bottom;
-    invertAxesText1.positionFromRight( .08f, .55f );
+    invertAxesText1.positionFromRight( .08f, .52f );
 	invertAxesText1.hidden = true;
 
 
 	invertAxesText1Yes = UIButton.create("axisInverted.png","axisInverted.png", 0, 0 );
-    invertAxesText1Yes.positionFromLeft( .08f, .55f );
+    invertAxesText1Yes.positionFromLeft( .08f, .52f );
 	invertAxesText1Yes.hidden = true;
 	invertAxesText1Yes.alphaTo(0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 
 	invertAxesText1No = UIButton.create("axisNormal.png","axisNormal.png", 0, 0 );
-    invertAxesText1No.positionFromLeft( .08f, .55f );
+    invertAxesText1No.positionFromLeft( .08f, .52f );
 	invertAxesText1No.hidden = true;
 	invertAxesText1No.alphaTo(0.01f, 0.4f, Easing.Sinusoidal.easeOut);
 
@@ -325,14 +335,14 @@ function Start () {
 	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
 	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	angledTiltLabel.positionFromLeft( -.08f, .55f );	
+	angledTiltLabel.positionFromLeft( -.08f, .52f );	
 	angledTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltLabel.hidden = true;
 
 	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 0, 0 );
 	flatTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	flatTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	flatTiltLabel.positionFromLeft( -.08f, .55f );
+	flatTiltLabel.positionFromLeft( -.08f, .52f );
 	flatTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltLabel.hidden = true;
 
