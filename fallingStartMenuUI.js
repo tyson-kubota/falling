@@ -420,16 +420,16 @@ function Start () {
 
 function ShowStart() {
 	tiltWarning.hidden = true;
-	
-	rightArrow.hidden = false;
+
 	if (PlayerPrefs.HasKey("LatestLevel")) {
-		//DisplayTiltChooser();
+		optionsButton.hidden = false;
+		optionsButton.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	}
 	if (level2Unlocked) {leftArrow.hidden = false;}
+	
+	rightArrow.hidden = false;
 	aboutButtonStart.hidden = false;
 	howToButton.hidden = false;
-	optionsButton.hidden = false;
-	optionsButton.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
@@ -711,6 +711,7 @@ function ShowTiltNeutralOptions () {
 	leftArrow.hidden = true;
 	aboutButtonStart.hidden = true;
 	howToButton.hidden = true;
+	optionsButton.hidden = true;
 	tiltText1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	flatTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	angledTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
@@ -803,8 +804,10 @@ function HideOptions() {
 	angledTiltChooser.hidden = true;
 	flatTiltChooser.hidden = true;
 	
-	optionsButton.hidden = false;
-	optionsButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	if (PlayerPrefs.HasKey("LatestLevel")) {	
+		optionsButton.hidden = false;
+		optionsButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	}
 
 }
 
