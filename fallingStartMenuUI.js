@@ -55,9 +55,12 @@ var text2 : UITextInstance;
 var text3 : UITextInstance;
 var tiltText1 : UITextInstance;
 var tiltText2 : UITextInstance;
-var invertAxesText1 : UITextInstance;
-var invertAxesText1Yes : UIButton;
-var invertAxesText1No : UIButton;
+var invertHorizAxisText : UITextInstance;
+var invertVertAxisText : UITextInstance;
+var invertHorizAxisTextYes : UIButton;
+var invertHorizAxisTextNo : UIButton;
+var invertVertAxisTextYes : UIButton;
+var invertVertAxisTextNo : UIButton;
 
 var optionsButton : UIButton;
 var isSaving : boolean = false;
@@ -218,35 +221,59 @@ function Start () {
 
 	tiltText2 = thinText.addTextInstance( "NEUTRAL TILT ANGLE", 0, 0 );
     tiltText2.verticalAlignMode = UITextVerticalAlignMode.Bottom;
-    tiltText2.positionFromRight( -.08f, .52f );
+    tiltText2.positionFromRight( -.16f, .52f );
 	tiltText2.hidden = true;
 	//public UITextInstance addTextInstance( string text, float xPos, float yPos, 
 	//float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )	
-	invertAxesText1 = thinText.addTextInstance( "TILT AXES", 0, 0 );
-	invertAxesText1.verticalAlignMode = UITextVerticalAlignMode.Bottom;
-    invertAxesText1.positionFromRight( .08f, .52f );
-	invertAxesText1.hidden = true;
+	invertHorizAxisText = thinText.addTextInstance( "HORIZONTAL AXIS", 0, 0 );
+	invertHorizAxisText.verticalAlignMode = UITextVerticalAlignMode.Bottom;
+    invertHorizAxisText.positionFromRight( .00f, .52f );
+	invertHorizAxisText.hidden = true;
+
+	invertVertAxisText = thinText.addTextInstance( "VERTICAL AXIS", 0, 0 );
+	invertVertAxisText.verticalAlignMode = UITextVerticalAlignMode.Bottom;
+    invertVertAxisText.positionFromRight( .16f, .52f );
+	invertVertAxisText.hidden = true;
+
+	invertHorizAxisTextYes = UIButton.create("axisInverted.png","axisInverted.png", 0, 0 );
+    invertHorizAxisTextYes.positionFromLeft( .00f, .52f );
+	invertHorizAxisTextYes.hidden = true;
+	invertHorizAxisTextYes.alphaTo(0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+
+	invertHorizAxisTextNo = UIButton.create("axisNormal.png","axisNormal.png", 0, 0 );
+    invertHorizAxisTextNo.positionFromLeft( .00f, .52f );
+	invertHorizAxisTextNo.hidden = true;
+	invertHorizAxisTextNo.alphaTo(0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+
+	invertVertAxisTextYes = UIButton.create("axisInverted.png","axisInverted.png", 0, 0 );
+    invertVertAxisTextYes.positionFromLeft( .16f, .52f );
+	invertVertAxisTextYes.hidden = true;
+	invertVertAxisTextYes.alphaTo(0.01f, 0.75f, Easing.Sinusoidal.easeOut);
+
+	invertVertAxisTextNo = UIButton.create("axisNormal.png","axisNormal.png", 0, 0 );
+    invertVertAxisTextNo.positionFromLeft( .16f, .52f );
+	invertVertAxisTextNo.hidden = true;
+	invertVertAxisTextNo.alphaTo(0.01f, 0.4f, Easing.Sinusoidal.easeOut);
+
+	invertVertAxisTextNo.onTouchUpInside += DoInvertedVertAxis;
+	invertVertAxisTextYes.onTouchUpInside += UndoInvertedVertAxis;
+	invertHorizAxisTextNo.onTouchUpInside += DoInvertedHorizAxis;
+	invertHorizAxisTextYes.onTouchUpInside += UndoInvertedHorizAxis;
 
 
-	invertAxesText1Yes = UIButton.create("axisInverted.png","axisInverted.png", 0, 0 );
-    invertAxesText1Yes.positionFromLeft( .08f, .52f );
-	invertAxesText1Yes.hidden = true;
+	invertVertAxisTextNo.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	invertVertAxisTextYes.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	invertHorizAxisTextNo.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	invertHorizAxisTextYes.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	invertVertAxisTextNo.normalTouchOffsets = new UIEdgeOffsets( 20 );
+	invertVertAxisTextYes.normalTouchOffsets = new UIEdgeOffsets( 20 );
+	invertHorizAxisTextNo.normalTouchOffsets = new UIEdgeOffsets( 20 );
+	invertHorizAxisTextYes.normalTouchOffsets = new UIEdgeOffsets( 20 );
 
-	invertAxesText1No = UIButton.create("axisNormal.png","axisNormal.png", 0, 0 );
-    invertAxesText1No.positionFromLeft( .08f, .52f );
-	invertAxesText1No.hidden = true;
-
-	invertAxesText1Yes.onTouchUpInside += UndoInvertedAxes;
-	invertAxesText1No.onTouchUpInside += DoInvertedAxes;
-
-	invertAxesText1Yes.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
-	invertAxesText1No.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
-	invertAxesText1Yes.normalTouchOffsets = new UIEdgeOffsets( 20 );
-	invertAxesText1No.normalTouchOffsets = new UIEdgeOffsets( 20 );
-
-	if (PlayerPrefs.GetInt("invertAxes", 0) == 1) {FallingLaunch.invertAxesVal = -1;}
-		else {FallingLaunch.invertAxesVal = 1;}
-
+	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {FallingLaunch.invertHorizAxisVal = -1;}
+	else {FallingLaunch.invertHorizAxisVal = 1;}
+	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {FallingLaunch.invertVertAxisVal = -1;}
+	else {FallingLaunch.invertVertAxisVal = 1;}	
 
 	tiltText1 = thinText.addTextInstance( "CHOOSE A NEUTRAL TILT ANGLE", 0, 0 );
     tiltText1.pixelsFromCenter( -40, 0 );
@@ -271,7 +298,7 @@ function Start () {
 	angledTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 20 );
 	angledTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
 	//angledTiltChooser.positionFromBottomRight(.05f, .05f);
-	angledTiltChooser.positionFromLeft( -.08f, .52f );
+	angledTiltChooser.positionFromLeft( -.16f, .52f );
 	angledTiltChooser.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltChooser.hidden = true;
 
@@ -279,7 +306,7 @@ function Start () {
 	flatTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 20 );
 	flatTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
 	//flatTiltChooser.positionFromBottomRight(.05f, .05f);
-	flatTiltChooser.positionFromLeft( -.08f, .52f );
+	flatTiltChooser.positionFromLeft( -.16f, .52f );
 	flatTiltChooser.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltChooser.hidden = true;
 
@@ -797,10 +824,14 @@ function ShowOptions() {
 
 function HideOptions() {
 	tiltText2.hidden = true;
-	invertAxesText1.hidden = true;
+	invertHorizAxisText.hidden = true;
+	invertVertAxisText.hidden = true;
 
-	invertAxesText1Yes.hidden = true;
-	invertAxesText1No.hidden = true;
+	invertHorizAxisTextYes.hidden = true;
+	invertHorizAxisTextNo.hidden = true;
+	invertVertAxisTextYes.hidden = true;
+	invertVertAxisTextNo.hidden = true;
+
 	angledTiltChooser.hidden = true;
 	flatTiltChooser.hidden = true;
 	
@@ -811,49 +842,84 @@ function HideOptions() {
 
 }
 
+
 function fadeInOptions() {
 	optionsButton.hidden = true;
 	tiltText2.hidden = false;
-	invertAxesText1.hidden = false;
+	invertHorizAxisText.hidden = false;
+	invertVertAxisText.hidden = false;
 	
-	if (FallingLaunch.invertAxesVal == -1) {
-		invertAxesText1Yes.hidden = false;
-		invertAxesText1Yes.alphaFromTo(1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);		
+	if (FallingLaunch.invertVertAxisVal == -1) {
+		invertVertAxisTextNo.hidden = true;
+		invertVertAxisTextYes.hidden = false;
+		invertVertAxisTextYes.alphaFromTo(1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
 	}
 	else {
-		invertAxesText1No.hidden = false;
-		invertAxesText1No.alphaFromTo(1.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);		
+		invertVertAxisTextNo.hidden = false;
+		invertVertAxisTextYes.hidden = true;
+		invertVertAxisTextNo.alphaFromTo(1.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
+	}
+
+	if (FallingLaunch.invertHorizAxisVal == -1) {
+		invertHorizAxisTextNo.hidden = true;
+		invertHorizAxisTextYes.hidden = false;
+		invertHorizAxisTextYes.alphaFromTo(1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
+	}
+	else {
+		invertHorizAxisTextNo.hidden = false;
+		invertHorizAxisTextYes.hidden = true;
+		invertHorizAxisTextNo.alphaFromTo(1.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	}
 	
 }
 
-function SaveAxesPrefs( invert : boolean) {
+function SaveAxesPrefs( invert : int) {
 	if (isSaving == false) {
 		isSaving = true;
-		if (invert == true) {
-			FallingLaunch.invertAxesVal = -1;
-			PlayerPrefs.SetInt("invertAxes", 1);
-			//Debug.Log("Inverted axes!");
+		if (invert == 1) {
+			FallingLaunch.invertVertAxisVal = -1;
+			PlayerPrefs.SetInt("invertVertAxis", 1);
 		}
-		else {
-			FallingLaunch.invertAxesVal = 1;
-			PlayerPrefs.SetInt("invertAxes", -1);
-			//Debug.Log("Un-inverted axes!");
+		if (invert == 2) {
+			FallingLaunch.invertVertAxisVal = 1;
+			PlayerPrefs.SetInt("invertVertAxis", -1);
 		}
+		if (invert == 3) {
+			FallingLaunch.invertHorizAxisVal = -1;
+			PlayerPrefs.SetInt("invertHorizAxis", 1);
+		}
+		if (invert == 4) {
+			FallingLaunch.invertHorizAxisVal = 1;
+			PlayerPrefs.SetInt("invertHorizAxis", -1);
+		}
+
 		isSaving = false;
 	}
 }
 
-function DoInvertedAxes() {
-		SaveAxesPrefs(true);
-		invertAxesText1No.hidden = true;
-		invertAxesText1Yes.hidden = false;
+function DoInvertedVertAxis() {
+		SaveAxesPrefs(1);
+		invertVertAxisTextYes.hidden = false;
+		invertVertAxisTextNo.hidden = true;
 }
 
-function UndoInvertedAxes() {
-		SaveAxesPrefs(false);
-		invertAxesText1No.hidden = false;
-		invertAxesText1Yes.hidden = true;
+
+function UndoInvertedVertAxis() {
+		SaveAxesPrefs(2);
+		invertVertAxisTextYes.hidden = true;
+		invertVertAxisTextNo.hidden = false;
+}
+
+function DoInvertedHorizAxis() {
+		SaveAxesPrefs(3);
+		invertHorizAxisTextYes.hidden = false;
+		invertHorizAxisTextNo.hidden = true;
+}
+
+function UndoInvertedHorizAxis() {
+		SaveAxesPrefs(4);
+		invertHorizAxisTextYes.hidden = true;
+		invertHorizAxisTextNo.hidden = false;
 }
 
 

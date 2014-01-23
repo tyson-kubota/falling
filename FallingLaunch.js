@@ -19,7 +19,8 @@ static var neutralPosTilted : Vector3;
 static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
 static var acceleratorSnapshot : Vector3;
-static var invertAxesVal : int;
+static var invertHorizAxisVal : int;
+static var invertVertAxisVal : int;
 
 static var LoadedLatestLevel : boolean = false;
 
@@ -152,8 +153,10 @@ function Calibrate () {
 	tiltable = false;
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
 		else {restPosition = neutralPosFlat;}
-	if (PlayerPrefs.GetInt("invertAxes", 0) == 1) {invertAxesVal = -1;}
-		else {invertAxesVal = 1;}
+	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
+	else {invertHorizAxisVal = 1;}
+	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
+	else {invertVertAxisVal = 1;}
 	//acceleratorSnapshot = Input.acceleration;
 	acceleratorSnapshot = Vector3(0.0,0.0,-1.0);
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
@@ -164,8 +167,10 @@ function CalibrateInLevel () {
 	tiltable = false;
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
 		else {restPosition = neutralPosFlat;}
-	if (PlayerPrefs.GetInt("invertAxes", 0) == 1) {invertAxesVal = -1;}
-		else {invertAxesVal = 1;}	
+	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
+	else {invertHorizAxisVal = 1;}
+	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
+	else {invertVertAxisVal = 1;}
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
 	tiltable = true;
 }
