@@ -26,8 +26,11 @@ var initialRespawn : Respawn;
 
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
+var verticalTiltLabel : UIButton;
+
 var angledTiltChooser : UIButton;
 var flatTiltChooser : UIButton;
+var verticalTiltChooser : UIButton;
 var TogglingTiltNeutral : boolean = false;
 
 var levelToLoad : String = "";
@@ -64,9 +67,6 @@ var invertVertAxisTextNo : UIButton;
 
 var optionsButton : UIButton;
 var isSaving : boolean = false;
-
-var optionsAngledTiltChooser : UIButton;
-var optionsFlatTiltChooser : UIButton;
 
 var openSiteButtonText : UIButton;
 
@@ -282,16 +282,25 @@ function Start () {
 	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
 	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	angledTiltLabel.pixelsFromCenter( 0, -90 );
+	// angledTiltLabel.pixelsFromCenter( 0, 0 );
+	angledTiltLabel.pixelsFromCenter( 0, 90 );
 	angledTiltLabel.onTouchUpInside += AngledTiltNeutral;
 	angledTiltLabel.hidden = true;
 
 	flatTiltLabel = UIButton.create("neutralAngleFlat.png","neutralAngleFlat.png", 0, 0 );
 	flatTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	flatTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	flatTiltLabel.pixelsFromCenter( 0, 90 );
+	// flatTiltLabel.pixelsFromCenter( 0, -120 );
+	flatTiltLabel.pixelsFromCenter( 0, -90 );
 	flatTiltLabel.onTouchUpInside += FlatTiltNeutral;
 	flatTiltLabel.hidden = true;
+
+	verticalTiltLabel = UIButton.create("neutralAngleVertical.png","neutralAngleVertical.png", 0, 0 );
+	verticalTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	verticalTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	// verticalTiltLabel.pixelsFromCenter( 0, 120 );
+	// verticalTiltLabel.onTouchUpInside += VerticalTiltNeutral;
+	verticalTiltLabel.hidden = true;
 
 
 	angledTiltChooser = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
@@ -309,6 +318,13 @@ function Start () {
 	flatTiltChooser.positionFromLeft( -.16f, .52f );
 	flatTiltChooser.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltChooser.hidden = true;
+
+	verticalTiltChooser = UIButton.create("neutralAngleVertical.png","neutralAngleVertical.png", 0, 0 );
+	verticalTiltChooser.normalTouchOffsets = new UIEdgeOffsets( 20 );
+	verticalTiltChooser.highlightedTouchOffsets = new UIEdgeOffsets( 20 );
+	verticalTiltChooser.positionFromLeft( -.16f, .52f );
+	verticalTiltChooser.onTouchUpInside += ToggleTiltNeutral;
+	verticalTiltChooser.hidden = true;
 
 
 	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
@@ -465,31 +481,33 @@ function ShowStart() {
 	//yield FixWrongInitialScreenOrientation();
 }
 
+
 function DisplayTiltChooser () {
 
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
 			angledTiltChooser.hidden = false;
+			flatTiltChooser.hidden = true;
+			verticalTiltChooser.hidden = true;
+
 			angledTiltChooser.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 		}
+		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
+			angledTiltChooser.hidden = true;
+			flatTiltChooser.hidden = true;
+			verticalTiltChooser.hidden = false;
+
+			verticalTiltChooser.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+		}
 		else {
+			angledTiltChooser.hidden = true;
 			flatTiltChooser.hidden = false;
+			verticalTiltChooser.hidden = true;
+
 			flatTiltChooser.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 		}
-		tiltText2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+		tiltText2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);		
 }
 
-// function DisplayTilt () {
-// 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-// 		flatTiltChooser.hidden = true;
-// 		angledTiltChooser.hidden = false;
-// 		angledTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-// 	}
-// 	else {
-// 		flatTiltChooser.hidden = false;
-// 		angledTiltChooser.hidden = true;
-// 		flatTiltChooser.alphaFromTo(2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-// 	}
-// }
 
 function CheckTiltAngle() {
 	canShowStart = false;
@@ -658,14 +676,22 @@ function ToggleTiltNeutral () {
 		TogglingTiltNeutral = true;
 		
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-			fallingLaunchComponent.ChangeTilt(true);
+			fallingLaunchComponent.ChangeTilt(2);
+			flatTiltChooser.hidden = true;
+			angledTiltChooser.hidden = true;
+			verticalTiltChooser.hidden = false;
+		}
+		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
+			fallingLaunchComponent.ChangeTilt(0);
 			flatTiltChooser.hidden = false;
 			angledTiltChooser.hidden = true;
-		}
+			verticalTiltChooser.hidden = true;
+		}		
 		else {
-			fallingLaunchComponent.ChangeTilt(false);
-			angledTiltChooser.hidden = false;
+			fallingLaunchComponent.ChangeTilt(1);
 			flatTiltChooser.hidden = true;
+			angledTiltChooser.hidden = false;
+			verticalTiltChooser.hidden = true;
 		}
 
 		TogglingTiltNeutral = false;
@@ -678,13 +704,14 @@ function FlatTiltNeutral () {
 		
 		TogglingTiltNeutral = true;
 		
-		fallingLaunchComponent.ChangeTilt(true);
+		fallingLaunchComponent.ChangeTilt(0);
 		flatTiltLabel.hidden = false;
 		angledTiltLabel.hidden = true;
+		verticalTiltLabel.hidden = true;
 
 		TogglingTiltNeutral = false;
 		
-		fadeAndLoad(true);
+		fadeAndLoad(0);
 	}
 }
 
@@ -693,28 +720,48 @@ function AngledTiltNeutral () {
 		
 		TogglingTiltNeutral = true;
 		
-		fallingLaunchComponent.ChangeTilt(false);
+		fallingLaunchComponent.ChangeTilt(1);
 		angledTiltLabel.hidden = false;
 		flatTiltLabel.hidden = true;
+		verticalTiltLabel.hidden = true;
 
 		TogglingTiltNeutral = false;
 		
-		fadeAndLoad(false);
+		fadeAndLoad(1);
 	}
 }
 
+function VerticalTiltNeutral () {
+	if (TogglingTiltNeutral == false) {
+		
+		TogglingTiltNeutral = true;
+		
+		fallingLaunchComponent.ChangeTilt(2);
+		angledTiltLabel.hidden = true;
+		flatTiltLabel.hidden = true;
+		verticalTiltLabel.hidden = false;
 
-function fadeAndLoad (flatNeutral : boolean) {
+		TogglingTiltNeutral = false;
+		
+		fadeAndLoad(2);
+	}
+}
+
+function fadeAndLoad (flatNeutral : int) {
 	//StartLevelLoad(level1);
 	tiltText1.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeOut);
 
-	if (flatNeutral) {
+	if (flatNeutral == 0) {
 		flatTiltLabel.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeIn);
-		angledTiltLabel.hidden = true;
+		// angledTiltLabel.hidden = true;
+	}
+	else if (flatNeutral == 1) {
+		angledTiltLabel.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeIn);
+		// flatTiltLabel.hidden = true;
 	}
 	else {
-		angledTiltLabel.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeIn);
-		flatTiltLabel.hidden = true;
+		verticalTiltLabel.alphaTo(1.0f, 0.0f, Easing.Sinusoidal.easeIn);
+		// verticalTiltLabel.hidden = true;
 	}
 
 	yield WaitForSeconds (1.0f);
@@ -733,6 +780,7 @@ function fadeAndLoad (flatNeutral : boolean) {
 function ShowTiltNeutralOptions () {
 	flatTiltLabel.hidden = false;
 	angledTiltLabel.hidden = false;
+	// verticalTiltLabel.hidden = false;
 	tiltText1.hidden = false;
 
 	rightArrow.hidden = true;
@@ -743,6 +791,8 @@ function ShowTiltNeutralOptions () {
 	tiltText1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	flatTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	angledTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	// verticalTiltLabel.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
+
 }
 
 function StartLevelLoad(levelName: String) {
@@ -770,6 +820,7 @@ function FadeOutLevelButtons(timer : float) {
 	leftArrow.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	angledTiltChooser.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	flatTiltChooser.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+	verticalTiltChooser.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	aboutButtonStart.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	optionsButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
@@ -835,6 +886,7 @@ function HideOptions() {
 
 	angledTiltChooser.hidden = true;
 	flatTiltChooser.hidden = true;
+	verticalTiltChooser.hidden = true;
 	
 	if (PlayerPrefs.HasKey("LatestLevel")) {	
 		optionsButton.hidden = false;

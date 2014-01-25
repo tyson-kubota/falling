@@ -15,6 +15,7 @@ static var restPosition : Vector3;
 static var neutralPosFlat : Vector3 = Vector3(0,0,-1.0);
 static var neutralPosTiltedRegular : Vector3 = Vector3(.6,0,-.9);
 static var neutralPosTiltedFlipped : Vector3 = Vector3(-.6,0,-.9);
+static var neutralPosVertical : Vector3 = Vector3(1.0,0,0.0);
 static var neutralPosTilted : Vector3;
 static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
@@ -151,8 +152,11 @@ function OnLevelWasLoaded (level : int) {
 
 function Calibrate () {
 	tiltable = false;
+
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
-		else {restPosition = neutralPosFlat;}
+	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
+	else {restPosition = neutralPosFlat;}
+	
 	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
 	else {invertHorizAxisVal = 1;}
 	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
@@ -160,30 +164,47 @@ function Calibrate () {
 	//acceleratorSnapshot = Input.acceleration;
 	acceleratorSnapshot = Vector3(0.0,0.0,-1.0);
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
+
 	tiltable = true;
 }
 
 function CalibrateInLevel () {
 	tiltable = false;
+	
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
-		else {restPosition = neutralPosFlat;}
+	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
+	else {restPosition = neutralPosFlat;}
+
 	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
 	else {invertHorizAxisVal = 1;}
 	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
 	else {invertVertAxisVal = 1;}
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
+
 	tiltable = true;
 }
 
 
-function ChangeTilt (toFlat : boolean) {
-	if (toFlat == false) {
-		PlayerPrefs.SetInt("TiltNeutral", 1);
-		Debug.Log("tilt set to angled.");
-	}
-	else {
+function ChangeTilt (toFlat : int) {
+	if (toFlat == 2) {
+		PlayerPrefs.SetInt("TiltNeutral", 2);
+		Debug.Log("tilt set to vertical.");
+	}	
+	else if (toFlat == 0) {
 		PlayerPrefs.SetInt("TiltNeutral", 0);
 		Debug.Log("tilt set to flat.");
 	}
+	else {
+		PlayerPrefs.SetInt("TiltNeutral", 1);
+		Debug.Log("tilt set to angled.");
+	}	
 	CalibrateInLevel();
 }
+
+// function Update () {
+// 	ListCurrentAccelerometer();
+// }
+// 
+// function ListCurrentAccelerometer() {
+// 	Debug.Log ("Your rotation is " + Input.acceleration);
+// }

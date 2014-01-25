@@ -33,6 +33,7 @@ var screenAspectRatio : float = ScreenH / ScreenW;
 
 var angledTiltLabel : UIButton;
 var flatTiltLabel : UIButton;
+var verticalTiltLabel : UIButton;
 var TogglingTiltNeutral : boolean = false;
 
 var boldText : UIText;
@@ -373,6 +374,13 @@ function Start () {
 	flatTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	flatTiltLabel.hidden = true;
 
+	verticalTiltLabel = UIButton.create("neutralAngleVertical.png","neutralAngleVertical.png", 0, 0 );
+	verticalTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
+	verticalTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	verticalTiltLabel.positionFromLeft( -.16f, .52f );
+	verticalTiltLabel.onTouchUpInside += ToggleTiltNeutral;
+	verticalTiltLabel.hidden = true;
+
 
 	circleReticle = UIButton.create("circle-reticle.png","circle-reticle.png", 0, 0);
 	circleReticle.positionCenter();
@@ -402,6 +410,9 @@ function Start () {
 
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
 		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 0.0f, transform.parent.position);
+	}
+	else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
+		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 90.0f, transform.parent.position);
 	}
 	else {
 		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 45.0f, transform.parent.position);
@@ -522,6 +533,7 @@ function UnPauseGame(resume : boolean) {
 
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
+	verticalTiltLabel.hidden = true;
 
 	FallingPlayer.isPausable = resume;	
 	holdingPauseButton = false;
@@ -659,6 +671,7 @@ function LevelSelect() {
 	
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
+	verticalTiltLabel.hidden = true;
 
 	loadNewLevelButton.hidden = true;	
 	ShowBackButton();
@@ -718,6 +731,7 @@ function HideOptions() {
 	
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
+	verticalTiltLabel.hidden = true;
 	
 }
 
@@ -759,9 +773,18 @@ function DisplayTiltChooser () {
 
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
 			angledTiltLabel.hidden = false;
+			flatTiltLabel.hidden = true;
+			verticalTiltLabel.hidden = true;
+		}
+		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
+			angledTiltLabel.hidden = true;
+			flatTiltLabel.hidden = true;
+			verticalTiltLabel.hidden = false;
 		}
 		else {
+			angledTiltLabel.hidden = true;
 			flatTiltLabel.hidden = false;
+			verticalTiltLabel.hidden = true;
 		}
 }
 
@@ -891,6 +914,7 @@ function LoadHomeViaMenu() {
 
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
+	verticalTiltLabel.hidden = true;
 
 	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(homeLevel);
@@ -1014,14 +1038,22 @@ function ToggleTiltNeutral () {
 		TogglingTiltNeutral = true;
 		
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-			fallingLaunchComponent.ChangeTilt(true);
+			fallingLaunchComponent.ChangeTilt(2);
+			flatTiltLabel.hidden = true;
+			angledTiltLabel.hidden = true;
+			verticalTiltLabel.hidden = false;
+		}
+		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
+			fallingLaunchComponent.ChangeTilt(0);
 			flatTiltLabel.hidden = false;
 			angledTiltLabel.hidden = true;
-		}
+			verticalTiltLabel.hidden = true;
+		}		
 		else {
-			fallingLaunchComponent.ChangeTilt(false);
-			angledTiltLabel.hidden = false;
+			fallingLaunchComponent.ChangeTilt(1);
 			flatTiltLabel.hidden = true;
+			angledTiltLabel.hidden = false;
+			verticalTiltLabel.hidden = true;
 		}
 
 		TogglingTiltNeutral = false;
@@ -1029,22 +1061,32 @@ function ToggleTiltNeutral () {
 	}
 }
 
-function DisplayTilt () {
-	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-		flatTiltLabel.hidden = true;
-		angledTiltLabel.hidden = false;
-	}
-	else {
-		flatTiltLabel.hidden = false;
-		angledTiltLabel.hidden = true;
-	}
-}
+// function DisplayTilt () {
+// 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
+// 		flatTiltLabel.hidden = true;
+// 		angledTiltLabel.hidden = false;
+// 		verticalTiltLabel.hidden = true;
+// 	}
+// 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
+// 		flatTiltLabel.hidden = true;
+// 		angledTiltLabel.hidden = true;
+// 		verticalTiltLabel.hidden = false;
+// 	}
+// 	else {
+// 		flatTiltLabel.hidden = false;
+// 		angledTiltLabel.hidden = true;
+// 		verticalTiltLabel.hidden = true;
+// 	}
+// }
 
 function DisplayTiltOnPause () {
 
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
 			angledTiltLabel.hidden = false;
 		}
+		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
+			verticalTiltLabel.hidden = false;
+		}		
 		else {
 			flatTiltLabel.hidden = false;
 		}
