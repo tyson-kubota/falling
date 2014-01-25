@@ -475,6 +475,7 @@ function DisplayTiltChooser () {
 			flatTiltChooser.hidden = false;
 			flatTiltChooser.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 		}
+		tiltText2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 }
 
 // function DisplayTilt () {
@@ -848,6 +849,9 @@ function fadeInOptions() {
 	tiltText2.hidden = false;
 	invertHorizAxisText.hidden = false;
 	invertVertAxisText.hidden = false;
+	
+	invertHorizAxisText.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	invertVertAxisText.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	
 	if (FallingLaunch.invertVertAxisVal == -1) {
 		invertVertAxisTextNo.hidden = true;
