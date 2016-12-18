@@ -7,6 +7,8 @@ var origMat : Material;
 var fadeTex : Texture2D;
 
 var mainCamera : GameObject;
+var cam : Camera;
+
 static var oceanCamera : GameObject;
 var backdropMist : GameObject;
 static var oceanRenderer : Renderer;
@@ -48,6 +50,7 @@ function Start () {
 	if (mistLevel == true) {	
 		backdropMist = transform.FindChild("Cylinder").gameObject;
 		}
+	cam = mainCamera.GetComponent.<Camera>();
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -56,7 +59,7 @@ function OnTriggerEnter (other : Collider) {
 // 		not needed if not actually changing backdrop
 //		transform.Find("plane-close").renderer.materials = [newMat];
 		if (ShouldChangeBackdrop == true) {
-		transform.Find("plane-close").renderer.materials = [newMat];}
+		transform.Find("plane-close").GetComponent.<Renderer>().materials = [newMat];}
 
 //		FadeBetweenCameras ();
 //		Enable the above method to re-add the fade 2d image backdrop on trigger enter.
@@ -90,7 +93,7 @@ function FadeCameraFarClipPlane (type : int) {
 
     iTween.ValueTo ( gameObject,
         {
-            "from" : mainCamera.camera.farClipPlane,
+            "from" : cam.farClipPlane,
             "to" : farClipPlaneValue2,
             "onupdate" : "ChangeCameraFarClipPlane",
             "time" : farClipPlaneFadeTime2,
@@ -100,7 +103,7 @@ function FadeCameraFarClipPlane (type : int) {
  	else {
  		    iTween.ValueTo ( gameObject,
         {
-            "from" : mainCamera.camera.farClipPlane,
+            "from" : cam.farClipPlane,
             "to" : farClipPlaneValue,
             "onupdate" : "ChangeCameraFarClipPlane",
             "time" : farClipPlaneFadeTime,
@@ -154,7 +157,7 @@ function ChangeFogEndDistance (i : int) {
 }
 
 function ChangeCameraFarClipPlane (i : int) {
-	mainCamera.camera.farClipPlane = i;
+	cam.farClipPlane = i;
 }
 
 function enableOceanCamera () {
@@ -167,6 +170,6 @@ function enableOceanCamera () {
 
 function OnTriggerExit (other : Collider) {
 	if (other.gameObject.CompareTag ("changeBackdrop") && ShouldChangeBackdrop == true)  {
-		transform.Find("plane-close").renderer.materials = [origMat];
+		transform.Find("plane-close").GetComponent.<Renderer>().materials = [origMat];
 	}
 }

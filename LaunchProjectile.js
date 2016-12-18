@@ -5,6 +5,8 @@ var launchInterval : float = 10.0;
 var randomTrajectory : boolean = false;
 private var isLaunched : boolean = false;
 
+private var audioSource: AudioSource;
+
 // Starting in 2 seconds.
 // a projectile will be launched every 5 seconds
 
@@ -18,6 +20,10 @@ private var isLaunched : boolean = false;
 //		InvokeRepeating("LaunchProjectile", 0, launchInterval);
 //	}
 //}
+
+function Start () {
+	audioSource = GetComponent.<AudioSource>();
+}
 
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player")){
@@ -41,5 +47,5 @@ function OnTriggerExit (other : Collider) {
 function LaunchProjectile () {
     var instance : Rigidbody = Instantiate(projectilePrefab, transform.position, transform.rotation);
 	if (randomTrajectory == true) {instance.velocity = Random.onUnitSphere * 5;}
-	if (audio) {audio.Play();}	
+	if (audioSource) {audioSource.Play();}	
 }

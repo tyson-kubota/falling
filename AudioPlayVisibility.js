@@ -1,5 +1,11 @@
 #pragma strict
 
+var audioSource : AudioSource;
+
+function Start () {
+	audioSource = GetComponent.<AudioSource>();
+}
+
 function OnBecameVisible () {
-	if (audio) {audio.Play();}
+	if (audioSource) {audioSource.Play();}
 }

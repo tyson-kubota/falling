@@ -2,14 +2,20 @@
 
 var triggerAnimation : String;
 
+private var thisAnimation: Animation;
+
+function Start() {
+	thisAnimation = GetComponent.<Animation>();
+}
+
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
-	animation.Play(triggerAnimation);
+	thisAnimation.Play(triggerAnimation);
   }	
 }
 
 function OnTriggerExit (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
-	animation.Stop(triggerAnimation);
+	thisAnimation.Stop(triggerAnimation);
   }	
 }

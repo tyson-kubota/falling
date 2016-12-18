@@ -80,6 +80,8 @@ private var myTransform : Transform;
 private var BackdropMist : GameObject;
 BackdropMist = transform.FindChild("Cylinder").gameObject;
 
+var rb : Rigidbody;
+
 function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
@@ -90,7 +92,7 @@ function Awake() {
 function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-	startingCameraFarClipPlane = myTransform.FindChild("Camera").camera.farClipPlane;
+	startingCameraFarClipPlane = myTransform.FindChild("Camera").GetComponent.<Camera>().farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
   	lifeStartTime = Time.time;
@@ -104,7 +106,10 @@ function Start() {
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = false;  
-	rigidbody.isKinematic = false;
+
+	rb = GetComponent.<Rigidbody>();
+	rb.isKinematic = false;
+
 	if (!introComponent) {
 	UIscriptComponent.UnhideGUI();
 	}
@@ -155,7 +160,7 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 
 function DeathRespawn () {
 	isPausable = false;
-	rigidbody.isKinematic = true;
+	rb.isKinematic = true;
 	lifeStartTime = Time.time;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
 	
@@ -182,14 +187,14 @@ function DeathRespawn () {
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   	
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
-	collider.attachedRigidbody.transform.Translate(respawnPosition);
+	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
 	myTransform.position = respawnPosition; // + Vector3.up;
 //	Camera.main.SendMessage("fadeIn");
 
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
-	rigidbody.isKinematic = false;
+	rb.isKinematic = false;
 //   	isAlive = 1;
 	
 	MoveController.controlMultiplier = 1;
@@ -200,7 +205,7 @@ function DeathRespawn () {
 
 function LatestCheckpointRespawn () {
 	isPausable = false;
-	rigidbody.isKinematic = true;
+	rb.isKinematic = true;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
 	//UIscriptComponent.fadeOut();
 
@@ -212,11 +217,11 @@ function LatestCheckpointRespawn () {
 	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   	
-	collider.attachedRigidbody.transform.Translate(respawnPosition);
+	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	myTransform.position = respawnPosition; // + Vector3.up;
 
   	FadeAudio (fadeTime, FadeDir.In);
-	rigidbody.isKinematic = false;
+	rb.isKinematic = false;
 	
 	MoveController.controlMultiplier = 1;
    	
@@ -237,11 +242,11 @@ function changeLevelBackdrop () {
 	changeBackdrop.cloudRenderer.enabled = false;
 	changeBackdrop.endSphereRenderer.enabled = false;
 
-// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
-//	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
+	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
+	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	myTransform.FindChild("Camera").camera.farClipPlane = startingCameraFarClipPlane;
-	myTransform.FindChild("plane-close").renderer.materials = [origMat];
+  	myTransform.FindChild("Camera").GetComponent.<Camera>().farClipPlane = startingCameraFarClipPlane;
+	myTransform.FindChild("plane-close").GetComponent.<Renderer>().materials = [origMat];
 	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});			   	
 	}
 	   		   	

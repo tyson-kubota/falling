@@ -3,8 +3,10 @@
 var duckingObject : GameObject;
 var duckingVal : float = .5f;
 var StopAudioOnComplete : boolean = false;
+var audioSource : AudioSource;
 
 function Start () {
+	audioSource = duckingObject.GetComponent.<AudioSource>();
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -21,17 +23,17 @@ function OnTriggerExit (other : Collider) {
 
 function lerpDuck (timer : float, endVal : float) {
 
-    var start = duckingObject.audio.volume;
+    var start = audioSource.volume;
     var end = endVal;
     var i = 0.0;
     var step = 1.0/timer;
 
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        duckingObject.audio.volume = Mathf.Lerp(start, end, i);
+        audioSource.volume = Mathf.Lerp(start, end, i);
         yield;        
     	}
     yield WaitForSeconds (timer);
 
-    if (StopAudioOnComplete) {duckingObject.audio.Stop();}
+    if (StopAudioOnComplete) {audioSource.Stop();}
 }

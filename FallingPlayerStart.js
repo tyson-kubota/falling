@@ -31,7 +31,7 @@ function DeathRespawn () {
 //	  gameObject.SendMessage ("ZeroScore", 1);
 
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
-	collider.attachedRigidbody.transform.Translate(respawnPosition);
+	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
 	transform.position = respawnPosition; // + Vector3.up;
 	  	  	Camera.main.SendMessage("fadeIn");
@@ -108,10 +108,10 @@ function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){ 
  //     Debug.Log("You scored!"); 
 	  gameObject.SendMessage ("IncrementScore", 10);
-	  if (audio)
-	  	{
-	  	audio.Play();
-	  	}
+//	  if (audio)
+//	  	{
+//	  	audio.Play();
+//	  	}
 	  }
 
   if (other.gameObject.CompareTag ("CloudLevelSelect")){

@@ -6,16 +6,24 @@ var triggerAnimation : String;
 var triggerInTime : float = 0.5;
 var triggerOutTime : float = 1.0;
 
+private var audioSource: AudioSource;
+private var thisAnimation: Animation;
+
+function Start () {
+	audioSource = GetComponent.<AudioSource>();
+	thisAnimation = GetComponent.<Animation>();
+}
+
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
-	animation.CrossFade(triggerAnimation, triggerInTime);
-	if (audio) {audio.Play();}
+	thisAnimation.CrossFade(triggerAnimation, triggerInTime);
+	if (audioSource) {audioSource.Play();}
   }	
 }
 
 function OnTriggerExit (other : Collider) {
   if (other.gameObject.CompareTag ("Player")) {
-	//animation.PlayQueued("twist2", QueueMode.PlayNow);
-  	animation.CrossFade(mainAnimation, triggerOutTime);
+	//thisAnimation.PlayQueued("twist2", QueueMode.PlayNow);
+  	thisAnimation.CrossFade(mainAnimation, triggerOutTime);
   }	
 }

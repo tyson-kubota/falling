@@ -9,7 +9,7 @@ private var resetTime : float;
 private var thisRenderer : Material;
 
 function Start () {
-	thisRenderer = renderer.material;
+	thisRenderer = GetComponent.<Renderer>().material;
 	thisRenderer.mainTextureOffset = Vector2(0,0);
 	resetTime = Mathf.Abs(1/speed);
 }

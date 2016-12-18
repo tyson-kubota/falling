@@ -39,6 +39,9 @@ var tiltAngle = 30.0;
 //var flipMultiplier : int = 1;
 //var flipMultiplier = FallingLaunch.flipMultiplier;
 
+private var rb : Rigidbody;
+private var mainCamera: Camera;
+
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
@@ -54,7 +57,8 @@ function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
 //}
-	if (camera.main.aspect < 1.5) {
+	mainCamera = GetComponent.<Camera>();
+	if (mainCamera.aspect < 1.5) {
 		titleCard.transform.Translate(-200,0,0);
 	}
 }
@@ -62,14 +66,17 @@ function Awake() {
 function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-	startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
+	startingCameraFarClipPlane = mainCamera.farClipPlane;
+	// formerly startingCameraFarClipPlane = gameObject.Find("Camera").camera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingStartMenuUI);  	
 	AudioListener.pause = false;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
-	rigidbody.isKinematic = false;	
+
+	rb = GetComponent.<Rigidbody>();
+	rb.isKinematic = false;	
 	UIscriptComponent.UnhideGUI();
 }
 
@@ -91,7 +98,7 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 
 function DeathRespawn () {
 	isPausable = false;
-	rigidbody.isKinematic = true;
+	rb.isKinematic = true;
    	var respawnPosition = Respawn.currentRespawn.transform.position;
   	Camera.main.SendMessage("fadeOut");
 //  isAlive = 1;
@@ -106,14 +113,14 @@ function DeathRespawn () {
     gameObject.SendMessage ("ResetScore", 0);
   	yield WaitForSeconds(1);
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
-	collider.attachedRigidbody.transform.Translate(respawnPosition);
+	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
 	transform.position = respawnPosition; // + Vector3.up;
 	Camera.main.SendMessage("fadeIn");
   	FadeAudio (fadeTime, FadeDir.In);
 //	thisOceanCamera.SendMessage("fadeIn");
 	isPausable = true;
-	rigidbody.isKinematic = false;
+	rb.isKinematic = false;
    	isAlive = 1;
 }   	
 
@@ -126,8 +133,8 @@ function changeLevelBackdrop () {
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 //	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	gameObject.Find("Camera").camera.farClipPlane = startingCameraFarClipPlane;
-	transform.Find("plane-close").renderer.materials = [origMat];
+  	gameObject.Find("Camera").GetComponent.<Camera>().farClipPlane = startingCameraFarClipPlane;
+	transform.Find("plane-close").GetComponent.<Renderer>().materials = [origMat];
 	var BackdropMist = gameObject.Find("Cylinder");
 	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});
 			   	

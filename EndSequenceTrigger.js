@@ -10,8 +10,14 @@ var diamondCore : GameObject;
 var diamond3DCore1 : GameObject;
 var diamond3DCore2 : GameObject;
 
+var audioSource : AudioSource;
+
 function Awake () {
 	EndScriptComponent = Player.GetComponent("EndSequence1stPerson");
+}
+
+function Start () {
+	audioSource = GetComponent.<AudioSource>();
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -25,9 +31,9 @@ function OnTriggerEnter (other : Collider) {
 		}
 		
 		for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
-			shard.animation.Play();
+			shard.GetComponent.<Animation>().Play();
 	
-		if (audio) {audio.Play();}
+		if (audioSource) {audioSource.Play();}
 
 		FallingPlayer.ScoreFlashTextureScript.FadeFlash (12.0, FadeDir.In);
 		//yield WaitForSeconds (1.0);
@@ -59,7 +65,7 @@ function SwapDiamonds(timer : float){
         i += step * Time.deltaTime;
         
         for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
-        shard.transform.Find("sky-rock-angled-segment").renderer.material.color = Color.Lerp(start, end, i);
+        shard.transform.Find("sky-rock-angled-segment").GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         
         yield;
     	}
@@ -80,7 +86,7 @@ function AddDiamondCore(timer : float){
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        diamondCore.renderer.material.color.a = Mathf.Lerp(start, end, i);
+        diamondCore.GetComponent.<Renderer>().material.color.a = Mathf.Lerp(start, end, i);
         yield;
     	}
     	
@@ -90,14 +96,14 @@ function AddDiamondCore(timer : float){
 
 function FadeDiamond(timer : float){
 
-    var start = endDiamond.renderer.material.color;
+    var start = endDiamond.GetComponent.<Renderer>().material.color;
     var end = Color.black;
     var i = 0.0;
     var step = 1.0/timer;
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        endDiamond.renderer.material.color = Color.Lerp(start, end, i);
+        endDiamond.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
     	}
     	
@@ -111,14 +117,14 @@ function AddDiamond3DCore(timer : float){
 	diamond3DCore2.active = true;
 
     var start = Color.black;
-    var end = diamond3DCore1.renderer.material.color;
+    var end = diamond3DCore1.GetComponent.<Renderer>().material.color;
     var i = 0.0;
     var step = 1.0/timer;
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        diamond3DCore1.renderer.material.color = Color.Lerp(start, end, i);
-        diamond3DCore2.renderer.material.color = Color.Lerp(start, end, i);
+        diamond3DCore1.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
+        diamond3DCore2.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
     	}
     	

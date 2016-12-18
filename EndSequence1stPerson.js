@@ -54,7 +54,7 @@ function PlayOutro () {
 	//LerpIntoDiamond(14);
 	MusicBedInterpolated.falsifyCheckDistance();
 	FadeMusic(8, OutroMusicBed);
-	animation.Play("end-player-anim");
+	GetComponent.<Animation>().Play("end-player-anim");
 	EndTriggerComponent.AddDiamondCore(5);
 	yield WaitForSeconds (1);
 	EndTriggerComponent.AddDiamond3DCore(6);
@@ -134,7 +134,7 @@ function LerpIntoDiamond (timer : float) {
 function FadeEndMenuLogo(timer:float){
 
 	EndMenuLogoCamera.GetComponent(Camera).enabled = true;
-	EndMenuLogoObject.renderer.enabled = true;
+	EndMenuLogoObject.GetComponent.<Renderer>().enabled = true;
     var start = 0;
     var end = 1.0;
     var i = 0.0;
@@ -142,7 +142,7 @@ function FadeEndMenuLogo(timer:float){
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        EndMenuLogoObject.renderer.material.color.a = Mathf.Lerp(start, end, i);
+        EndMenuLogoObject.GetComponent.<Renderer>().material.color.a = Mathf.Lerp(start, end, i);
         yield;
     	}
     	

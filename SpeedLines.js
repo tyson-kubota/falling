@@ -8,9 +8,9 @@ var speedLinesAudio1 : AudioSource;
 var speedLinesAudio2 : AudioSource;
 
 function Start () {
-	speedLinesRenderer = renderer;
-	speedLinesMaterial = renderer.material;
-	peakValue = renderer.material.color.a;
+	speedLinesRenderer = GetComponent.<Renderer>();
+	speedLinesMaterial = speedLinesRenderer.material;
+	peakValue = speedLinesMaterial.color.a;
 	speedLinesMaterial.color.a = 0.0;
 	speedLinesRenderer.enabled = false;
 }

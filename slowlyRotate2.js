@@ -16,8 +16,11 @@ var dirGlobal:float = 1;
 //var y : RotVector;
 //var z : RotVector;
 
+var myRenderer : Renderer;
+
 function Start () {
 //	Loop ();
+	myRenderer = GetComponent.<Renderer>();
 }
 
 function Loop () {
@@ -27,7 +30,7 @@ function Loop () {
 }
 
 function RotateNow (delay : float) {
-if (renderer.isVisible) {
+if (myRenderer.isVisible) {
     iTween.RotateUpdate(gameObject, transform.eulerAngles, 2);
     yield WaitForSeconds(delay);
     }
@@ -36,7 +39,7 @@ if (renderer.isVisible) {
 //function FixedUpdate () {transform.Rotate(Vector3(x, y, z) * (dir*3) * Time.deltaTime, Space.World);}
 
 function FixedUpdate() {
-if (renderer.isVisible) {
+if (myRenderer.isVisible) {
 	transform.Rotate(Vector3.right * (dirLocal*3) * Time.deltaTime);
 	transform.Rotate(Vector3.up * (dirGlobal*3) * Time.deltaTime, Space.World);
 	}

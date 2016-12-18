@@ -19,10 +19,11 @@ function Start () {
 	   	
 	   	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
 	    	destructible = shard.GetComponent(ProjectileDestroy);
-	    	shard.renderer.enabled = false;
-	    	shard.rigidbody.isKinematic = true;
+	    	var shardRenderer : Renderer = shard.GetComponent.<Renderer>();
+	    	shardRenderer.enabled = false;
+	    	shard.GetComponent.<Rigidbody>().isKinematic = true;
 	    	destructible.enabled = false;
-	    	shardColor = shard.renderer.material.color;
+	    	shardColor = shardRenderer.material.color;
 	    }
     }
     else if (FallingLaunch.NewGamePlus) {
@@ -47,10 +48,12 @@ function EndIntro (playAudio : boolean) {
 	
     for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
         destructible = shard.GetComponent(ProjectileDestroy);
-    	shard.rigidbody.isKinematic = false;
+    	shard.GetComponent.<Rigidbody>().isKinematic = false;
     	//yield WaitForSeconds(.25);
-    	if (shard.audio && playAudio) {shard.audio.Play();}
-    	shard.renderer.enabled = true;
+    	var shardAudio : AudioSource = shard.GetComponent.<AudioSource>();
+    	if (shardAudio && playAudio) {shardAudio.Play();}
+
+    	shard.GetComponent.<Renderer>().enabled = true;
     	destructible.enabled = true;
     }
     
@@ -62,7 +65,7 @@ function EndIntro (playAudio : boolean) {
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
-        shard.renderer.material.color = Color.Lerp(start, end, i);
+        shard.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
     	}
 }

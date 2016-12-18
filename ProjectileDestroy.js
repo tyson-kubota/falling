@@ -15,7 +15,7 @@ function OnCollisionEnter (collision : Collision) {
   if (collision.gameObject.CompareTag ("Player")) {
 // throw an analytics event!
   	GA.API.Design.NewEvent("Projectile:Collision:" + ProjectileName, FallingLaunch.secondsAlive, transform.position);
-	rigidbody.isKinematic = true;
+	gameObject.GetComponent.<Rigidbody>().isKinematic = true;
 	Destroy(gameObject, 1);
   }
   

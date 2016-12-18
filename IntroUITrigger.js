@@ -22,6 +22,8 @@ var iconDepth : int = 0;
 static var activeIntro : boolean = false;
 var textHeight : int;
 
+private var audioSource: AudioSource;
+
 function Start () {
 
 	if (thisTrigger == Triggers.trigger1) {
@@ -59,7 +61,9 @@ function Start () {
 
 	helpIcon.pixelsFromBottom(textHeight);
 	helpIcon.hidden = true;
-		
+
+	audioSource = GetComponent.<AudioSource>();
+				
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -67,7 +71,7 @@ function OnTriggerEnter (other : Collider) {
 		activeIntro = true;
 		fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer, tutorialSprite);
 		tutorialSpritePosition(thisTimer);
-		if (audio) {audio.Play();}
+		if (audioSource) {audioSource.Play();}
 	}
 }
 

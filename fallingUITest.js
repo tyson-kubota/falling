@@ -591,7 +591,7 @@ function LevelComplete() {
     fallingPlayerComponent.FadeAudio (.9, FadeDir.Out);
     yield WaitForSeconds (1);
 //  Time.timeScale = 0;
-	player.rigidbody.isKinematic = true;
+	player.GetComponent.<Rigidbody>().isKinematic = true;
     AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);
 //  not necessary because Respawn.js resets the latest checkpoint in its Start	
@@ -605,7 +605,7 @@ function LevelComplete() {
 function BeginOutroUI() {
 	FadeOutGUI();
 	FallingPlayer.isPausable = false;
-	player.rigidbody.isKinematic = true;
+	player.GetComponent.<Rigidbody>().isKinematic = true;
 }
 
 function OldGameCompleteUI() {

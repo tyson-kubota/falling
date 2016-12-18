@@ -28,6 +28,8 @@ var SpeedLinesTextureScript : GUITextureLaunch;
 var SpeedLinesMesh : GameObject;
 static var SpeedLinesMeshScript : SpeedLines;
 
+var audioSource : AudioSource;
+
 var changingPitch : boolean = false;
 var shouldChangePitch : boolean = true;
 
@@ -48,6 +50,8 @@ function Start() {
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
+
+	audioSource = mainCamera.GetComponent.<AudioSource>();
 
 	//Calibrate();
 
@@ -211,13 +215,13 @@ function speedsUp () {
 		//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
 		SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
 		FallingPlayer.UIscriptComponent.showThreatBar(1);
-		if (mainCamera.audio && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
+		if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
 		}
 		else {
 		//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
 		SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
 		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-		if (mainCamera.audio && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
+		if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
 }		
 }
 
@@ -273,10 +277,10 @@ function lerpSlowdown (timer : float) {
 
 function lerpPitchUp (timer : float, endPitch : float, endVolume : float) {
     
-    var startVol = mainCamera.audio.volume;
+    var startVol = audioSource.volume;
     var endVol = endVolume;
     
-    var start = mainCamera.audio.pitch;
+    var start = audioSource.pitch;
     var end = endPitch;
     var i = 0.0;
     var step = 1.0/timer;
@@ -284,8 +288,8 @@ function lerpPitchUp (timer : float, endPitch : float, endVolume : float) {
 
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        mainCamera.audio.pitch = Mathf.Lerp(start, end, i);
-        mainCamera.audio.volume = Mathf.SmoothStep(startVol, endVol, i);
+        audioSource.pitch = Mathf.Lerp(start, end, i);
+        audioSource.volume = Mathf.SmoothStep(startVol, endVol, i);
         yield;
         
         if (Slowdown < 1) {break;}
@@ -297,18 +301,18 @@ function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
     
     changingPitch = true;
 
-    var startVol = mainCamera.audio.volume;
+    var startVol = audioSource.volume;
     var endVol = endVolume;
     
-    var start = mainCamera.audio.pitch;
+    var start = audioSource.pitch;
     var end = endPitch;
     var i = 0.0;
     var step = 1.0/timer;
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        mainCamera.audio.pitch = Mathf.Lerp(start, end, i);
-        mainCamera.audio.volume = Mathf.SmoothStep(startVol, endVol, i);
+        audioSource.pitch = Mathf.Lerp(start, end, i);
+        audioSource.volume = Mathf.SmoothStep(startVol, endVol, i);
         yield;
 
         if (Slowdown > 17999) {changingPitch = false; break;}        

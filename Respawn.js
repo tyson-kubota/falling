@@ -43,6 +43,8 @@ static var currentRespawn : Respawn;
 var myCheckpoint : String;
 var mainRespawnScript : boolean = false;
 
+private var audioSource: AudioSource;
+
 function Start()
 {	
 	// Get some of the objects we need later.
@@ -54,9 +56,10 @@ function Start()
 	// set up the looping "RespawnActive" sound, but leave it switched off for now:
 	if (SFXRespawnActiveLoop)
 	{
-		audio.clip = SFXRespawnActiveLoop;
-		audio.loop = true;
-		audio.playOnAwake = false;
+		audioSource = GetComponent.<AudioSource>();
+		audioSource.clip = SFXRespawnActiveLoop;
+		audioSource.loop = true;
+		audioSource.playOnAwake = false;
 	}
 	
 	// Assign the respawn point to be this one - Since the player is positioned on top of a respawn point, it will come in and overwrite it.

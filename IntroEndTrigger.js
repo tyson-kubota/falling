@@ -5,9 +5,11 @@ var IntroScriptComponent : IntroSequence1stPerson;
 //IntroScriptComponent = Player.GetComponent("IntroSequence1stPerson");
 var activeIntro : boolean = false;
 
+var audioSource : AudioSource;
+
 function Start () {
 	IntroScriptComponent = Player.GetComponent("IntroSequence1stPerson");
-
+	audioSource = GetComponent.<AudioSource>();
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -15,6 +17,6 @@ function OnTriggerEnter (other : Collider) {
 	activeIntro = true;
 	FallingPlayer.ScoreFlashTextureScript.FadeFlash (3, FadeDir.Out);
 	IntroScriptComponent.EndIntro(true);
-	if (audio) {audio.Play();}
+	if (audioSource) {audioSource.Play();}
 	}
 }

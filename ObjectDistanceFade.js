@@ -10,7 +10,7 @@ private var sqrRtLen : float;
 
 function Start () {
 	myTransform = transform;
-	myRendererMatl = renderer.material;
+	myRendererMatl = GetComponent.<Renderer>().material;
 }
 
 function OnBecameVisible() {
