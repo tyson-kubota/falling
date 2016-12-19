@@ -60,12 +60,12 @@ var initialRespawn : Respawn;
 
 var levelToLoad : String = "";
 
-var homeLevel : String = "Falling-scene-menu";
+static var homeLevel : String = "Falling-scene-menu";
 
-var level1 : String = "Falling-scene-tutorial";
-var level2 : String = "Falling-scene2";
-var level3 : String = "Falling-scene3";
-var level4 : String = "Falling-scene4";
+static var level1 : String = "Falling-scene-tutorial";
+static var level2 : String = "Falling-scene2";
+static var level3 : String = "Falling-scene3";
+static var level4 : String = "Falling-scene4";
 
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;
@@ -198,16 +198,16 @@ function Start () {
 	BackToHomeMenuButton.onTouchUpInside += LoadHomeViaMenu;
 	BackToHomeMenuButton.hidden = true;
 
-	if (level1 == Application.loadedLevelName) {
+	if (level1 == SceneManagement.SceneManager.GetActiveScene().name) {
 		nextLevelLabel = UIT.firstToolkit.addSprite( "level2.png", 0, 0, 0 );
 	}
-	else if (level2 == Application.loadedLevelName) {
+	else if (level2 == SceneManagement.SceneManager.GetActiveScene().name) {
 		nextLevelLabel = UIT.firstToolkit.addSprite( "level3.png", 0, 0, 0 );	
 	}
-	else if (level3 == Application.loadedLevelName) {
+	else if (level3 == SceneManagement.SceneManager.GetActiveScene().name) {
 		nextLevelLabel = UIT.firstToolkit.addSprite( "level4.png", 0, 0, 0 );	
 	}
-	else if (level4 == Application.loadedLevelName) {
+	else if (level4 == SceneManagement.SceneManager.GetActiveScene().name) {
 		nextLevelLabel = UIT.firstToolkit.addSprite( "level1.png", 0, 0, 0 );	
 	}
 
@@ -215,7 +215,7 @@ function Start () {
 	nextLevelLabel.positionCenter();
 	nextLevelLabel.hidden = true;
 
-	if (level1 == Application.loadedLevelName) {
+	if (level1 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
 		loadLevelOne.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 	}
@@ -226,7 +226,7 @@ function Start () {
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
 	
-	if (level2 == Application.loadedLevelName) {
+	if (level2 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
 		loadLevelTwo.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 		loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
@@ -243,7 +243,7 @@ function Start () {
 	}
 	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
 	
-	if (level3 == Application.loadedLevelName) {
+	if (level3 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 		loadLevelThree.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 		loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
@@ -260,7 +260,7 @@ function Start () {
 	}
 	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
 	
-	if (level4 == Application.loadedLevelName) {
+	if (level4 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
 		loadLevelFour.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 		loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;
@@ -406,28 +406,28 @@ function Start () {
 	animateProgressBar (lifeBar);
 //	Loop ();
 
-	// GA.API.Design.NewEvent("LevelBegin:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	// GA.API.Design.NewEvent("LevelBegin:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
-		// GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 0.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 0.0f, transform.parent.position);
 	}
 	else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
-		// GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 90.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 90.0f, transform.parent.position);
 	}
 	else {
-		// GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 45.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 45.0f, transform.parent.position);
 	}
 	if (FallingLaunch.invertHorizAxisVal == 1) {
-		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + Application.loadedLevelName, 1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name, 1.0f, transform.parent.position);
 	}
 	else if (FallingLaunch.invertHorizAxisVal == -1) {
-		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + Application.loadedLevelName, -1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name, -1.0f, transform.parent.position);
 	}
 	if (FallingLaunch.invertVertAxisVal == -1) {
-		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + Application.loadedLevelName, -1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name, -1.0f, transform.parent.position);
 	}	
 	else if (FallingLaunch.invertVertAxisVal == 1) {
-		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + Application.loadedLevelName, 1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name, 1.0f, transform.parent.position);
 	}	
 
 	}
@@ -478,7 +478,7 @@ function PauseGame() {
 		FallingPlayer.isPausable = false;
 		
 		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-		// GA.API.Design.NewEvent("GUI:PauseGame:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		// GA.API.Design.NewEvent("GUI:PauseGame:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 		//Debug.Log("you paused at " + transform.parent.position);
 		
 		circleReticle.hidden = true;
@@ -564,7 +564,7 @@ function RestartLevel() {
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
 	
-	// GA.API.Design.NewEvent("GUI:RestartLevel:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	// GA.API.Design.NewEvent("GUI:RestartLevel:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 	
 	Respawn.currentRespawn = initialRespawn;
 	HideGUI();

@@ -51,13 +51,13 @@ function Start() {
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
 
+	mainCamera = transform.FindChild("Camera").gameObject;
 	audioSource = mainCamera.GetComponent.<AudioSource>();
 
 	//Calibrate();
 
 	lerpSlowdown(.5);
 	lerpControl(3);
-	mainCamera = transform.FindChild("Camera").gameObject;
 	//pauseButtonArea = Rect(0, 0, Screen.width / 2, Screen.height / 2);
 	pauseButtonArea = Rect(Screen.width * .9, Screen.height * .8, Screen.width * .1, Screen.height * .2);
 }

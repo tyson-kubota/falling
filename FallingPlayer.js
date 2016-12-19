@@ -111,7 +111,7 @@ function Start() {
 	rb.isKinematic = false;
 
 	if (!introComponent) {
-	UIscriptComponent.UnhideGUI();
+	   UIscriptComponent.UnhideGUI();
 	}
 
 	LevelStartFade();
