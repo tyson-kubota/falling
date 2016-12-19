@@ -328,7 +328,7 @@ function OnCollisionEnter (collision : Collision) {
   		
   		if (audioDeath) {audioDeath.Play();}
   		
-  		GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, myTransform.position);
+  		// GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, myTransform.position);
   		
   		//var deathCollideEvent : GAEvent = new GAEvent("Death", "Collision", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
 		//GoogleAnalytics.instance.Add(deathCollideEvent);
@@ -373,12 +373,12 @@ function OnTriggerEnter (other : Collider) {
 
 		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
 		if (clipToPlay > 0.6f) {
-			audioToPlay.pan = (-clipToPlay/2);
+			audioToPlay.panStereo = (-clipToPlay/2);
 			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol/2), peakVol);
 		}
 		else {
 			audioToPlay.volume = clipToPlay;
-			audioToPlay.pan = (clipToPlay/2);
+			audioToPlay.panStereo = (clipToPlay/2);
 		}
 		
 		//audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
@@ -398,8 +398,8 @@ function OnTriggerEnter (other : Collider) {
   	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	
-	GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, myTransform.position);
-	TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
+	// GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, myTransform.position);
+	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
 	
 	// to keep you from dying after you strike the levelend trigger
 	script.IncrementScore(25);

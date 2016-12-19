@@ -22,9 +22,9 @@ var BackToEndMenuButton : UIButton;
 
 function Start () {
 
-	textHeight = (UI.isHD == true) ? 18 : 18;
+	textHeight = (UIT.isHD == true) ? 18 : 18;
 	
-	endGameSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 2 );
+	endGameSprite = UIT.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 2 );
 	endGameSprite.hidden = true;
 	endGameSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
 	

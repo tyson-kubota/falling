@@ -31,10 +31,10 @@ function Start () {
 function PlayOutro () {
 	//GameAnalytics events for beating the game
 	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-	GA.API.Design.NewEvent("GameComplete:" + FallingPlayer.isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
+	// GA.API.Design.NewEvent("GameComplete:" + FallingPlayer.isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
 	
-	TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
-	TestFlightUnity.TestFlight.PassCheckpoint( "GameComplete");
+	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
+	// TestFlightUnity.TestFlight.PassCheckpoint( "GameComplete");
 
 	FallingPlayer.isPausable = false;
 	ScoreController.enabled = false;

@@ -99,7 +99,7 @@ function Start () {
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
 	
-    bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
+    bgSprite = UIT.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	bgSprite.alphaTo( 0.01f, 0.9f, Easing.Sinusoidal.easeOut);
@@ -128,7 +128,7 @@ function Start () {
 
 	var tiltPlacementRatio : float;
 
-	if (UI.isHD == true) {
+	if (UIT.isHD == true) {
 		spriteEdgeSize = 4;
 		buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
 		tiltPlacementRatio = (196.0/Screen.width);
@@ -152,11 +152,11 @@ function Start () {
 
 		
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
-//	tutorialSprite = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
+//	tutorialSprite = UIT.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
 //	tutorialSprite.hidden = true;
 //	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
 	
-	fadeSprite = UI.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
+	fadeSprite = UIT.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
 	fadeSprite.positionCenter();
 	fadeSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
 	fadeSprite.alphaTo( 0.01f, 0.0f, Easing.Sinusoidal.easeOut);
@@ -199,16 +199,16 @@ function Start () {
 	BackToHomeMenuButton.hidden = true;
 
 	if (level1 == Application.loadedLevelName) {
-		nextLevelLabel = UI.firstToolkit.addSprite( "level2.png", 0, 0, 0 );
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level2.png", 0, 0, 0 );
 	}
 	else if (level2 == Application.loadedLevelName) {
-		nextLevelLabel = UI.firstToolkit.addSprite( "level3.png", 0, 0, 0 );	
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level3.png", 0, 0, 0 );	
 	}
 	else if (level3 == Application.loadedLevelName) {
-		nextLevelLabel = UI.firstToolkit.addSprite( "level4.png", 0, 0, 0 );	
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level4.png", 0, 0, 0 );	
 	}
 	else if (level4 == Application.loadedLevelName) {
-		nextLevelLabel = UI.firstToolkit.addSprite( "level1.png", 0, 0, 0 );	
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level1.png", 0, 0, 0 );	
 	}
 
 	//nextLevelLabel.positionFromCenter(.0f);
@@ -406,28 +406,28 @@ function Start () {
 	animateProgressBar (lifeBar);
 //	Loop ();
 
-	GA.API.Design.NewEvent("LevelBegin:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	// GA.API.Design.NewEvent("LevelBegin:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
-		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 0.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 0.0f, transform.parent.position);
 	}
 	else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
-		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 90.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 90.0f, transform.parent.position);
 	}
 	else {
-		GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 45.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("TiltPreference:" + Application.loadedLevelName, 45.0f, transform.parent.position);
 	}
 	if (FallingLaunch.invertHorizAxisVal == 1) {
-		GA.API.Design.NewEvent("AxesPreference:Horizontal:" + Application.loadedLevelName, 1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + Application.loadedLevelName, 1.0f, transform.parent.position);
 	}
 	else if (FallingLaunch.invertHorizAxisVal == -1) {
-		GA.API.Design.NewEvent("AxesPreference:Horizontal:" + Application.loadedLevelName, -1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + Application.loadedLevelName, -1.0f, transform.parent.position);
 	}
 	if (FallingLaunch.invertVertAxisVal == -1) {
-		GA.API.Design.NewEvent("AxesPreference:Vertical:" + Application.loadedLevelName, -1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + Application.loadedLevelName, -1.0f, transform.parent.position);
 	}	
 	else if (FallingLaunch.invertVertAxisVal == 1) {
-		GA.API.Design.NewEvent("AxesPreference:Vertical:" + Application.loadedLevelName, 1.0f, transform.parent.position);
+		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + Application.loadedLevelName, 1.0f, transform.parent.position);
 	}	
 
 	}
@@ -478,7 +478,7 @@ function PauseGame() {
 		FallingPlayer.isPausable = false;
 		
 		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-		GA.API.Design.NewEvent("GUI:PauseGame:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+		// GA.API.Design.NewEvent("GUI:PauseGame:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 		//Debug.Log("you paused at " + transform.parent.position);
 		
 		circleReticle.hidden = true;
@@ -564,7 +564,7 @@ function RestartLevel() {
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
 	
-	GA.API.Design.NewEvent("GUI:RestartLevel:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	// GA.API.Design.NewEvent("GUI:RestartLevel:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
 	
 	Respawn.currentRespawn = initialRespawn;
 	HideGUI();

@@ -57,7 +57,7 @@ function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
 //}
-	mainCamera = GetComponent.<Camera>();
+	mainCamera = Camera.main;
 	if (mainCamera.aspect < 1.5) {
 		titleCard.transform.Translate(-200,0,0);
 	}

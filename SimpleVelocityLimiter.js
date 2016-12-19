@@ -17,7 +17,7 @@ private var sqrMaxVelocity : float;
 // For more info, see:
 // http://unity3d.com/support/documentation/ScriptReference/MonoBehaviour.Awake.html
 function Awake() {
-	rb = rigidbody;
+	rb = GetComponent.<Rigidbody>();
 	SetMaxVelocity(maxVelocity);
 }
 

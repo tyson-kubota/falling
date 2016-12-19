@@ -10,7 +10,7 @@ private var myRigidbody : Rigidbody;
 
 //initialize values 
 function Awake() { 
-   myRigidbody = rigidbody; 
+   myRigidbody = GetComponent.<Rigidbody>(); 
    previousPosition = myRigidbody.position; 
    var cldr : Collider = GetComponent.<Collider>();
    minimumExtent = Mathf.Min(Mathf.Min(cldr.bounds.extents.x, cldr.bounds.extents.y), cldr.bounds.extents.z); 

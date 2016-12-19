@@ -96,7 +96,7 @@ function Awake () {
 	// }
 
 	if (!FallingLaunch.hasSetOrientation) {
-		if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
+		if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
 			//Debug.Log("I'm in LandscapeRight!");
 			Screen.orientation = ScreenOrientation.LandscapeRight;
@@ -159,12 +159,12 @@ function Start () {
 		level4Unlocked = true;
 	}
 	
-    bgSpriteStart = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
+    bgSpriteStart = UIT.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSpriteStart.positionCenter();
 	bgSpriteStart.scaleTo( 0.0001f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
 	bgSpriteStart.alphaTo( 0.0001f, 0.1f, Easing.Sinusoidal.easeOut);
 
-	bgSprite = UI.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
+	bgSprite = UIT.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Sinusoidal.easeOut);
 	bgSprite.alphaTo( 0.01f, 0.94f, Easing.Sinusoidal.easeOut);
@@ -177,7 +177,7 @@ function Start () {
 
 	pauseButton.hidden = true;
 
-	if (UI.isHD == true) {
+	if (UIT.isHD == true) {
 	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
 	}
 	else {
@@ -444,9 +444,9 @@ function Start () {
 	howToButton.onTouchUpInside += OpenHowTo;
 	howToButton.hidden = true;
 
-	helpIcon1 = UI.firstToolkit.addSprite( "tiltText.png", 0, 0, 0 );
-	helpIcon2 = UI.firstToolkit.addSprite( "spheresText.png", 0, 0, 0 );
-	helpIcon3 = UI.firstToolkit.addSprite( "boostText.png", 0, 0, 0 );
+	helpIcon1 = UIT.firstToolkit.addSprite( "tiltText.png", 0, 0, 0 );
+	helpIcon2 = UIT.firstToolkit.addSprite( "spheresText.png", 0, 0, 0 );
+	helpIcon3 = UIT.firstToolkit.addSprite( "boostText.png", 0, 0, 0 );
 	helpIcon1.positionFromTop(.3f);
 	helpIcon2.positionCenter();
 	helpIcon3.positionFromBottom(.3f);

@@ -28,7 +28,7 @@ function Start () {
 
 	if (thisTrigger == Triggers.trigger1) {
 		var tutorialSprite1 : UISprite;
-		tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 8 );
+		tutorialSprite1 = UIT.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 8 );
 		tutorialSprite = tutorialSprite1;
 		tutorialSprite.hidden = true;
 		tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
@@ -37,7 +37,7 @@ function Start () {
 
 	if (thisTrigger == Triggers.trigger2) {
 		var tutorialSprite2 : UISprite;
-		tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 6 );
+		tutorialSprite1 = UIT.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 6 );
 		tutorialSprite = tutorialSprite1;
 		tutorialSprite.hidden = true;
 		tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
@@ -46,7 +46,7 @@ function Start () {
 	
 	if (thisTrigger == Triggers.trigger3) {
 		var tutorialSprite3 : UISprite;
-		tutorialSprite1 = UI.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
+		tutorialSprite1 = UIT.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
 		tutorialSprite = tutorialSprite1;
 		tutorialSprite.hidden = true;
 		tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
@@ -55,9 +55,9 @@ function Start () {
 	
 	fallingIntroUIComponent = fallingIntroUI.GetComponent("fallingIntroUI");
 	fallingUIComponent = fallingUI.GetComponent("fallingUITest");
-    helpIcon = UI.firstToolkit.addSprite( thisIcon + ".png", 0, 0, iconDepth );
+    helpIcon = UIT.firstToolkit.addSprite( thisIcon + ".png", 0, 0, iconDepth );
 
-	textHeight = (UI.isHD == true) ? 18 : 18;
+	textHeight = (UIT.isHD == true) ? 18 : 18;
 
 	helpIcon.pixelsFromBottom(textHeight);
 	helpIcon.hidden = true;

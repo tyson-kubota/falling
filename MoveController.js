@@ -205,8 +205,7 @@ function fallingSpeed () {
 //  Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
 //	Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 
-	constantForce.relativeForce = (Vector3.down * Slowdown);
-
+	GetComponent.<ConstantForce>().relativeForce = (Vector3.down * Slowdown);
 }
 
 function speedsUp () {

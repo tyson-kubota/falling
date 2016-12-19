@@ -59,14 +59,9 @@ function TickingAway (delay : float) {
 		   	FallingPlayer.isPausable = false;
 		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
 		   	FallingLaunch.secondsAlive = (Time.time - FallingPlayer.lifeStartTime);
-		   	GA.API.Design.NewEvent("Death:Drained:"+Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
+		   	// GA.API.Design.NewEvent("Death:Drained:"+Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
 		   	//Debug.Log("You died!");
-		   	//GA.API.Design.NewEvent("Death:Drained:", FallingLaunch.secondsAlive, transform.position);
-		   	
-		   	//var deathDrainEvent : GAEvent = new GAEvent("Death", "Drained", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
-		   	//GoogleAnalytics.instance.Add(deathDrainEvent);
-		   	//GoogleAnalytics.instance.Dispatch();
-		   	
+
 		   	yield GetComponent(FallingPlayer).DeathRespawn ();
 			GetComponent(FallingPlayer).ShowDeathHelp();
 			// GameAnalytics syntax: GA.API.Design.NewEvent(String eventName, float eventValue, Vector3 trackPosition); 

@@ -11,13 +11,13 @@ function Start () {
 
 function OnTriggerEnter (other : Collider) {
 	if (other.gameObject.layer == 16) {
-		if (duckingObject.audio) {lerpDuck(2, duckingVal);}
+		if (duckingObject.GetComponent.<AudioSource>()) {lerpDuck(2, duckingVal);}
 	}
 }
 
 function OnTriggerExit (other : Collider) {
 	if (other.gameObject.layer == 16) {
-		if (duckingObject.audio) {lerpDuck(2, 1);}
+		if (duckingObject.GetComponent.<AudioSource>()) {lerpDuck(2, 1);}
 	}
 }
 

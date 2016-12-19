@@ -54,8 +54,8 @@ function Start () {
 
 	if (!alreadyLaunched) {
 		
-		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
-		Debug.Log("Your screen orientation is " + iPhoneInput.orientation + "!");
+//		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
+		Debug.Log("Your screen orientation is " + Input.deviceOrientation + "!");
 		
 		// if (!hasSetOrientation) {
 		// 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -77,12 +77,12 @@ function Start () {
 		//this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;
 	
-		var iOSGen = iPhone.generation;
+		var iOSGen = iOS.Device.generation;
 		
 	//	Debug.Log("this is an " + iOSGen  + " device!");
 	//	Debug.Log("Your screen dpi is " + Screen.dpi + "!");
-		if (iOSGen == iPhoneGeneration.iPad1Gen || iOSGen == iPhoneGeneration.iPad2Gen || 
-		iOSGen == iPhoneGeneration.iPhone4 || iOSGen == iPhoneGeneration.iPodTouch4Gen ||
+		if (iOSGen == UnityEngine.iOS.DeviceGeneration.iPad1Gen || iOSGen == UnityEngine.iOS.DeviceGeneration.iPad2Gen || 
+		iOSGen == UnityEngine.iOS.DeviceGeneration.iPhone4 || iOSGen == UnityEngine.iOS.DeviceGeneration.iPodTouch4Gen ||
 		iOSGen.ToString().Contains("iPhone3G")) {
 			QualitySettings.DecreaseLevel(false);
 			targetFPS = 30;

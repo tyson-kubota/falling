@@ -37,13 +37,13 @@ function Start () {
 		oceanCamera = transform.FindChild("Camera-for-ocean").gameObject;
 		backdropMist = transform.FindChild("Cylinder").gameObject;
 		
-		oceanRenderer = gameObject.Find("sky-water-ocean/Mesh").renderer;
+		oceanRenderer = gameObject.Find("sky-water-ocean/Mesh").GetComponent.<Renderer>();
 		oceanRenderer.enabled = false;
 		
-		cloudRenderer = gameObject.Find("simple-cloud-plane/Mesh").renderer;
+		cloudRenderer = gameObject.Find("simple-cloud-plane/Mesh").GetComponent.<Renderer>();
 		cloudRenderer.enabled = false;
 		
-		endSphereRenderer = gameObject.Find("score-orbs-end/score-orb/Mesh").renderer;
+		endSphereRenderer = gameObject.Find("score-orbs-end/score-orb/Mesh").GetComponent.<Renderer>();
 		endSphereRenderer.enabled = false;
 		}
 	
