@@ -35,10 +35,10 @@ var TogglingTiltNeutral : boolean = false;
 
 var levelToLoad : String = "";
 
-var level1 : String = "Falling-scene-tutorial";
-var level2 : String = "Falling-scene2";
-var level3 : String = "Falling-scene3";
-var level4 : String = "Falling-scene4";
+static var level1 : String = "Falling-scene-tutorial";
+static var level2 : String = "Falling-scene2";
+static var level3 : String = "Falling-scene3";
+static var level4 : String = "Falling-scene4";
 
 var level2Unlocked : boolean = false;
 var level3Unlocked : boolean = false;

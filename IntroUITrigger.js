@@ -13,7 +13,7 @@ trigger3
 };
 
 var helpIcon: UISprite;
-var thisIcon : String = "level1";
+var thisIcon : String;
 var thisTimer : float = 8;
 var thisTrigger : Triggers;
 var tutorialSprite : UISprite;
