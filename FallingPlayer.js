@@ -4,7 +4,7 @@
 static var startingFogColor : Color = Color(1.17, 1.17, 1.17, 2);
 static var startingFogEndDistance : int = 1500;
 static var startingCameraFarClipPlane : int = 1700;
-static var startingCloudsAlpha : float = .39f;
+static var startingCloudsAlpha : float = .25f; // Unity 4 used .39f (99 in RGBA)
 
 //original for corroded sky tubes level
 //static var startingFogEndDistance : int = 2500;
