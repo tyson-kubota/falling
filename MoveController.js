@@ -35,9 +35,6 @@ var shouldChangePitch : boolean = true;
 
 static var pauseButtonArea : Rect;
 
-static var horizAxisInversionVal : int;
-static var vertAxisInversionVal : int;
-
 function Awake() {
 	myTransform = transform;
 	script = GetComponent("ScoreController");
@@ -95,32 +92,31 @@ function FixedUpdate () {
 //		if (dir.sqrMagnitude > 1)
 //			dir.Normalize();
 
-if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
+    if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
+        
+        // TODO: Don't use accelerometer-derived movement at all in VR mode!
+        // But for now, ignore axis inversion prefs in VR mode:
+        if (FallingLaunch.isVRMode) {movePlayer(1, 1);}
+        else {
+            // Or use the axis settings from player prefs:
+            movePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
+        }
+    }
+    else {dir = Vector3.zero;}
 
-	// Make it move 10 meters per second instead of 10 meters per frame...
-	// .:. not necessary in fixedupdate
-    // dir *= Time.deltaTime;
-    // print("Your dir is: " + dir);     
-    
-    //myTransform.Translate (dir * speed, Space.World);
+}
+
+function movePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
     FallingLaunch.hasSetAccel = true;
     FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
     //Debug.Log(FallingLaunch.accelerator);
     dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
-	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
-
-    // Ignore axis inversion prefs if in VR mode:
-    horizAxisInversionVal = FallingLaunch.isVRMode ? 1 : FallingLaunch.invertHorizAxisVal;
-    vertAxisInversionVal = FallingLaunch.isVRMode ? 1 : FallingLaunch.invertVertAxisVal;
+    dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
 
     dir.x = horizAxisInversionVal * Mathf.Clamp(dir.x, -2.0, 2.0);
-	dir.z = vertAxisInversionVal * Mathf.Clamp(dir.z, -2.0, 2.0);
+    dir.z = vertAxisInversionVal * Mathf.Clamp(dir.z, -2.0, 2.0);
 
     myTransform.Translate (dir * speed, Space.World);
-}
-
-else {dir = Vector3.zero;}
-
 }
 
 function SmoothSlowdown () {
@@ -140,17 +136,17 @@ function SmoothSlowdown () {
 }
 
 function ChangeSpeed ( i : int ) {
-Slowdown = i;
-//	Debug.Log("Your current speed score is " + ScoreController.visibleScore);
+    Slowdown = i;
+    //	Debug.Log("Your current speed score is " + ScoreController.visibleScore);
 }
 
 function ResumeSpeed () {
-isSlowing = false;
+    isSlowing = false;
 }
 
 function Update () {
 	fallingSpeed();
-//	Debug.Log("Slowdown = " + Slowdown);
+	// Debug.Log("Slowdown = " + Slowdown);
 }
 
 // I also tried moving fallingSpeed function to fixedUpdate, but it actually made the game slower,
@@ -185,7 +181,9 @@ function fallingSpeed () {
 			
 		if (fingerCount > 0) { 	
 			//speedUp();
-			if (Slowdown < 1) {speedingUp = 2; Slowdown = maxSlowdown; speedsUp();
+			if (Slowdown < 1) {
+                speedingUp = 2; Slowdown = maxSlowdown; 
+                speedsUp();
 				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
 			}
 			//if (Slowdown < 1) 
@@ -220,41 +218,19 @@ function fallingSpeed () {
 }
 
 function speedsUp () {
-		if (speedingUp == 2) {
-		speedingUp = 1;
-		//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
-		SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
-		FallingPlayer.UIscriptComponent.showThreatBar(1);
-		if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
-		}
-		else {
-		//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
-		SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
-		FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-		if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
-}		
-}
-
-function speedUp () {
-		Slowdown = maxSlowdown;        
-		Camera.main.SendMessage("speedLinesUp");
-//		SendMessage is slow; rephrase if I ever use this speedUp method again.
-
-//		UIscriptComponent.speedLinesNow();		
-
-//		if (speedingUp == true) {
-//		SpeedLinesTextureScript.FadeFlash (0.25, FadeDir.In);
-//		yield WaitForSeconds(.25);}
-//		else {
-//		SpeedLinesTextureScript.FadeFlash (0.5, FadeDir.Out);
-//		yield WaitForSeconds(.5);}
-}
-
-function speedDown () {
-		Slowdown = 0;
-		//SpeedLinesTextureScript.LinesFlash (1.0, FadeDir.Out);
-		SpeedLinesMeshScript.LinesFlash (1.0, FadeDir.Out);
-		yield WaitForSeconds(1.0);
+	if (speedingUp == 2) {
+    	speedingUp = 1;
+    	//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
+    	SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
+    	FallingPlayer.UIscriptComponent.showThreatBar(1);
+    	if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
+	}
+	else {
+    	//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
+    	SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
+    	FallingPlayer.UIscriptComponent.hideThreatBar(.5);
+    	if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
+    }		
 }
 
 function slowDown () {
