@@ -96,7 +96,9 @@ function FixedUpdate () {
         
         // TODO: Don't use accelerometer-derived movement at all in VR mode!
         // But for now, ignore axis inversion prefs in VR mode:
-        if (FallingLaunch.isVRMode) {movePlayer(1, 1);}
+        if (FallingLaunch.isVRMode) {
+            movePlayer(1, 1);
+        }
         else {
             // Or use the axis settings from player prefs:
             movePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
