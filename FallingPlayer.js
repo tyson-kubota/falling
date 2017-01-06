@@ -76,9 +76,14 @@ var myVol : float;
 var peakVol : float;
 
 private var myTransform : Transform;
+private var myMainCamera : Camera;
+
+private var myBackdrop : GameObject;
+private var myBackdropRenderer : Renderer;
 
 private var BackdropMist : GameObject;
-BackdropMist = transform.FindChild("Cylinder").gameObject;
+
+private var myVRViewer : GameObject;
 
 var rb : Rigidbody;
 
@@ -86,13 +91,20 @@ function Awake() {
 //	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	flipMultiplier = -1;
 //}
-	myTransform = transform;
+    myTransform = transform;
 }
 
 function Start() {
+    myMainCamera = myTransform.FindChild("Camera").GetComponent.<Camera>();
+    myBackdrop = GameObject.Find("plane-close");
+    BackdropMist = GameObject.Find("Cylinder");
+    myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
+
+    myVRViewer = GameObject.Find("GvrViewerMain");
+
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-	startingCameraFarClipPlane = myTransform.FindChild("Camera").GetComponent.<Camera>().farClipPlane;
+	startingCameraFarClipPlane = myMainCamera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
   	lifeStartTime = Time.time;
@@ -245,13 +257,19 @@ function changeLevelBackdrop () {
 	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	myTransform.FindChild("Camera").GetComponent.<Camera>().farClipPlane = startingCameraFarClipPlane;
-	myTransform.FindChild("plane-close").GetComponent.<Renderer>().materials = [origMat];
+  	if (myMainCamera) {myMainCamera.farClipPlane = startingCameraFarClipPlane;}
+	if (myBackdropRenderer) {
+        myBackdropRenderer.materials = [origMat];
+    }
 	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});			   	
 	}
 	   		   	
 function Update () {
-	playerTilt ();
+	// playerTilt moves camera on device tilt. Enable if not in VR mode, and there's no VR viewer object:
+    if (!FallingLaunch.isVRMode && !myVRViewer) {
+        playerTilt ();
+    }
+
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
 	//Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
 }

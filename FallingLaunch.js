@@ -30,6 +30,8 @@ static var debugMode : boolean = false;
 
 var testFlightToken : String;
 
+static var isVRMode : boolean = false;
+
 //GameAnalytics variables
 static var secondsAlive : float = 0;
 static var secondsInLevel : float = 0;
@@ -47,6 +49,7 @@ enum iPads {
 };
 
 function Awake () {
+	isVRMode = true; // TODO: Let user pick this via UI
 }
 
 function Start () {
@@ -76,6 +79,11 @@ function Start () {
 
 		//this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;
+
+		// NB: still doesn't work, sensor 'correctness' depends on starting device orientation as read by Cardboard.
+		// HACK: Force landscape left orientation for Cardboard compatibility. 
+		// TODO: make conditional on isVRMode?
+		// Screen.orientation = ScreenOrientation.LandscapeLeft;
 	
 		var iOSGen = iOS.Device.generation;
 		
@@ -150,6 +158,13 @@ function OnLevelWasLoaded (level : int) {
 	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
 }
 
+function SetAxesRotation () {
+	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
+	else {invertHorizAxisVal = 1;}
+	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
+	else {invertVertAxisVal = 1;}
+}
+
 function Calibrate () {
 	tiltable = false;
 
@@ -157,10 +172,7 @@ function Calibrate () {
 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
 	else {restPosition = neutralPosFlat;}
 	
-	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
-	else {invertHorizAxisVal = 1;}
-	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
-	else {invertVertAxisVal = 1;}
+	SetAxesRotation();
 	//acceleratorSnapshot = Input.acceleration;
 	acceleratorSnapshot = Vector3(0.0,0.0,-1.0);
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
@@ -175,10 +187,7 @@ function CalibrateInLevel () {
 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
 	else {restPosition = neutralPosFlat;}
 
-	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
-	else {invertHorizAxisVal = 1;}
-	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
-	else {invertVertAxisVal = 1;}
+	SetAxesRotation();
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
 
 	tiltable = true;

@@ -35,6 +35,9 @@ var shouldChangePitch : boolean = true;
 
 static var pauseButtonArea : Rect;
 
+static var horizAxisInversionVal : int;
+static var vertAxisInversionVal : int;
+
 function Awake() {
 	myTransform = transform;
 	script = GetComponent("ScoreController");
@@ -44,6 +47,10 @@ function Awake() {
 
 
 function Start() {
+
+    // HACK: Force landscape left orientation for Cardboard compatibility. 
+    // TODO: make conditional on isVRMode?
+    Screen.orientation = ScreenOrientation.LandscapeLeft;
 
 //	Screen.sleepTimeout = 0.0f;
 //	deprecated, now should use NeverSleep
@@ -102,8 +109,12 @@ if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
     dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
 	dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
 
-	dir.x = FallingLaunch.invertHorizAxisVal * Mathf.Clamp(dir.x, -2.0, 2.0);
-	dir.z = FallingLaunch.invertVertAxisVal * Mathf.Clamp(dir.z, -2.0, 2.0);
+    // Ignore axis inversion prefs if in VR mode:
+    horizAxisInversionVal = FallingLaunch.isVRMode ? 1 : FallingLaunch.invertHorizAxisVal;
+    vertAxisInversionVal = FallingLaunch.isVRMode ? 1 : FallingLaunch.invertVertAxisVal;
+
+    dir.x = horizAxisInversionVal * Mathf.Clamp(dir.x, -2.0, 2.0);
+	dir.z = vertAxisInversionVal * Mathf.Clamp(dir.z, -2.0, 2.0);
 
     myTransform.Translate (dir * speed, Space.World);
 }
