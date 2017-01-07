@@ -32,7 +32,7 @@ var farClipPlaneFadeTime2 : float = 2;
 function Start () {
 
 	if (oceanLevel == true) {
-		mainCamera = transform.FindChild("Camera").gameObject;
+		if (!mainCamera) {mainCamera = transform.FindChild("Camera").gameObject;}
 		
 		oceanCamera = transform.FindChild("Camera-for-ocean").gameObject;
 		backdropMist = transform.FindChild("Cylinder").gameObject;

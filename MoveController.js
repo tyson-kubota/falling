@@ -1,10 +1,6 @@
 #pragma strict
 
-public var force:float = 1.0;
-public var simulateAccelerometer:boolean = false;
-public var touchedBy:boolean = false;
 var dir : Vector3 = Vector3.zero;
-var endPoint = 0.0; 
 var touch : Touch;
 var fingerCount = 0;
 
@@ -18,12 +14,15 @@ static var isSlowing : boolean = false;
 static var speedingUp : int = 1;
 
 static var controlMultiplier : float = 1;
+private var controlModifierTotal : float;
 
-var mainCamera : GameObject;
+var mainCameraObj : GameObject;
+private var mainCamera : Camera;
+
+private var myHead : GvrHead;
+var GvrViewerMainObject : GameObject; // In each scene, manually add the GvrViewerMain obj via Inspector
+
 var script : ScoreController;
-
-var SpeedLinesTexture : GameObject;
-var SpeedLinesTextureScript : GUITextureLaunch;
 
 var SpeedLinesMesh : GameObject;
 static var SpeedLinesMeshScript : SpeedLines;
@@ -38,7 +37,6 @@ static var pauseButtonArea : Rect;
 function Awake() {
 	myTransform = transform;
 	script = GetComponent("ScoreController");
-	SpeedLinesTextureScript = SpeedLinesTexture.GetComponent("GUITextureLaunch");
 	SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
 }
 
@@ -47,65 +45,78 @@ function Start() {
 
     // HACK: Force landscape left orientation for Cardboard compatibility. 
     // TODO: make conditional on isVRMode?
+    // Or is this best off just being removed?
+    // NB: If your phone is tilted a little beyond flat (away from you) on level load,
+    // then all other game objects will be behind you when you look up: 180deg wrong 
+    // in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse 
+    // quaternion in some cases based on Head gaze direction/ gameObj position, 
+    // or in the menu UI, ensure the phone orientation is not flat before 
+    // letting the user load the scene...
     Screen.orientation = ScreenOrientation.LandscapeLeft;
 
-//	Screen.sleepTimeout = 0.0f;
-//	deprecated, now should use NeverSleep
+	// Screen.sleepTimeout = 0.0f;
+	// deprecated, now should use NeverSleep
 	Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
 	Slowdown = FallingLaunch.levelEndSlowdown;
 
-	mainCamera = transform.FindChild("Camera").gameObject;
+    if (mainCameraObj) {
+        mainCamera = mainCameraObj.GetComponent.<Camera>();
+    }
+    else { // if it wasn't set already via the Inspector UI...
+        mainCameraObj = GameObject.FindWithTag("MainCamera");
+        mainCamera = Camera.main;
+    }
+	
 	audioSource = mainCamera.GetComponent.<AudioSource>();
-
+                
 	//Calibrate();
 
 	lerpSlowdown(.5);
 	lerpControl(3);
 	//pauseButtonArea = Rect(0, 0, Screen.width / 2, Screen.height / 2);
 	pauseButtonArea = Rect(Screen.width * .9, Screen.height * .8, Screen.width * .1, Screen.height * .2);
+
 }
 
 function FixedUpdate () {
 	var dir : Vector3 = Vector3.zero;
-		
-//	if (simulateAccelerometer)
-//	{
-		// using joystick input instead of iPhone accelerometer
-//		dir.x = Input.GetAxis("Horizontal");
-//		dir.z = Input.GetAxis("Vertical");
-//	}
-//	else
-
-		// we assume that device is held parallel to the ground
-		// and Home button is in the right hand
-		
-		// remap device acceleration axis to game coordinates
-		// 1) XY plane of the device is mapped onto XZ plane
-		// 2) rotated 90 degrees around Y axis
- //		 dir.x = -Input.acceleration.y;
-//		 dir.z = Input.acceleration.x;
-
-//		 print("Your X and Z accel are: " + dir.x + ", " + dir.z);
-
-		// clamp acceleration vector to unit sphere
-//		if (dir.sqrMagnitude > 1)
-//			dir.Normalize();
-
     if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
-        
-        // TODO: Don't use accelerometer-derived movement at all in VR mode!
-        // But for now, ignore axis inversion prefs in VR mode:
-        if (FallingLaunch.isVRMode) {
-            movePlayer(1, 1);
+        // In VR mode, use Cardboard gaze direction (e.g. as applied to head object)
+        // to determine any movement that's not downwards/gravity-driven:
+        if (FallingLaunch.isVRMode && GvrViewerMainObject) {
+            if (myHead) {movePlayerVR();}
         }
         else {
-            // Or use the axis settings from player prefs:
+            // if not in VR mode, call movePlayer and honor the playerPrefs axis settings:
             movePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
         }
     }
     else {dir = Vector3.zero;}
 
+}
+
+function movePlayerVR () {
+    // Using TransformDirection so it's in world space, not local.
+    controlModifierTotal = FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier;
+    dir.x = 3 * transform.TransformDirection(myHead.Gaze.direction).x * controlModifierTotal;
+    dir.z = 3 * transform.TransformDirection(myHead.Gaze.direction).z * controlModifierTotal;
+
+    // Debug.Log('head direction: ' + myHead.Gaze.direction);
+    // Debug.Log('dir x pre-clamping ' + dir.x);
+    // Debug.Log('dir z pre-clamping ' + dir.z);
+
+    // Only using X and Z: no y-traversal in world axis,
+    // since scene gravity handles the Y dimension.
+    dir.x = Mathf.Clamp(dir.x, -2.0, 2.0);
+    dir.z = Mathf.Clamp(dir.z, -2.0, 2.0);
+
+    // Debug.Log('dir x final ' + dir.x);
+    // Debug.Log('dir z final ' + dir.z);
+
+    // Clamped to 2 units/frame (and avoiding speed multiplier) to keep it as
+    // more 'realistic' 1:1 movement, with just a little amplification:
+    myTransform.Translate (dir, Space.World);   
 }
 
 function movePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
@@ -147,6 +158,14 @@ function ResumeSpeed () {
 }
 
 function Update () {
+    // TODO: make coroutine instead? http://answers.unity3d.com/answers/1281517/view.html
+    // Find head for VR (can't live in Start because the GVR plugin takes > 1 frame to set up):
+    if (FallingLaunch.isVRMode && GvrViewerMainObject && !myHead) {
+        if (mainCameraObj.GetComponent.<StereoController>()) {
+            myHead = mainCameraObj.GetComponent.<StereoController>().Head;
+        }
+    }
+
 	fallingSpeed();
 	// Debug.Log("Slowdown = " + Slowdown);
 }
@@ -182,39 +201,29 @@ function fallingSpeed () {
 	
 			
 		if (fingerCount > 0) { 	
-			//speedUp();
 			if (Slowdown < 1) {
                 speedingUp = 2; Slowdown = maxSlowdown; 
                 speedsUp();
 				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
 			}
-			//if (Slowdown < 1) 
-			//{speedingUp = 2; speedsUp(); Slowdown = maxSlowdown; }
 			
 		}
 	    else if (fingerCount < 1) {
-	//    	slowDown();
-			//if (Slowdown > 0) {speedDown(); yield;}
-			//Slowdown = 0;
 			if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
-			//else if (Slowdown > 0) {speedingUp = 0; speedsUp(); }
 	    }
 	}
 
 	else {
 		Slowdown = 0;
 		speedingUp = 1;
-		//SpeedLinesTextureScript.LinesOff();
 		SpeedLinesMeshScript.LinesOff();
-		//mainCamera.audio.pitch = 1;
-		//mainCamera.audio.volume = 1;
 		if (shouldChangePitch == true && changingPitch == false) {lerpPitchDown(.5, 1, 1);}
 		dir = Vector3.zero;
 		FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
 	}
 
-//  Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
-//	Debug.Log("You have " + fingerCount + " fingers touching the screen." );
+ // Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
+ // Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 
 	GetComponent.<ConstantForce>().relativeForce = (Vector3.down * Slowdown);
 }
@@ -222,13 +231,11 @@ function fallingSpeed () {
 function speedsUp () {
 	if (speedingUp == 2) {
     	speedingUp = 1;
-    	//SpeedLinesTextureScript.LinesFlash (0.25, FadeDir.In);
     	SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
     	FallingPlayer.UIscriptComponent.showThreatBar(1);
     	if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
 	}
 	else {
-    	//SpeedLinesTextureScript.LinesFlashOut (0.75, FadeDir.In);
     	SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
     	FallingPlayer.UIscriptComponent.hideThreatBar(.5);
     	if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
@@ -259,7 +266,6 @@ function lerpSlowdown (timer : float) {
         if (Slowdown > 17999) {break;}
     	}
     yield WaitForSeconds (timer);
-    //speedingUp = 1; 
  
 }
 
@@ -308,12 +314,6 @@ function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
     
     yield WaitForSeconds (timer);    
     changingPitch = false;
-}
-
-function SpeedLinesOff (timer : float) {
-	SpeedLinesTextureScript.FadeOut (timer);
-	yield WaitForSeconds(timer);
-	SpeedLinesTextureScript.LinesOff();
 }
 
 function lerpControl(timer : float) {

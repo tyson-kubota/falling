@@ -95,7 +95,7 @@ function Awake() {
 }
 
 function Start() {
-    myMainCamera = myTransform.FindChild("Camera").GetComponent.<Camera>();
+    myMainCamera = Camera.main;
     myBackdrop = GameObject.Find("plane-close");
     BackdropMist = GameObject.Find("Cylinder");
     myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
