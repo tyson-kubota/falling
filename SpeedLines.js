@@ -31,8 +31,8 @@ function FadeFlash (timer : float, fadeType : FadeDir) {
 
 function LinesFlash (timer : float, fadeType : FadeDir) {
 
-    var start = fadeType == FadeDir.In? speedLinesMaterial.color.a : peakValue;
-    var end = fadeType == FadeDir.In? peakValue : 0.0;
+    var start = (fadeType == FadeDir.In) ? speedLinesMaterial.color.a : peakValue;
+    var end = (fadeType == FadeDir.In) ? peakValue : 0.0;
     var audioStart = speedLinesAudio2.volume;
     var audioEnd = 1.0; 
     var i = 0.0;
@@ -63,8 +63,8 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
 
 function LinesFlashOut (timer : float, fadeType : FadeDir) {
 
-    var start = fadeType == FadeDir.In? 0.0 : peakValue;
-    var end = fadeType == FadeDir.In? speedLinesMaterial.color.a : 0.0;
+    var start = (fadeType == FadeDir.In) ? 0.0 : peakValue;
+    var end = (fadeType == FadeDir.In) ? speedLinesMaterial.color.a : 0.0;
     var audioStart = speedLinesAudio2.volume;
     var audioEnd = 0.0;    
     var i = 0.0;

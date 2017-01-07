@@ -6,7 +6,7 @@ var fingerCount = 0;
 private var myTransform : Transform;
 private var startTime : float;
 
-static var Slowdown : int = 0;
+static var Slowdown : float = 0.0;
 static var maxSlowdown : float = 18000.0;
 static var lateralSpeedBoost : float = 0.0;
 static var maxLateralSpeed : float = 0.5;
@@ -19,7 +19,6 @@ private var clampedModifierVR : float;
 
 private var dir = Vector3.zero;
 var speed : float = 2.4;
-static var isSlowing : boolean = false;
 static var speedingUp : int = 1;
 
 static var controlMultiplier : float = 1;
@@ -151,29 +150,9 @@ function MovePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
     myTransform.Translate (dir * speed, Space.World);
 }
 
-function SmoothSlowdown () {
-
-    isSlowing = true;    
-    iTween.ValueTo ( gameObject,
-        {
-            "from" : maxSlowdown,
-            "to" : 0,
-            "onupdate" : "ChangeSpeed",
-            "time" : 1,
-            "easetype": "easeOutExpo",
-            "oncomplete": "ResumeSpeed"
-       }
-    );
-
-}
-
 function ChangeSpeed ( i : int ) {
     Slowdown = i;
     //  Debug.Log("Your current speed score is " + ScoreController.visibleScore);
-}
-
-function ResumeSpeed () {
-    isSlowing = false;
 }
 
 function Update () {
@@ -219,13 +198,13 @@ function FallingSpeed () {
         }
     
             
-        if (fingerCount > 0) {  
+        if (fingerCount > 0) {
             if (Slowdown < 1) {
-                speedingUp = 2; Slowdown = maxSlowdown; 
+                Slowdown = maxSlowdown;
+                speedingUp = 2;
                 speedsUp();
                 //GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
             }
-            
         }
         else if (fingerCount < 1) {
             if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
@@ -292,15 +271,6 @@ function speedsUp () {
         FallingPlayer.UIscriptComponent.hideThreatBar(.5);
         if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
     }       
-}
-
-function slowDown () {
-    if ((Slowdown > 0) && (isSlowing == false)) {
-        SmoothSlowdown (); 
-        }
-        else {Slowdown = 0;}
-//  the above Slowdown = 0 statement breaks the tweened slowdown, but prevents a nasty bug where newly-loaded levels don't slow properly 
-//      else { Camera.main.SendMessage("speedLinesDown"); }
 }
 
 function lerpSlowdown (timer : float) {

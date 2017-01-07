@@ -1,7 +1,7 @@
 #pragma strict
-static var flipMultiplier : float = 1;
+static var flipMultiplier : float = 1.0;
 static var landscapeFlipped : boolean = false;
-static var levelEndSlowdown : int = 0;
+static var levelEndSlowdown : float = 0.0;
 static var alreadyLaunched : boolean = false;
 static var hasSetOrientation : boolean = false;
 static var NewGamePlus : boolean = false;
@@ -26,7 +26,7 @@ static var invertVertAxisVal : int;
 static var LoadedLatestLevel : boolean = false;
 
 static var levelAchieved : int;
-static var debugMode : boolean = false;
+static var debugMode : boolean = true; //false;
 
 var testFlightToken : String;
 

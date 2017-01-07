@@ -1,12 +1,19 @@
 ﻿#pragma strict
 
 var GvrViewerMainObject : GameObject;
-var cameraVRParent : GameObject;
+
+// should be a prefab tilted 90 degrees in X axis, so the user faces forward in headset:
+var cameraVRParentPrefab : GameObject;
+private var cameraVRParent : GameObject;
 
 var cameraObj : GameObject;
 private var VRViewerComponent : Component;
-var VRViewer : GvrViewer;
+// var VRViewer : GvrViewer;
 private var hasCentered : boolean = false;
+
+function Awake () {
+    if (!cameraObj) {cameraObj = transform.FindChild("Camera").gameObject;}
+}
 
 function Start () {
     // NOTE: Would be best to perform these lookups elsewhere, but
@@ -16,12 +23,16 @@ function Start () {
     // https://docs.unity3d.com/ScriptReference/Component.GetComponent.html
     VRViewerComponent = GvrViewerMainObject.GetComponent("GvrViewer");
     
-    if (!cameraObj) {cameraObj = transform.FindChild("Camera").gameObject;}
-
     if (FallingLaunch.isVRMode && VRViewerComponent) {
         (VRViewerComponent as MonoBehaviour).enabled = true; // type coercion required to access 'enabled'
         // Re-parent camera for 90deg tilt offset (so player can look forward in VR):
-        cameraObj.transform.parent = cameraVRParent.transform;
+        cameraVRParent = 
+            Instantiate(cameraVRParentPrefab);
+
+        // Make the camera-VR-parent object (post-instantiation) a child of this (player) gameObject transform,
+        // then make the Camera (cameraObj) a child of the camera-VR-parent object:
+        cameraVRParent.transform.SetParent(transform);
+        cameraObj.transform.SetParent(cameraVRParent.transform);
         
         // center cardboard view post-instantiation:
         // TODO: This recentering needs some kind of rotational offset to account for the parent head's 90-degree (we want to map 'forward' in cardboard to 'down' in world space)
