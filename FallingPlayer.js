@@ -265,8 +265,8 @@ function changeLevelBackdrop () {
 	}
 	   		   	
 function Update () {
-	// playerTilt moves camera on device tilt. Enable if not in VR mode, and there's no VR viewer object:
-    if (!FallingLaunch.isVRMode && !myVRViewer) {
+	// playerTilt moves camera on device tilt. Enable if not in VR mode:
+    if (!FallingLaunch.isVRMode) {
         playerTilt ();
     }
 

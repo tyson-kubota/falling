@@ -1,6 +1,5 @@
 #pragma strict
 
-var dir : Vector3 = Vector3.zero;
 var touch : Touch;
 var fingerCount = 0;
 
@@ -9,6 +8,16 @@ private var startTime : float;
 
 static var Slowdown : int = 0;
 static var maxSlowdown : float = 18000.0;
+static var lateralSpeedBoost : float = 0.0;
+static var maxLateralSpeed : float = 1.5;
+
+var forceComponent : ConstantForce;
+
+private var extraForceRaw : Vector3;
+var extraForce : Vector3;
+private var clampedModifierVR : float;
+
+private var dir : Vector3 = Vector3.zero;
 var speed : float = 2.4;
 static var isSlowing : boolean = false;
 static var speedingUp : int = 1;
@@ -35,16 +44,17 @@ var shouldChangePitch : boolean = true;
 static var pauseButtonArea : Rect;
 
 function Awake() {
-	myTransform = transform;
-	script = GetComponent("ScoreController");
-	SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
+    myTransform = transform;
+    script = GetComponent("ScoreController");
+    SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
+    forceComponent = GetComponent.<ConstantForce>();
+    extraForce = Vector3.zero;
 }
 
 
 function Start() {
 
-    // HACK: Force landscape left orientation for Cardboard compatibility. 
-    // TODO: make conditional on isVRMode?
+    // HACK: Force landscape left orientation in VR for Cardboard compatibility. 
     // Or is this best off just being removed?
     // NB: If your phone is tilted a little beyond flat (away from you) on level load,
     // then all other game objects will be behind you when you look up: 180deg wrong 
@@ -52,13 +62,13 @@ function Start() {
     // quaternion in some cases based on Head gaze direction/ gameObj position, 
     // or in the menu UI, ensure the phone orientation is not flat before 
     // letting the user load the scene...
-    Screen.orientation = ScreenOrientation.LandscapeLeft;
+    if (FallingLaunch.isVRMode) {Screen.orientation = ScreenOrientation.LandscapeLeft;}
 
-	// Screen.sleepTimeout = 0.0f;
-	// deprecated, now should use NeverSleep
-	Screen.sleepTimeout = SleepTimeout.NeverSleep;
+    // Screen.sleepTimeout = 0.0f;
+    // deprecated, now should use NeverSleep
+    Screen.sleepTimeout = SleepTimeout.NeverSleep;
     startTime = Time.time; 
-	Slowdown = FallingLaunch.levelEndSlowdown;
+    Slowdown = FallingLaunch.levelEndSlowdown;
 
     if (mainCameraObj) {
         mainCamera = mainCameraObj.GetComponent.<Camera>();
@@ -67,36 +77,40 @@ function Start() {
         mainCameraObj = GameObject.FindWithTag("MainCamera");
         mainCamera = Camera.main;
     }
-	
-	audioSource = mainCamera.GetComponent.<AudioSource>();
+    
+    audioSource = mainCamera.GetComponent.<AudioSource>();
                 
-	//Calibrate();
+    //Calibrate();
 
-	lerpSlowdown(.5);
-	lerpControl(3);
-	//pauseButtonArea = Rect(0, 0, Screen.width / 2, Screen.height / 2);
-	pauseButtonArea = Rect(Screen.width * .9, Screen.height * .8, Screen.width * .1, Screen.height * .2);
+    lerpSlowdown(.5);
+    lerpControl(3);
+    //pauseButtonArea = Rect(0, 0, Screen.width / 2, Screen.height / 2);
+    pauseButtonArea = Rect(Screen.width * .9, Screen.height * .8, Screen.width * .1, Screen.height * .2);
 
 }
 
 function FixedUpdate () {
-	var dir : Vector3 = Vector3.zero;
+    dir = Vector3.zero;
+
+    // Address any x/z movement due to device tilts or VR head gaze positon:
     if (FallingPlayer.isAlive == 1 && FallingLaunch.tiltable == true) {
         // In VR mode, use Cardboard gaze direction (e.g. as applied to head object)
         // to determine any movement that's not downwards/gravity-driven:
         if (FallingLaunch.isVRMode && GvrViewerMainObject) {
-            if (myHead) {movePlayerVR();}
+            if (myHead) { MovePlayerVR(); }
         }
         else {
             // if not in VR mode, call movePlayer and honor the playerPrefs axis settings:
-            movePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
+            MovePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
         }
     }
     else {dir = Vector3.zero;}
 
+    // Address any speedups due to screen presses: 
+    FallingSpeed();
 }
 
-function movePlayerVR () {
+function MovePlayerVR () {
     // Using TransformDirection so it's in world space, not local.
     controlModifierTotal = FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier;
     dir.x = 3 * transform.TransformDirection(myHead.Gaze.direction).x * controlModifierTotal;
@@ -114,12 +128,18 @@ function movePlayerVR () {
     // Debug.Log('dir x final ' + dir.x);
     // Debug.Log('dir z final ' + dir.z);
 
-    // Clamped to 2 units/frame (and avoiding speed multiplier) to keep it as
-    // more 'realistic' 1:1 movement, with just a little amplification:
-    myTransform.Translate (dir, Space.World);   
+    // Cap the lateral speed (it should be translation, not a force, 
+    // so you don't keep moving after you lift the trigger):
+    lateralSpeedBoost = Mathf.Max((Slowdown/maxSlowdown) * maxLateralSpeed, 0.0);
+    // Debug.Log('lateralSpeedBoost: ' + lateralSpeedBoost);
+
+    // Clamped to 2 units/frame (and avoiding speed multiplier) to obtain 
+    // more 'realistic' 1:1 movement, with just a little amplification,
+    // and with lateralSpeedBoost as the extra if you're touching the screen.
+    myTransform.Translate (dir * (1.0 + lateralSpeedBoost), Space.World);   
 }
 
-function movePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
+function MovePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
     FallingLaunch.hasSetAccel = true;
     FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
     //Debug.Log(FallingLaunch.accelerator);
@@ -134,7 +154,7 @@ function movePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
 
 function SmoothSlowdown () {
 
-	isSlowing = true;    
+    isSlowing = true;    
     iTween.ValueTo ( gameObject,
         {
             "from" : maxSlowdown,
@@ -150,7 +170,7 @@ function SmoothSlowdown () {
 
 function ChangeSpeed ( i : int ) {
     Slowdown = i;
-    //	Debug.Log("Your current speed score is " + ScoreController.visibleScore);
+    //  Debug.Log("Your current speed score is " + ScoreController.visibleScore);
 }
 
 function ResumeSpeed () {
@@ -165,90 +185,120 @@ function Update () {
             myHead = mainCameraObj.GetComponent.<StereoController>().Head;
         }
     }
-
-	fallingSpeed();
-	// Debug.Log("Slowdown = " + Slowdown);
+    // fallingSpeed();
+    // Debug.Log("Slowdown = " + Slowdown);
 }
 
+// Old perf note (moved fallingSpeed to fixedUpdate on 1/7/2017):
 // I also tried moving fallingSpeed function to fixedUpdate, but it actually made the game slower,
 // since iOS is usually 30fps and fixedUpdate needs to run at 50fps (0.02 fixed timestep) for
 // decent collision detection.
 
-function fallingSpeed () {
+function FallingSpeed () {
 
-	fingerCount = 0;
-	
-	if (FallingPlayer.isAlive == 1 && FallingPlayer.isPausable == true) {
-	    //for (touch in Input.touches) {
-	    //	if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
-	    for (var i = 0; i < Input.touchCount; ++i) {
-			if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {	    		
-	    		fingerCount++;
+    fingerCount = 0;
+    
+    if (FallingPlayer.isAlive == 1 && FallingPlayer.isPausable == true) {
+        //for (touch in Input.touches) {
+        //  if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
+        for (var i = 0; i < Input.touchCount; ++i) {
+            if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {                
+                fingerCount++;
 
-				if (pauseButtonArea.Contains(Input.GetTouch(i).position)) {
-					// Debug.Log("Returning!");
-					return;
-				}
+                if (pauseButtonArea.Contains(Input.GetTouch(i).position)) {
+                    // Debug.Log("Returning!");
+                    return;
+                }
 
-	    		// if (pauseButtonArea.Contains(touch.position)) {
-	    		// 	Debug.Log("Touching pause area!");
-	    		// }
-	    		// else {
-	    		// 	Debug.Log("Not in pause area.");
-	    		// }	    		
-	    	}
-		}
-	
-			
-		if (fingerCount > 0) { 	
-			if (Slowdown < 1) {
+                // if (pauseButtonArea.Contains(touch.position)) {
+                //  Debug.Log("Touching pause area!");
+                // }
+                // else {
+                //  Debug.Log("Not in pause area.");
+                // }                
+            }
+        }
+    
+            
+        if (fingerCount > 0) {  
+            if (Slowdown < 1) {
                 speedingUp = 2; Slowdown = maxSlowdown; 
                 speedsUp();
-				//GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
-			}
-			
-		}
-	    else if (fingerCount < 1) {
-			if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
-	    }
-	}
+                //GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
+            }
+            
+        }
+        else if (fingerCount < 1) {
+            if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
+        }
+    }
 
-	else {
-		Slowdown = 0;
-		speedingUp = 1;
-		SpeedLinesMeshScript.LinesOff();
-		if (shouldChangePitch == true && changingPitch == false) {lerpPitchDown(.5, 1, 1);}
-		dir = Vector3.zero;
-		FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
-	}
+    else {
+        Slowdown = 0;
+        speedingUp = 1;
+        SpeedLinesMeshScript.LinesOff();
+        if (shouldChangePitch == true && changingPitch == false) {lerpPitchDown(.5, 1, 1);}
+        dir = Vector3.zero;
+        FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
+    }
 
- // Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
- // Debug.Log("You have " + fingerCount + " fingers touching the screen." );
+    // Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
+    // Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 
-	GetComponent.<ConstantForce>().relativeForce = (Vector3.down * Slowdown);
+    // if (myHead) {Debug.Log('myHead.Gaze.direction: ' + myHead.Gaze.direction);}
+
+    // In non-VR mode, relativeForce assumes the Player GameObject transform is tilted 
+    // (by the device accelerometer) in space; it relies on device tilt 
+    // to provide some worldspace lateral speedup to the local (relative) down vector.
+
+    // In VR, the head's gaze direction supplies our y vector, which is attenuated 
+    // based on the gaze x/z (clampedModifierVR).
+    // That vector is multiplied by Slowdown to get a final downwards force.
+
+    // The x/z movement during a speed boost is handled in MovePlayerVR, since applying
+    // sideways forces pushes the player too far away from the main level.
+    if (myHead) {
+        extraForceRaw = myHead.Gaze.direction;
+        Debug.Log('extraForceRaw: ' + extraForceRaw);
+
+        clampedModifierVR = 
+            Mathf.Max(Mathf.Abs(myHead.Gaze.direction.x), Mathf.Abs(myHead.Gaze.direction.z));
+        // Debug.Log('clampedModifierVR: ' + clampedModifierVR);
+        extraForce = Vector3.ClampMagnitude(extraForceRaw, (1.0 - clampedModifierVR));
+    
+        // Mutate into a downwards vector that insists on negative y values 
+        // (so you can't fly upwards).
+        extraForce = Vector3(0, Mathf.Min(extraForce.y, 0.0) * Slowdown, 0);
+    }
+    else {
+        extraForce = Vector3.down * Slowdown;
+    }
+
+    Debug.Log('extraForce: ' + extraForce);
+    forceComponent.relativeForce = extraForce;
 }
 
 function speedsUp () {
-	if (speedingUp == 2) {
-    	speedingUp = 1;
-    	SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
-    	FallingPlayer.UIscriptComponent.showThreatBar(1);
-    	if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
-	}
-	else {
-    	SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
-    	FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-    	if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
-    }		
+    if (speedingUp == 2) {
+        speedingUp = 1;
+        SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
+        FallingPlayer.UIscriptComponent.showThreatBar(1);
+        if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
+    }
+    else {
+        SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
+        FallingPlayer.UIscriptComponent.hideThreatBar(.5);
+        if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
+    }       
 }
 
 function slowDown () {
     if ((Slowdown > 0) && (isSlowing == false)) {
-		SmoothSlowdown (); 
-	    }
-	    else {Slowdown = 0;}
-//	the above Slowdown = 0 statement breaks the tweened slowdown, but prevents a nasty bug where newly-loaded levels don't slow properly 
-//	    else { Camera.main.SendMessage("speedLinesDown"); }
+        SmoothSlowdown (); 
+        }
+        else {Slowdown = 0;}
+//  the above Slowdown = 0 statement breaks the tweened slowdown, but prevents a nasty bug where newly-loaded levels don't slow properly 
+//      else { Camera.main.SendMessage("speedLinesDown"); }
 }
 
 function lerpSlowdown (timer : float) {
@@ -264,7 +314,7 @@ function lerpSlowdown (timer : float) {
         yield;
         
         if (Slowdown > 17999) {break;}
-    	}
+        }
     yield WaitForSeconds (timer);
  
 }
@@ -287,7 +337,7 @@ function lerpPitchUp (timer : float, endPitch : float, endVolume : float) {
         yield;
         
         if (Slowdown < 1) {break;}
-    	}
+        }
     yield WaitForSeconds (timer);
 }
 
@@ -310,7 +360,7 @@ function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
         yield;
 
         if (Slowdown > 17999) {changingPitch = false; break;}        
-    	}
+        }
     
     yield WaitForSeconds (timer);    
     changingPitch = false;
@@ -328,14 +378,14 @@ function lerpControl(timer : float) {
         i += step * Time.deltaTime;
         controlMultiplier = Mathf.Lerp(start, end, i);
         yield;
-		//Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
-    	}
+        //Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
+        }
     yield WaitForSeconds (timer);
 }
 
 function Calibrate () {
-	FallingLaunch.tiltable = false;
-	var acceleratorSnapshot = Input.acceleration;
-	FallingLaunch.calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, FallingLaunch.restPosition);
-	FallingLaunch.tiltable = true;
+    FallingLaunch.tiltable = false;
+    var acceleratorSnapshot = Input.acceleration;
+    FallingLaunch.calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, FallingLaunch.restPosition);
+    FallingLaunch.tiltable = true;
 }
