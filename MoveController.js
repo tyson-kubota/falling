@@ -9,15 +9,15 @@ private var startTime : float;
 static var Slowdown : int = 0;
 static var maxSlowdown : float = 18000.0;
 static var lateralSpeedBoost : float = 0.0;
-static var maxLateralSpeed : float = 1.5;
+static var maxLateralSpeed : float = 0.5;
 
 var forceComponent : ConstantForce;
 
-private var extraForceRaw : Vector3;
-var extraForce : Vector3;
+private var extraForceRaw = Vector3.zero;
+var extraForce = Vector3.zero;
 private var clampedModifierVR : float;
 
-private var dir : Vector3 = Vector3.zero;
+private var dir = Vector3.zero;
 var speed : float = 2.4;
 static var isSlowing : boolean = false;
 static var speedingUp : int = 1;
@@ -48,7 +48,6 @@ function Awake() {
     script = GetComponent("ScoreController");
     SpeedLinesMeshScript = SpeedLinesMesh.GetComponent("SpeedLines");
     forceComponent = GetComponent.<ConstantForce>();
-    extraForce = Vector3.zero;
 }
 
 
@@ -245,27 +244,30 @@ function FallingSpeed () {
     // Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
     // Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 
-    // if (myHead) {Debug.Log('myHead.Gaze.direction: ' + myHead.Gaze.direction);}
-
     // In non-VR mode, relativeForce assumes the Player GameObject transform is tilted 
     // (by the device accelerometer) in space; it relies on device tilt 
     // to provide some worldspace lateral speedup to the local (relative) down vector.
 
-    // In VR, the head's gaze direction supplies our y vector, which is attenuated 
-    // based on the gaze x/z (clampedModifierVR).
+    // In VR, the head's gaze direction supplies our y vector, which is attenuated
+    // based on the gaze x/z (clampedModifierVR). 
     // That vector is multiplied by Slowdown to get a final downwards force.
 
-    // The x/z movement during a speed boost is handled in MovePlayerVR, since applying
+    // Any x/z movement during a speed boost is handled in MovePlayerVR, since applying
     // sideways forces pushes the player too far away from the main level.
     if (myHead) {
         extraForceRaw = myHead.Gaze.direction;
-        Debug.Log('extraForceRaw: ' + extraForceRaw);
+        // Debug.Log('extraForceRaw: ' + extraForceRaw);
+        // Debug.Log('myHead.Gaze.direction: ' + myHead.Gaze.direction);
 
         clampedModifierVR = 
             Mathf.Max(Mathf.Abs(myHead.Gaze.direction.x), Mathf.Abs(myHead.Gaze.direction.z));
-        // Debug.Log('clampedModifierVR: ' + clampedModifierVR);
         extraForce = Vector3.ClampMagnitude(extraForceRaw, (1.0 - clampedModifierVR));
-    
+        // Debug.Log('clampedModifierVR: ' + clampedModifierVR);
+
+        // If you wanted to directly set the downward vector, 
+        // you could use set extraForce.y to be myHead.Gaze.direction.y below...
+        // but the attenuated version is easier on the neck to control!
+
         // Mutate into a downwards vector that insists on negative y values 
         // (so you can't fly upwards).
         extraForce = Vector3(0, Mathf.Min(extraForce.y, 0.0) * Slowdown, 0);
@@ -274,7 +276,7 @@ function FallingSpeed () {
         extraForce = Vector3.down * Slowdown;
     }
 
-    Debug.Log('extraForce: ' + extraForce);
+    // Debug.Log('extraForce: ' + extraForce);
     forceComponent.relativeForce = extraForce;
 }
 
