@@ -104,8 +104,8 @@ function FixedUpdate () {
     }
     else {dir = Vector3.zero;}
 
-    // Address any speedups due to screen presses: 
-    FallingSpeed();
+    // Address any speedups due to screen presses in FixedUpdate, not here! 
+    // FallingSpeed();
 }
 
 function MovePlayerVR () {
@@ -163,7 +163,8 @@ function Update () {
             myHead = mainCameraObj.GetComponent.<StereoController>().Head;
         }
     }
-    // fallingSpeed();
+    
+    FallingSpeed();
     // Debug.Log("Slowdown = " + Slowdown);
 }
 
