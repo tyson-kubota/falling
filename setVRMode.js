@@ -22,9 +22,10 @@ function Start () {
     // Also better to use a type below, not a string, but it's necessary due to C# + JS:
     // https://docs.unity3d.com/ScriptReference/Component.GetComponent.html
     VRViewerComponent = GvrViewerMainObject.GetComponent("GvrViewer");
-    
+
     if (FallingLaunch.isVRMode && VRViewerComponent) {
         (VRViewerComponent as MonoBehaviour).enabled = true; // type coercion required to access 'enabled'
+        (VRViewerComponent as GvrViewer).VRModeEnabled = true;
         // Re-parent camera for 90deg tilt offset (so player can look forward in VR):
         cameraVRParent = 
             Instantiate(cameraVRParentPrefab);
@@ -41,6 +42,8 @@ function Start () {
         //     VRViewer.Instance.Recenter();
         //     hasCentered = true;
         // }
+    } else if (VRViewerComponent) {
+        (VRViewerComponent as GvrViewer).VRModeEnabled = false;
     }
 
     if (!FallingLaunch.isVRMode) {
