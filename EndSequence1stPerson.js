@@ -19,6 +19,8 @@ var UIscriptEndMenuComponent : FallingEndMenuUI;
 var outroCompletedOrb : GameObject;
 var outroCompletionPoint : GameObject;
 
+var anim : Animation;
+
 function Start () {
 	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
@@ -26,6 +28,8 @@ function Start () {
 	MusicBedInterpolated = OutroMusicBedObject.GetComponent("AudioVolumeInterpolate");
 	UIscriptEndMenuComponent = UIscriptEndMenuName.GetComponent("FallingEndMenuUI");
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
+
+    anim = GetComponent.<Animation>();
 }
 
 function PlayOutro () {
@@ -54,7 +58,9 @@ function PlayOutro () {
 	//LerpIntoDiamond(14);
 	MusicBedInterpolated.falsifyCheckDistance();
 	FadeMusic(8, OutroMusicBed);
-	GetComponent.<Animation>().Play("end-player-anim");
+
+    anim.Play("end-player-anim"); // TODO: FIXME
+    
 	EndTriggerComponent.AddDiamondCore(5);
 	yield WaitForSeconds (1);
 	EndTriggerComponent.AddDiamond3DCore(6);

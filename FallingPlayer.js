@@ -3,6 +3,7 @@
 // 2 = 255 for rgba in this color array
 static var startingFogColor : Color = Color(1.17, 1.17, 1.17, 2);
 static var startingFogEndDistance : int = 1500;
+static var startingFogStartDistance : int = 150;
 static var startingCameraFarClipPlane : int = 1700;
 static var startingCloudsAlpha : float = .25f; // Unity 4 used .39f (99 in RGBA)
 
@@ -104,6 +105,8 @@ function Start() {
 
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
+    startingFogStartDistance = RenderSettings.fogStartDistance;
+    
 	startingCameraFarClipPlane = myMainCamera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
@@ -197,6 +200,7 @@ function DeathRespawn () {
 
 	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;
+    RenderSettings.fogStartDistance = startingFogStartDistance;
   	
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
 	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
@@ -228,7 +232,8 @@ function LatestCheckpointRespawn () {
 
 	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	
+  	RenderSettings.fogStartDistance = startingFogStartDistance;
+
 	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	myTransform.position = respawnPosition; // + Vector3.up;
 
@@ -257,11 +262,13 @@ function changeLevelBackdrop () {
 	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
+    RenderSettings.fogStartDistance = startingFogStartDistance;
+
   	if (myMainCamera) {myMainCamera.farClipPlane = startingCameraFarClipPlane;}
 	if (myBackdropRenderer) {
         myBackdropRenderer.materials = [origMat];
     }
-	iTween.ColorTo(BackdropMist,{"a":startingCloudsAlpha,"time":.5});			   	
+	iTween.ColorTo(BackdropMist,{"a": startingCloudsAlpha,"time": .5});
 	}
 	   		   	
 function Update () {
