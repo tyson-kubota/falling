@@ -167,10 +167,15 @@ function SmoothFogFade (type : int) {
 //			"oncomplete" : "CameraFadeEnd"
        });
 	} else if (type == 3) {
+        // Effectively zeroes out fog via gentler distance dispersal.
+        // Assumes that fogEndValue is large enough that halving it 
+        // will still place the fog start far from the camera.
+        var fogStartType3 : float = fogEndValue * .5;
+        
         iTween.ValueTo ( gameObject,
         {
             "from" : FallingPlayer.startingFogStartDistance,
-            "to" : fogEndValue - 100, // Effectively zeroes out fog
+            "to" : fogStartType3,
             "onupdate" : "ChangeFogStartDistance",
             "time" : 3,
             "easetype" : "easeInExpo"
