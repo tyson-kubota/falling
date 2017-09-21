@@ -65,8 +65,8 @@ function Start()
 	// Assign the respawn point to be this one - Since the player is positioned on top of a respawn point, it will come in and overwrite it.
 	// This is just to make sure that we always have a respawn point.
 
-	//mainRespawnScript boolean is to keep multiple instances of Respawn from all trying to write 
-	//to PlayerPrefs within a single Update call.
+	// mainRespawnScript boolean is to keep multiple instances of Respawn from all trying to write 
+	// to PlayerPrefs within a single Update call.
 	if (mainRespawnScript) {	
 		if (PlayerPrefs.HasKey("LatestLevel") && PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName)
 		{	
@@ -88,9 +88,6 @@ function Start()
 			currentRespawn = initialRespawn;
 		}		
 	}
-	// else {
-	// 	currentRespawn = initialRespawn;
-	// }
 
 	SaveCheckpoint();
 }
@@ -109,7 +106,6 @@ function OnTriggerEnter(other : Collider)
 	
 			// Set the current respawn point to be us and make it visible.
 			currentRespawn = this;
-			//SetActive ();
 		}
 	}
 }
@@ -120,6 +116,11 @@ function OnApplicationPause(pauseStatus: boolean) {
     }
 }
 
+// NB: We currently only persistently save checkpoints on pause 
+// (including app-to-background auto-pausing) and level loading.
+// Writing to PlayerPrefs can be slow and introduce visual stutter, so we do NOT
+// save in prefs when you pass a checkpoint during gameplay, although we do update the global
+// currentRespawn var, so respawn works.
 function SaveCheckpoint() {
 	if (mainRespawnScript) {
     	myCheckpoint = currentRespawn.transform.name;

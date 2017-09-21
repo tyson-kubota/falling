@@ -1195,8 +1195,8 @@ function AutoOrientToLandscape () {
 	FallingLaunch.hasSetOrientation = true;		
 }
 
-function StopCompensatingSensors() {
-	//this is necessary to override Unity 4's auto-orientation code	
-	Input.compensateSensors = false;
-	yield;
-}
+// function StopCompensatingSensors() {
+// 	//this is necessary to override Unity 4's auto-orientation code	
+// 	Input.compensateSensors = false;
+// 	yield;
+// }
