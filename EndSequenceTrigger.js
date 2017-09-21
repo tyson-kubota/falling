@@ -25,9 +25,9 @@ function OnTriggerEnter (other : Collider) {
 		lifeCountdown.inOutro = true;
 		
 		MoveController.SpeedLinesMeshScript.LinesLerpOut(3);
-		
+
 		if (EndScriptComponent) {
-		EndScriptComponent.PlayOutro();
+		  EndScriptComponent.PlayOutro();
 		}
 		
 		for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
@@ -48,6 +48,10 @@ function GetChildren(obj : GameObject) : Array{
         children.Add(child.gameObject);
     }
     return children;
+}
+
+function getDiamondCenter() {
+    return diamondCore.transform.position;
 }
 
 function SwapDiamonds(timer : float){

@@ -19,8 +19,6 @@ var UIscriptEndMenuComponent : FallingEndMenuUI;
 var outroCompletedOrb : GameObject;
 var outroCompletionPoint : GameObject;
 
-var anim : Animation;
-
 function Start () {
 	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
@@ -29,7 +27,10 @@ function Start () {
 	UIscriptEndMenuComponent = UIscriptEndMenuName.GetComponent("FallingEndMenuUI");
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
 
-    anim = GetComponent.<Animation>();
+    
+    // Skip to the outro for testing. 
+    // Make sure to disable EndSequenceTrigger's PlayOutro call so they don't compete:
+    // PlayOutro();
 }
 
 function PlayOutro () {
@@ -55,18 +56,31 @@ function PlayOutro () {
     LerpTowardsDiamond(10);
     RotateTowardsDiamond(10);
 	yield WaitForSeconds (10);
-	//LerpIntoDiamond(14);
+        
+	// LerpIntoDiamond(14);
 	MusicBedInterpolated.falsifyCheckDistance();
 	FadeMusic(8, OutroMusicBed);
 
-    anim.Play("end-player-anim"); // TODO: FIXME
+    // Only using iTween for path movement. 
+    // Rotation is handled via FinalRotation's Slerp.
+    iTween.MoveTo(gameObject, 
+    iTween.Hash("path",iTweenPath.GetPath("player-end-path"), 
+        "orienttopath", false, 
+        // "looktarget", EndTriggerComponent.getDiamondCenter(),
+        // "axis", "y",
+        "time", 13, 
+        "easetype", "easeInOutSine"
+    ));
     
+    // start rotating player camera to end at the same time as the above tween path traveling.
+    FinalRotation(13);
+
 	EndTriggerComponent.AddDiamondCore(5);
 	yield WaitForSeconds (1);
 	EndTriggerComponent.AddDiamond3DCore(6);
 	yield WaitForSeconds (1);
 	EndTriggerComponent.FadeDiamond(8);
-	yield WaitForSeconds (6);
+    yield WaitForSeconds (6);
 	
 	ScoreController.enabled = true;
 	LifeController.enabled = true;
@@ -103,6 +117,20 @@ function LerpTowardsDiamond (timer : float) {
     }
 
 	EndTriggerComponent.SwapDiamonds(4);
+}
+
+function FinalRotation (timer : float) {
+    var i = 0.0;
+    var step = 1.0/timer;
+    var startRotation = transform.rotation;
+    var endRotation = Quaternion.Euler(-23.9,101.74,-2.52);
+            
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+
+        yield;
+    }
 }
 
 function RotateTowardsDiamond (timer : float) {

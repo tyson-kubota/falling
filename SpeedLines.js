@@ -39,8 +39,6 @@ function LinesFlash (timer : float, fadeType : FadeDir) {
     var step = 1.0/timer;
 	
 	speedLinesRenderer.enabled = true;
-// if (controllerITween2.speedingUp == 2) {
-// if ((controllerITween2.speedingUp == 2) && (controllerITween2.Slowdown < 1)) {
 
     if (i == 0.0) {
     	if (!speedLinesAudio1.isPlaying) {speedLinesAudio1.Play();}
