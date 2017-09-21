@@ -56,7 +56,7 @@ function PlayOutro () {
     LerpTowardsDiamond(10);
     RotateTowardsDiamond(10);
 	yield WaitForSeconds (10);
-        
+
 	// LerpIntoDiamond(14);
 	MusicBedInterpolated.falsifyCheckDistance();
 	FadeMusic(8, OutroMusicBed);
@@ -69,7 +69,7 @@ function PlayOutro () {
         // "looktarget", EndTriggerComponent.getDiamondCenter(),
         // "axis", "y",
         "time", 13, 
-        "easetype", "easeInOutSine"
+        "easetype", "easeOutSine"
     ));
     
     // start rotating player camera to end at the same time as the above tween path traveling.
