@@ -89,24 +89,42 @@ var fallingLaunchComponent : FallingLaunch;
 function Awake () {
 	//Input.compensateSensors = true;
 	
-	Debug.Log("My orientation is " + Screen.orientation);
+	Debug.Log("My screen orientation is " + Screen.orientation);
 	//Screen.orientation = ScreenOrientation.AutoRotation;
 	// if (FallingLaunch.hasSetOrientation == false) {
 	// 	AutoOrientToLandscape();
 	// }
 
 	if (!FallingLaunch.hasSetOrientation) {
+		// Just to be safe, exclude portrait modes from potential autorotation:
+		Screen.autorotateToPortrait = false;
+		Screen.autorotateToPortraitUpsideDown = false;
+
+		// We have to use autoRotation here, due to crashes on force-changing Screen.orientation 
+		// in conjunction with permitted-via-settings autoRotation 
+		// (if app launches mid-screen-rotation?).
+		// Source: https://forum.unity.com/threads/unitydefaultviewcontroller-should-be-used-only-if-unity-is-set-to-autorotate.314542/#post-2833628
+		Screen.orientation = ScreenOrientation.AutoRotation;
+
 		if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
-			//Debug.Log("I'm in LandscapeRight!");
-			Screen.orientation = ScreenOrientation.LandscapeRight;
+			// Screen.orientation = ScreenOrientation.LandscapeRight;
+			
+			// Permit [auto]rotation to landscapeRight only:
+			Screen.autorotateToLandscapeLeft = false;
+			Screen.autorotateToLandscapeRight = true;
+
 			FallingLaunch.landscapeFlipped = true;
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
-		}
-		else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
+		} else {	
+			// Screen.orientation = ScreenOrientation.LandscapeLeft;
 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
 			//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+			
+			// Permit [auto]rotation to landscapeLeft only:
+			Screen.autorotateToLandscapeLeft = true;
+			Screen.autorotateToLandscapeRight = false;
 		}	
 
 		FallingLaunch.hasSetOrientation = true;
@@ -1113,87 +1131,87 @@ function upLevel4() {
 	}
 }
 
-function SetOrientationNow() {
-	if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
-		Screen.orientation = ScreenOrientation.LandscapeRight;
-		FallingLaunch.flipMultiplier = -1;
-		Debug.Log("I'm in LandscapeRight!");
-		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
-	}
-	else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft){
-		Screen.orientation = ScreenOrientation.LandscapeLeft;
-		FallingLaunch.flipMultiplier = 1;
-		Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
-		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
-	}	
+// function SetOrientationNow() {
+// 	if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
+// 		Screen.orientation = ScreenOrientation.LandscapeRight;
+// 		FallingLaunch.flipMultiplier = -1;
+// 		Debug.Log("I'm in LandscapeRight!");
+// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+// 	}
+// 	else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft){
+// 		Screen.orientation = ScreenOrientation.LandscapeLeft;
+// 		FallingLaunch.flipMultiplier = 1;
+// 		Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
+// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+// 	}	
 
-	//this is necessary to override Unity 4's auto-orientation code
-	Input.compensateSensors = false;
-	yield;
-	return;
-}
+// 	//this is necessary to override Unity 4's auto-orientation code
+// 	Input.compensateSensors = false;
+// 	yield;
+// 	return;
+// }
 
 
-function FixWrongInitialScreenOrientation () {
-   if ( (Screen.height > Screen.width && Input.deviceOrientation.ToString().ToLower().StartsWith("landscape"))
-     || (Screen.width > Screen.height && Input.deviceOrientation.ToString().ToLower().StartsWith("portrait"))
-   ) {
-     Debug.LogWarning("Fixing wrong screen orientation ("+ Screen.orientation +") to right device orientation: "+ Input.deviceOrientation);
-     switch (Input.deviceOrientation) {
-     case DeviceOrientation.LandscapeLeft:
-      Screen.orientation = ScreenOrientation.LandscapeLeft;
-      break;
-     case DeviceOrientation.LandscapeRight:
-      Screen.orientation = ScreenOrientation.LandscapeRight;
-      break;
-     case DeviceOrientation.PortraitUpsideDown:
-      Screen.orientation = ScreenOrientation.PortraitUpsideDown;
-      break;
-     case DeviceOrientation.Portrait:
-      Screen.orientation = ScreenOrientation.Portrait;
-      break;
-     }
-   }
-   yield;
-}
+// function FixWrongInitialScreenOrientation () {
+//    if ( (Screen.height > Screen.width && Input.deviceOrientation.ToString().ToLower().StartsWith("landscape"))
+//      || (Screen.width > Screen.height && Input.deviceOrientation.ToString().ToLower().StartsWith("portrait"))
+//    ) {
+//      Debug.LogWarning("Fixing wrong screen orientation ("+ Screen.orientation +") to right device orientation: "+ Input.deviceOrientation);
+//      switch (Input.deviceOrientation) {
+//      case DeviceOrientation.LandscapeLeft:
+//       Screen.orientation = ScreenOrientation.LandscapeLeft;
+//       break;
+//      case DeviceOrientation.LandscapeRight:
+//       Screen.orientation = ScreenOrientation.LandscapeRight;
+//       break;
+//      case DeviceOrientation.PortraitUpsideDown:
+//       Screen.orientation = ScreenOrientation.PortraitUpsideDown;
+//       break;
+//      case DeviceOrientation.Portrait:
+//       Screen.orientation = ScreenOrientation.Portrait;
+//       break;
+//      }
+//    }
+//    yield;
+// }
 
-function AutoOrientToLandscape () {
+// function AutoOrientToLandscape () {
 
-	// if (Input.deviceOrientation == DeviceOrientation.FaceUp) {
-	// 	if (Screen.orientation == ScreenOrientation.LandscapeRight) {
-	// 		Debug.Log("Device is FaceUp, and ScreenOrientation is LandscapeRight");
-	// 		FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
-	// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;			
-	// 	}
-	// 	else {
-	// 		Debug.Log("Device is FaceUp, and ScreenOrientation is NOT LandscapeRight");
-	// 		FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
-	// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;			
-	// 	}
+// 	// if (Input.deviceOrientation == DeviceOrientation.FaceUp) {
+// 	// 	if (Screen.orientation == ScreenOrientation.LandscapeRight) {
+// 	// 		Debug.Log("Device is FaceUp, and ScreenOrientation is LandscapeRight");
+// 	// 		FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
+// 	// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;			
+// 	// 	}
+// 	// 	else {
+// 	// 		Debug.Log("Device is FaceUp, and ScreenOrientation is NOT LandscapeRight");
+// 	// 		FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
+// 	// 		FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;			
+// 	// 	}
 
-	// 	Screen.autorotateToLandscapeRight = false;
-	// 	Screen.autorotateToLandscapeLeft = false;
-	// 	Screen.autorotateToPortrait = false;
-	// 	Screen.autorotateToPortraitUpsideDown = false;
+// 	// 	Screen.autorotateToLandscapeRight = false;
+// 	// 	Screen.autorotateToLandscapeLeft = false;
+// 	// 	Screen.autorotateToPortrait = false;
+// 	// 	Screen.autorotateToPortraitUpsideDown = false;
 
-	// }
+// 	// }
 
-	if (Vector3.Dot(Input.acceleration.normalized, Vector3(1,0,0)) > 0) 
-	//else if (Input.deviceOrientation == DeviceOrientation.LandscapeRight)
-		{
-			Screen.orientation = ScreenOrientation.LandscapeRight;
-			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
-			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
-		}
-	else if(Vector3.Dot(Input.acceleration.normalized, Vector3(-1,0,0)) > 0)
-	//else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
-		{
-			Screen.orientation = ScreenOrientation.LandscapeLeft;
-			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
-			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
-		}
-	FallingLaunch.hasSetOrientation = true;		
-}
+// 	if (Vector3.Dot(Input.acceleration.normalized, Vector3(1,0,0)) > 0) 
+// 	//else if (Input.deviceOrientation == DeviceOrientation.LandscapeRight)
+// 		{
+// 			Screen.orientation = ScreenOrientation.LandscapeRight;
+// 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
+// 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+// 		}
+// 	else if(Vector3.Dot(Input.acceleration.normalized, Vector3(-1,0,0)) > 0)
+// 	//else if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
+// 		{
+// 			Screen.orientation = ScreenOrientation.LandscapeLeft;
+// 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
+// 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+// 		}
+// 	FallingLaunch.hasSetOrientation = true;		
+// }
 
 // function StopCompensatingSensors() {
 // 	//this is necessary to override Unity 4's auto-orientation code	
