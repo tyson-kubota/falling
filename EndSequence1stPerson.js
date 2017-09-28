@@ -110,7 +110,8 @@ function LerpTowardsDiamond (timer : float) {
     while (i <= 1.0) {
 //      transform.LookAt(diamondLookTarget);    
         i += step * Time.deltaTime;
-        transform.position = Vector3.Slerp(start, end, i);
+        var t : float = i*i*i * (i * (6f*i - 15f) + 10f); // smootherstep lerp
+        transform.position = Vector3.Slerp(start, end, t);
  		//transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
 
         yield;
@@ -127,7 +128,8 @@ function FinalRotation (timer : float) {
             
     while (i <= 1.0) {
         i += step * Time.deltaTime;
-        transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+        var t : float = i*i*i * (i * (6f*i - 15f) + 10f); // smootherstep lerp
+        transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
 
         yield;
     }
@@ -141,29 +143,30 @@ function RotateTowardsDiamond (timer : float) {
 	 		
     while (i <= 1.0) {
         i += step * Time.deltaTime;
- 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+        var t : float = i*i * (3f - 2f*i); // smoothstep lerp
+ 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
 
         yield;
     }
 }
 
-function LerpIntoDiamond (timer : float) {
-	var end = outroCompletedOrb.transform.position; 
-    var start = gameObject.transform.position;
-	var startRotation = transform.rotation;
-	var endRotation = Quaternion.Euler(-79,97,-2.3);    
-    var i = 0.0;
-    var step = 1.0/timer;
+// function LerpIntoDiamond (timer : float) {
+// 	var end = outroCompletedOrb.transform.position; 
+//     var start = gameObject.transform.position;
+// 	var startRotation = transform.rotation;
+// 	var endRotation = Quaternion.Euler(-79,97,-2.3);    
+//     var i = 0.0;
+//     var step = 1.0/timer;
 	
-    while (i <= 1.0) {
-        i += step * Time.deltaTime;
-        transform.position = Vector3.Slerp(start, end, i);
- 		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
+//     while (i <= 1.0) {
+//         i += step * Time.deltaTime;
+//         transform.position = Vector3.Slerp(start, end, i);
+//  		transform.rotation = Quaternion.Slerp(startRotation, endRotation, i);
         
-        yield;
-    }
+//         yield;
+//     }
 
-}
+// }
 
 function FadeEndMenuLogo(timer:float){
 
