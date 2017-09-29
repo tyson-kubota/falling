@@ -204,7 +204,10 @@ function FallingSpeed () {
                 Slowdown = maxSlowdown;
                 speedingUp = 2;
                 speedsUp();
-                //GA.API.Design.NewEvent("Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, transform.position);
+                GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+                    "Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
+                    FallingLaunch.secondsAlive
+                );
             }
         }
         else if (fingerCount < 1) {

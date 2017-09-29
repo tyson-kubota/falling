@@ -35,9 +35,14 @@ function Start () {
 
 function PlayOutro () {
 	//GameAnalytics events for beating the game
+    var isNewGamePlus : String = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
+
 	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-	// GA.API.Design.NewEvent("GameComplete:" + FallingPlayer.isNewGamePlus, FallingLaunch.secondsInLevel, transform.position);
-	
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+        "GameComplete:" + isNewGamePlus,
+        FallingLaunch.secondsInLevel
+    );
+
 	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
 	// TestFlightUnity.TestFlight.PassCheckpoint( "GameComplete");
 

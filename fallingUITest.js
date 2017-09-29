@@ -406,28 +406,51 @@ function Start () {
 	animateProgressBar (lifeBar);
 //	Loop ();
 
-	// GA.API.Design.NewEvent("LevelBegin:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+        "LevelBegin:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
+        FallingLaunch.secondsInLevel
+    );
 
+    // Analytics reporting for tilt prefs, and horizontal/vertical axis prefs, respectively:
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
-		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 0.0f, transform.parent.position);
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        0.0
+	    );
+	} else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        90.0f
+	    );
+	} else {
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        45.0f
+	    );
 	}
-	else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
-		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 90.0f, transform.parent.position);
-	}
-	else {
-		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 45.0f, transform.parent.position);
-	}
+
 	if (FallingLaunch.invertHorizAxisVal == 1) {
-		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name, 1.0f, transform.parent.position);
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        1.0f
+	    );
+	} else if (FallingLaunch.invertHorizAxisVal == -1) {
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        -1.0f
+	    );
 	}
-	else if (FallingLaunch.invertHorizAxisVal == -1) {
-		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name, -1.0f, transform.parent.position);
-	}
+	
 	if (FallingLaunch.invertVertAxisVal == -1) {
-		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name, -1.0f, transform.parent.position);
-	}	
-	else if (FallingLaunch.invertVertAxisVal == 1) {
-		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name, 1.0f, transform.parent.position);
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        -1.0f
+	    );
+	} else if (FallingLaunch.invertVertAxisVal == 1) {
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        1.0f
+	    );
 	}	
 
 	}
@@ -478,7 +501,11 @@ function PauseGame() {
 		FallingPlayer.isPausable = false;
 		
 		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-		// GA.API.Design.NewEvent("GUI:PauseGame:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+	    
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	       	"GUI:PauseGame:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
+	        FallingLaunch.secondsInLevel
+	    );
 		//Debug.Log("you paused at " + transform.parent.position);
 		
 		circleReticle.hidden = true;
@@ -563,8 +590,11 @@ function RestartLevel() {
 	FallingPlayer.isPausable = false;	
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
-	
-	// GA.API.Design.NewEvent("GUI:RestartLevel:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+       	"GUI:RestartLevel:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
+        FallingLaunch.secondsInLevel
+    );	
 	
 	Respawn.currentRespawn = initialRespawn;
 	HideGUI();

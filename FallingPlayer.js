@@ -48,7 +48,6 @@ isAlive = lifeCountdown.isAlive;
 
 static var lifeStartTime : float = 0;
 static var levelStartTime : float = 0;
-static var isNewGamePlus : String;
   	  	
 static var isTiltable : boolean = true;
 
@@ -353,11 +352,10 @@ function OnCollisionEnter (collision : Collision) {
   		
   		if (audioDeath) {audioDeath.Play();}
   		
-  		// GA.API.Design.NewEvent("Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive, myTransform.position);
-  		
-  		//var deathCollideEvent : GAEvent = new GAEvent("Death", "Collision", FallingLaunch.thisLevelArea, FallingLaunch.secondsAlive);
-		//GoogleAnalytics.instance.Add(deathCollideEvent);
-		//GoogleAnalytics.instance.Dispatch();
+        GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+            "Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
+            FallingLaunch.secondsAlive
+        );
   		//Debug.Log("you died in the area " + FallingLaunch.thisLevelArea);
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
     	
@@ -420,10 +418,14 @@ function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("LevelEnd") && isExitingLevel == false) {
   	isExitingLevel = true;
 	isPausable = false;
-  	isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
+  	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	
-	// GA.API.Design.NewEvent("LevelComplete:" + isNewGamePlus, FallingLaunch.secondsInLevel, myTransform.position);
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+        "LevelComplete:" + isNewGamePlus,
+        FallingLaunch.secondsInLevel
+    );
+
 	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
 	
 	// to keep you from dying after you strike the levelend trigger
