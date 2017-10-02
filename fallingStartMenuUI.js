@@ -132,6 +132,8 @@ function Awake () {
 
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
+	ScreenH = Screen.height;
+	ScreenW = Screen.width;
 	screenAspectRatio = (ScreenH / ScreenW);
 }
 
@@ -196,10 +198,10 @@ function Start () {
 	pauseButton.hidden = true;
 
 	if (UIT.isHD == true) {
-	buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
+		buttonScaleFactor = (((Screen.height / 2.0) - 100.0) / Screen.height);
 	}
 	else {
-	buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
+		buttonScaleFactor = (((Screen.height / 2.0) - 50.0) / Screen.height);
 	}
 
 	boldText = new UIText( "font-bold", "font-bold.png" );
@@ -377,9 +379,32 @@ function Start () {
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaStart;
 	loadLevelOne.onTouchUp += upLevel1;
 	loadLevelOne.onTouchDown += downLevel1;
-				
+
+	var calculatedMiddleIconRatio : float = 0.0f;
+
+	if (ScreenW > 2200) {
+		calculatedMiddleIconRatio = 0.36f;
+	} else if (ScreenW > 1600) {
+		calculatedMiddleIconRatio = 0.33f;
+	} else if (ScreenW > 1200) {
+		calculatedMiddleIconRatio = 0.32f;
+	} else if (ScreenW > 1000) {
+		calculatedMiddleIconRatio = 0.31f;
+	} else {
+		calculatedMiddleIconRatio = 0.3f;
+	}
+
+	var middleIconAdjustRatio : float = UIT.isHD ? calculatedMiddleIconRatio : 0.3f;
+	
+	// Debug.Log("buttonScaleFactor: " + buttonScaleFactor);	
+	// Debug.Log("ScreenW: " + ScreenW);
+	// Debug.Log("calculatedMiddleIconRatio: " + calculatedMiddleIconRatio);
+	// Debug.Log("middleIconAdjustRatio: " + middleIconAdjustRatio);
+
 	loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
-	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
+
+	loadLevelTwo.positionFromTopLeft(buttonScaleFactor, middleIconAdjustRatio);
+
 	if (level2Unlocked) {
 		loadLevelTwo.onTouchUpInside += LoadLevel2ViaStart;
 		loadLevelTwo.onTouchUp += upLevel2;
@@ -388,7 +413,11 @@ function Start () {
 	else {loadLevelTwo.onTouchUpInside += DoNothing;}
 			
 	loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
-	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
+
+	// var level3Space : float = (ScreenW * 0.9f) / 3.0;
+
+	loadLevelThree.positionFromTopRight(buttonScaleFactor, middleIconAdjustRatio);
+
 	if (level3Unlocked) {
 		loadLevelThree.onTouchUpInside += LoadLevel3ViaStart;
 		loadLevelThree.onTouchUp += upLevel3;

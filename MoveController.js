@@ -204,10 +204,10 @@ function FallingSpeed () {
                 Slowdown = maxSlowdown;
                 speedingUp = 2;
                 speedsUp();
-                GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-                    "Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
-                    FallingLaunch.secondsAlive
-                );
+                // GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+                //     "Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
+                //     FallingLaunch.secondsAlive
+                // );
             }
         }
         else if (fingerCount < 1) {

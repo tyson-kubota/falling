@@ -80,6 +80,8 @@ private var savedTimeScale:float;
 // private var lifeBar = UIProgressBar.create( "lifeBarRedTest.png", 0, 0 );
 
 function Awake () {
+	ScreenH = Screen.height;
+	ScreenW = Screen.width;
 	screenAspectRatio = (ScreenH / ScreenW);
 }
 
@@ -215,6 +217,22 @@ function Start () {
 	nextLevelLabel.positionCenter();
 	nextLevelLabel.hidden = true;
 
+	var calculatedMiddleIconRatio : float = 0.0f;
+
+	if (ScreenW > 2200) {
+		calculatedMiddleIconRatio = 0.36f;
+	} else if (ScreenW > 1600) {
+		calculatedMiddleIconRatio = 0.33f;
+	} else if (ScreenW > 1200) {
+		calculatedMiddleIconRatio = 0.32f;
+	} else if (ScreenW > 1000) {
+		calculatedMiddleIconRatio = 0.31f;
+	} else {
+		calculatedMiddleIconRatio = 0.3f;
+	}
+
+	var middleIconAdjustRatio : float = UIT.isHD ? calculatedMiddleIconRatio : 0.3f;
+	
 	if (level1 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
 		loadLevelOne.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
@@ -241,8 +259,8 @@ function Start () {
 				loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
 			}
 	}
-	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
-	
+	loadLevelTwo.positionFromTopLeft(buttonScaleFactor, middleIconAdjustRatio);
+
 	if (level3 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 		loadLevelThree.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
@@ -258,7 +276,7 @@ function Start () {
 				loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
 			}
 	}
-	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
+	loadLevelThree.positionFromTopRight(buttonScaleFactor, middleIconAdjustRatio);
 	
 	if (level4 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
