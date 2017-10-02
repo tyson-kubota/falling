@@ -26,7 +26,7 @@ static var invertVertAxisVal : int;
 static var LoadedLatestLevel : boolean = false;
 
 static var levelAchieved : int;
-static var debugMode : boolean = true; //false;
+static var debugMode : boolean = false; // true;
 
 var testFlightToken : String;
 
@@ -77,7 +77,7 @@ function Start () {
 		// 	hasSetOrientation = true;
 		// }
 
-		//this is necessary to override Unity 4's auto-orientation code
+		// this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;
 
 		// NB: still doesn't work, sensor 'correctness' depends on starting device orientation as read by Cardboard.
