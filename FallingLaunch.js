@@ -1,6 +1,5 @@
 #pragma strict
 static var flipMultiplier : float = 1.0;
-static var landscapeFlipped : boolean = false;
 static var levelEndSlowdown : float = 0.0;
 static var alreadyLaunched : boolean = false;
 static var hasSetOrientation : boolean = false;
@@ -15,7 +14,9 @@ static var restPosition : Vector3;
 static var neutralPosFlat : Vector3 = Vector3(0,0,-1.0);
 static var neutralPosTiltedRegular : Vector3 = Vector3(.6,0,-.9);
 static var neutralPosTiltedFlipped : Vector3 = Vector3(-.6,0,-.9);
-static var neutralPosVertical : Vector3 = Vector3(1.0,0,0.0);
+static var neutralPosVerticalRegular = Vector3(1.0,0,0.0);
+static var neutralPosVerticalFlipped = Vector3(-1.0,0,0.0);
+static var neutralPosVertical : Vector3;
 static var neutralPosTilted : Vector3;
 static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
@@ -58,14 +59,13 @@ function Start () {
 	if (!alreadyLaunched) {
 		
 //		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
-		Debug.Log("Your screen orientation is " + Input.deviceOrientation + "!");
+		Debug.Log("Your device orientation is " + Input.deviceOrientation + "!");
 		
 		// if (!hasSetOrientation) {
 		// 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 		// 		flipMultiplier = flipMultiplier * -1;
 		// 		//Debug.Log("I'm in LandscapeRight!");
 		// 		Screen.orientation = ScreenOrientation.LandscapeRight;
-		// 		landscapeFlipped = true;
 		// 		neutralPosTilted = neutralPosTiltedFlipped;
 		// 	}
 		// 	else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
@@ -158,7 +158,7 @@ function OnLevelWasLoaded (level : int) {
 	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
 }
 
-function SetAxesRotation () {
+function SetAxesInversion () {
 	if (PlayerPrefs.GetInt("invertHorizAxis", 0) == 1) {invertHorizAxisVal = -1;}
 	else {invertHorizAxisVal = 1;}
 	if (PlayerPrefs.GetInt("invertVertAxis", 0) == 1) {invertVertAxisVal = -1;}
@@ -172,7 +172,7 @@ function Calibrate () {
 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
 	else {restPosition = neutralPosFlat;}
 	
-	SetAxesRotation();
+	SetAxesInversion();
 	//acceleratorSnapshot = Input.acceleration;
 	acceleratorSnapshot = Vector3(0.0,0.0,-1.0);
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
@@ -187,7 +187,7 @@ function CalibrateInLevel () {
 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
 	else {restPosition = neutralPosFlat;}
 
-	SetAxesRotation();
+	SetAxesInversion();
 	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
 
 	tiltable = true;

@@ -90,6 +90,7 @@ function Awake () {
 	//Input.compensateSensors = true;
 	
 	Debug.Log("My screen orientation is " + Screen.orientation);
+
 	//Screen.orientation = ScreenOrientation.AutoRotation;
 	// if (FallingLaunch.hasSetOrientation == false) {
 	// 	AutoOrientToLandscape();
@@ -108,23 +109,35 @@ function Awake () {
 
 		if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
+			
+			// Debug.Log("LandscapeRight FallingLaunch.flipMultiplier: " + FallingLaunch.flipMultiplier);
 			// Screen.orientation = ScreenOrientation.LandscapeRight;
 			
 			// Permit [auto]rotation to landscapeRight only:
 			Screen.autorotateToLandscapeLeft = false;
 			Screen.autorotateToLandscapeRight = true;
 
-			FallingLaunch.landscapeFlipped = true;
+			// Enforce a landscape direction:
+			// Screen.orientation = ScreenOrientation.LandscapeRight;
+
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+			FallingLaunch.neutralPosVertical = FallingLaunch.neutralPosVerticalFlipped;
 		} else {	
 			// Screen.orientation = ScreenOrientation.LandscapeLeft;
 			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
+			
+			// Debug.Log("Non-LandscapeRight FallingLaunch.flipMultiplier: " + FallingLaunch.flipMultiplier);
 			//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
 			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+			FallingLaunch.neutralPosVertical = FallingLaunch.neutralPosVerticalRegular;
 			
 			// Permit [auto]rotation to landscapeLeft only:
 			Screen.autorotateToLandscapeLeft = true;
 			Screen.autorotateToLandscapeRight = false;
+
+			// Enforce a landscape direction:
+			// Screen.orientation = ScreenOrientation.LandscapeLeft;
+
 		}	
 
 		FallingLaunch.hasSetOrientation = true;
@@ -845,6 +858,7 @@ function ShowTiltNeutralOptions () {
 function StartLevelLoad(levelName: String) {
 	//yield StopCompensatingSensors();
 	fallingLaunchComponent.Calibrate();
+
 	if (aboutToLoad == false) {
 		aboutToLoad = true;
 		FadeAudio (fadeTime);

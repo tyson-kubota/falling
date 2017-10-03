@@ -60,7 +60,10 @@ function Start() {
     // quaternion in some cases based on Head gaze direction/ gameObj position, 
     // or in the menu UI, ensure the phone orientation is not flat before 
     // letting the user load the scene...
-    if (FallingLaunch.isVRMode) {Screen.orientation = ScreenOrientation.LandscapeLeft;}
+    if (FallingLaunch.isVRMode) {
+        // TODO FIXME FOR VR MODE: see above
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+    }
 
     // Screen.sleepTimeout = 0.0f;
     // deprecated, now should use NeverSleep
@@ -96,8 +99,7 @@ function FixedUpdate () {
         // to determine any movement that's not downwards/gravity-driven:
         if (FallingLaunch.isVRMode && GvrViewerMainObject) {
             if (myHead) { MovePlayerVR(); }
-        }
-        else {
+        } else {
             // if not in VR mode, call movePlayer and honor the playerPrefs axis settings:
             MovePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
         }
@@ -137,15 +139,23 @@ function MovePlayerVR () {
     myTransform.Translate (dir * (1.0 + lateralSpeedBoost), Space.World);   
 }
 
-function MovePlayer (horizAxisInversionVal: int, vertAxisInversionVal: int) {
+function MovePlayer(horizAxisInversionVal: int, vertAxisInversionVal: int) {
     FallingLaunch.hasSetAccel = true;
     FallingLaunch.accelerator = FallingLaunch.calibrationRotation * Input.acceleration;
-    //Debug.Log(FallingLaunch.accelerator);
+
+    // Debug.Log("MoveController FallingLaunch.calibrationRotation: " + FallingLaunch.calibrationRotation);
+    // Debug.Log("Input.acceleration: " + Input.acceleration);
+    // Debug.Log( "MoveController FallingLaunch.flipMultiplier: " + FallingLaunch.flipMultiplier );
+    
+    // Debug.Log("MoveController FallingLaunch.accelerator: " + FallingLaunch.accelerator);
+
     dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
     dir.z = 3 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * ((FallingLaunch.accelerator.x) * Mathf.Abs(FallingLaunch.accelerator.x));
 
     dir.x = horizAxisInversionVal * Mathf.Clamp(dir.x, -2.0, 2.0);
     dir.z = vertAxisInversionVal * Mathf.Clamp(dir.z, -2.0, 2.0);
+    // Debug.Log("dir.x final: " + dir.x);
+    // Debug.Log("dir.z final: " + dir.z);
 
     myTransform.Translate (dir * speed, Space.World);
 }
@@ -357,11 +367,4 @@ function lerpControl(timer : float) {
         //Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
         }
     yield WaitForSeconds (timer);
-}
-
-function Calibrate () {
-    FallingLaunch.tiltable = false;
-    var acceleratorSnapshot = Input.acceleration;
-    FallingLaunch.calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, FallingLaunch.restPosition);
-    FallingLaunch.tiltable = true;
 }

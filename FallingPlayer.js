@@ -132,8 +132,10 @@ function Start() {
 }
 
 function LevelStartFade () {
-	if (PlayerPrefs.HasKey("LatestLevel") && PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName)
-	{FallingLaunch.LoadedLatestLevel = true;}
+	if (PlayerPrefs.HasKey("LatestLevel") && 
+        PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName) {
+        FallingLaunch.LoadedLatestLevel = true;
+    }
 
 	if (FallingLaunch.LoadedLatestLevel == false) {
 		introFade();
@@ -273,14 +275,14 @@ function changeLevelBackdrop () {
 function Update () {
 	// playerTilt moves camera on device tilt. Enable if not in VR mode:
     if (!FallingLaunch.isVRMode) {
-        playerTilt ();
+        playerTilt();
     }
 
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
 	//Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
 }
 	  
-function playerTilt () {
+function playerTilt() {
 	if (isTiltable == true) {
 	    var dir : Vector3 = Vector3.zero;
 
@@ -328,13 +330,21 @@ function lerpControlOut(timer : float) {
  
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        MoveController.controlMultiplier = Mathf.Lerp(start, end, i);
-        if (isAlive == 0) {MoveController.controlMultiplier = start; break;}        
+        var t : float = i*i * (3f - 2f*i); // smoothstep lerp
+        MoveController.controlMultiplier = Mathf.Lerp(start, end, t);
         
+        if (isAlive == 0) {
+            MoveController.controlMultiplier = start; 
+            break;
+        }
+
         yield;
 
-        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = start; break;} 
-    	}
+        if (i >= 1.0 || isAlive == 0) {
+            MoveController.controlMultiplier = start; 
+            break;
+        } 
+	}
     yield WaitForSeconds (timer);
 }
 	 
