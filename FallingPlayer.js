@@ -432,7 +432,7 @@ function OnTriggerEnter (other : Collider) {
 	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 	
     GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-        "LevelComplete:" + isNewGamePlus,
+        "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
         FallingLaunch.secondsInLevel
     );
 
