@@ -87,8 +87,9 @@ function Start () {
 	
 		var iOSGen = iOS.Device.generation;
 		
-	//	Debug.Log("this is an " + iOSGen  + " device!");
-	//	Debug.Log("Your screen dpi is " + Screen.dpi + "!");
+		// Debug.Log("this is an " + iOSGen  + " device!");
+
+		// Reduce target framerate for very old iOS devices:
 		if (iOSGen == UnityEngine.iOS.DeviceGeneration.iPad1Gen || iOSGen == UnityEngine.iOS.DeviceGeneration.iPad2Gen || 
 		iOSGen == UnityEngine.iOS.DeviceGeneration.iPhone4 || iOSGen == UnityEngine.iOS.DeviceGeneration.iPodTouch4Gen ||
 		iOSGen.ToString().Contains("iPhone3G")) {
@@ -98,20 +99,22 @@ function Start () {
 		else {
 			targetFPS = 60;
 		}	
-		
-		if (iOSGen.ToString().Contains("iPad")) {
+
+		var screenDPI : float = Screen.dpi;
+		var screenWidthInInches: float = (Screen.width / screenDPI);
+		var screenHeightInInches: float = (Screen.height / screenDPI);
+
+		var hasLargeScreen: boolean = screenDPI > 0 && (screenWidthInInches > 8 && screenHeightInInches > 5);		
+		// Debug.Log("Screen DPI: " + screenDPI);
+		// Debug.Log("Screen width in inches: " + screenWidthInInches);
+		// Debug.Log("Screen height in inches: " + screenHeightInInches);
+
+		if (iOSGen.ToString().Contains("iPad") || hasLargeScreen) {
+			// Debug.Log("Looks like a tablet!");
 			isTablet = true;
-		}
-		
-		if (Screen.dpi > 0) {
-			if ((Screen.width / Screen.dpi) > 5 || (Screen.height / Screen.dpi) > 5) {
-				isTablet = true;
-				//Debug.Log("Looks like a tablet!");
-			}
-			else {
-				isTablet = false;
-				//Debug.Log("Based on reported screen size, not a tablet...");
-			}
+		} else {
+			// Debug.Log("Based on reported screen size, not a tablet...");
+			isTablet = false;
 		}
 		
 		if (!Input.gyro.enabled) {
@@ -121,7 +124,7 @@ function Start () {
 	//	if ((iOSGen && 
 	//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
 		
-		flipMultiplier = (isTablet == true) ? (2 * flipMultiplier) : (1.5 * flipMultiplier);
+		flipMultiplier = isTablet ? 2 * flipMultiplier : 1.5 * flipMultiplier;
 
 		DontDestroyOnLoad (this);
 		alreadyLaunched = true;
