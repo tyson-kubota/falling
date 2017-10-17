@@ -89,7 +89,12 @@ var fallingLaunchComponent : FallingLaunch;
 function Awake () {
 	//Input.compensateSensors = true;
 	
-	Debug.Log("My screen orientation is " + Screen.orientation);
+	if (Debug.isDebugBuild) {
+		Debug.Log("My screen orientation is " + Screen.orientation);
+
+		Debug.Log("My Input.deviceOrientation orientation is " + Input.deviceOrientation);
+		Debug.Log("Cached FallingLaunch Input.deviceOrientation is " + FallingLaunch.initialInputDeviceOrientation);
+	}
 
 	//Screen.orientation = ScreenOrientation.AutoRotation;
 	// if (FallingLaunch.hasSetOrientation == false) {
@@ -106,39 +111,18 @@ function Awake () {
 		// (if app launches mid-screen-rotation?).
 		// Source: https://forum.unity.com/threads/unitydefaultviewcontroller-should-be-used-only-if-unity-is-set-to-autorotate.314542/#post-2833628
 		Screen.orientation = ScreenOrientation.AutoRotation;
-
-		if (Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
-			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * -1;
-			
-			// Debug.Log("LandscapeRight FallingLaunch.flipMultiplier: " + FallingLaunch.flipMultiplier);
-			// Screen.orientation = ScreenOrientation.LandscapeRight;
-			
-			// Permit [auto]rotation to landscapeRight only:
-			Screen.autorotateToLandscapeLeft = false;
-			Screen.autorotateToLandscapeRight = true;
-
-			// Enforce a landscape direction:
-			// Screen.orientation = ScreenOrientation.LandscapeRight;
-
-			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
-			FallingLaunch.neutralPosVertical = FallingLaunch.neutralPosVerticalFlipped;
-		} else {	
-			// Screen.orientation = ScreenOrientation.LandscapeLeft;
-			FallingLaunch.flipMultiplier = FallingLaunch.flipMultiplier * 1;
-			
-			// Debug.Log("Non-LandscapeRight FallingLaunch.flipMultiplier: " + FallingLaunch.flipMultiplier);
-			//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
-			FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
-			FallingLaunch.neutralPosVertical = FallingLaunch.neutralPosVerticalRegular;
-			
-			// Permit [auto]rotation to landscapeLeft only:
-			Screen.autorotateToLandscapeLeft = true;
-			Screen.autorotateToLandscapeRight = false;
-
-			// Enforce a landscape direction:
-			// Screen.orientation = ScreenOrientation.LandscapeLeft;
-
-		}	
+		
+		// on iPhones, we could probably assume input to be landscape-left most of the time,
+		// unless the device is known to be in landscape-right
+		// (the edge cases are iPads lying on a flat surface, which could have either screen orientation):
+	
+		// This function waits an [arbitrary] second for iOS's autorotation to settle, then locks it.
+		// It's not yielded, so it doesn't delay execution of the `hasSetOrientation = true` below.
+		LockDeviceOrientation(1.0f);
+		
+		if (Debug.isDebugBuild) {
+			Debug.Log("My final screen orientation is " + Screen.orientation);
+		}
 
 		FallingLaunch.hasSetOrientation = true;
 	}
@@ -148,6 +132,81 @@ function Awake () {
 	ScreenH = Screen.height;
 	ScreenW = Screen.width;
 	screenAspectRatio = (ScreenH / ScreenW);
+}
+
+function LockDeviceOrientation (waitTime: float) {
+	// iOS/Unity can give strange/wrong orientation values while screen is mid-rotation 
+	//or close to flat, so we manually add a wait yield.
+	yield WaitForSeconds(waitTime);
+
+	Screen.autorotateToLandscapeLeft = false;
+	Screen.autorotateToLandscapeRight = false;
+
+	switch (Input.deviceOrientation) {
+		case DeviceOrientation.LandscapeLeft:
+			LockLandscapeLeftOrientation();
+
+			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeLeft", 0.0);
+			break;
+		case DeviceOrientation.LandscapeRight:
+			LockLandscapeRightOrientation();
+
+			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeRight", 0.0);
+			break;
+		default:
+			HandleDeviceOrientationMismatch();
+
+			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationCheck:NonLandscape:" + Input.deviceOrientation, 0.0);
+			break;
+	}
+
+	return;		
+}
+
+
+function HandleDeviceOrientationMismatch() {
+	if (FallingLaunch.initialInputDeviceOrientation != Input.deviceOrientation) {
+
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    	"DeviceOrientationCheck:CachedAndCurrentMismatch:" + Input.deviceOrientation + ":" + FallingLaunch.initialInputDeviceOrientation, 
+	    	0.0
+    	);
+
+    	if (FallingLaunch.initialInputDeviceOrientation == DeviceOrientation.LandscapeLeft) {
+    		if (Debug.isDebugBuild) {
+				Debug.Log("There's been a cached/current deviceOrientation mismatch. Setting to landscape left...");
+			}
+    		LockLandscapeLeftOrientation();
+    	} else if (FallingLaunch.initialInputDeviceOrientation == DeviceOrientation.LandscapeRight) {
+    		if (Debug.isDebugBuild) {
+    			Debug.Log("There's been a cached/current deviceOrientation mismatch. Setting to landscape right...");
+    		}
+			LockLandscapeRightOrientation();
+    	}
+		
+	} else {
+		if (Debug.isDebugBuild) {
+			Debug.Log(
+				"No need to manually set Screen.orientation, since initialInputDeviceOrientation and Input.deviceOrientation do match, as " + Input.deviceOrientation
+			);
+		}
+		GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:CachedAndCurrentMatch:" + Input.deviceOrientation, 0.0);
+	}
+
+	return;
+}
+
+function LockLandscapeLeftOrientation () {
+	Screen.orientation = ScreenOrientation.LandscapeLeft;
+	FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedRegular;
+	FallingLaunch.neutralPosVertical = FallingLaunch.neutralPosVerticalRegular;
+}
+
+function LockLandscapeRightOrientation () {
+	Screen.orientation = ScreenOrientation.LandscapeRight;
+	FallingLaunch.neutralPosTilted = FallingLaunch.neutralPosTiltedFlipped;
+	FallingLaunch.neutralPosVertical = FallingLaunch.neutralPosVerticalFlipped;
+	FallingLaunch.flipMultiplier = -FallingLaunch.flipMultiplier;	
 }
 
 function Start () {
@@ -519,7 +578,7 @@ function Start () {
 	yield WaitForSeconds (1);
 	canShowStart = true;
 //	ShowStart();
-	}
+}
 
 function ShowStart() {
 	tiltWarning.hidden = true;

@@ -9,6 +9,9 @@ var targetFPS : int = 30;
 static var isTablet : boolean = false;
 
 static var tiltable : boolean = false;
+
+static var initialInputDeviceOrientation : DeviceOrientation;
+
 static var hasSetAccel : boolean = false;
 static var restPosition : Vector3;
 static var neutralPosFlat : Vector3 = Vector3(0,0,-1.0);
@@ -16,8 +19,8 @@ static var neutralPosTiltedRegular : Vector3 = Vector3(.6,0,-.9);
 static var neutralPosTiltedFlipped : Vector3 = Vector3(-.6,0,-.9);
 static var neutralPosVerticalRegular = Vector3(1.0,0,0.0);
 static var neutralPosVerticalFlipped = Vector3(-1.0,0,0.0);
-static var neutralPosVertical : Vector3;
-static var neutralPosTilted : Vector3;
+static var neutralPosVertical : Vector3 = neutralPosVerticalRegular;
+static var neutralPosTilted : Vector3 = neutralPosTiltedRegular;
 static var accelerator : Vector3;
 static var calibrationRotation : Quaternion;
 static var acceleratorSnapshot : Vector3;
@@ -59,7 +62,11 @@ function Start () {
 	if (!alreadyLaunched) {
 		
 //		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
-		Debug.Log("Your device orientation is " + Input.deviceOrientation + "!");
+		if (Debug.isDebugBuild) {
+			Debug.Log("Your device orientation is " + Input.deviceOrientation + "!");
+		}
+		
+		initialInputDeviceOrientation = Input.deviceOrientation;
 		
 		// if (!hasSetOrientation) {
 		// 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
@@ -79,6 +86,8 @@ function Start () {
 
 		// this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;
+
+		// Debug.Log("Device orientation after Input.compensateSensors = false is " + Input.deviceOrientation);
 
 		// NB: still doesn't work, sensor 'correctness' depends on starting device orientation as read by Cardboard.
 		// HACK: Force landscape left orientation for Cardboard compatibility. 
