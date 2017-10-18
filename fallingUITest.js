@@ -620,25 +620,25 @@ function RestartLevel() {
 	UnPauseGame(false);
 }
 
-function LevelComplete() {
+function LevelComplete(timer1 : float, timer2 : float) {
 	HideGUI();
 	FallingPlayer.isPausable = false;
 	MoveController.Slowdown = 0;
 	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 3.0f, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
+	bgSprite.alphaFromTo( timer1, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
 	FallingLaunch.levelEndSlowdown = MoveController.Slowdown;
-	
-	yield WaitForSeconds (3);
-// fade in congrats menu / buttons here 
 
+	yield WaitForSeconds(timer1);
+
+	// fade in congrats menu / buttons here 
     savedTimeScale = Time.timeScale;
 	//loadingLabel.hidden = false;
 	//loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
 	nextLevelLabel.hidden = false;
-	nextLevelLabel.alphaFromTo( 1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);    
+	nextLevelLabel.alphaFromTo( timer2, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);    
     fallingPlayerComponent.FadeAudio (.9, FadeDir.Out);
-    yield WaitForSeconds (1);
-//  Time.timeScale = 0;
+    yield WaitForSeconds (timer2);
+	//  Time.timeScale = 0;
 	player.GetComponent.<Rigidbody>().isKinematic = true;
     AudioListener.pause = true;
 	Application.LoadLevel(levelToLoad);

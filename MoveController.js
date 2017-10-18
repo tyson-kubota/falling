@@ -21,7 +21,7 @@ private var dir = Vector3.zero;
 var speed : float = 2.4;
 static var speedingUp : int = 1;
 
-static var controlMultiplier : float = 1;
+static var controlMultiplier : float = 1.0;
 private var controlModifierTotal : float;
 
 var mainCameraObj : GameObject;
@@ -82,6 +82,10 @@ function Start() {
     audioSource = mainCamera.GetComponent.<AudioSource>();
                 
     //Calibrate();
+
+    // resetting controlMultiplier in case it was zeroed from the previous level
+    // (since as a global/static var, it's cached across level loads);
+    controlMultiplier = 1.0;
 
     lerpSlowdown(.5);
     lerpControl(3);

@@ -63,6 +63,9 @@ var whiteFader : FadeInOutAlt;
 var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
 
+var simpleVelocityLimiterComponent : SimpleVelocityLimiter;
+simpleVelocityLimiterComponent = GetComponent("SimpleVelocityLimiter");
+
 var playAltScoreAudio : boolean = false;
 var clipToPlay : float;
 var audioToPlay : AudioSource;
@@ -129,6 +132,9 @@ function Start() {
 	}
 
 	LevelStartFade();
+
+    // since it was probably lerped down to zero at previous levelEnd, initialize it here.
+    MoveController.controlMultiplier = 1;
 }
 
 function LevelStartFade () {
@@ -216,7 +222,7 @@ function DeathRespawn () {
 	
 	MoveController.controlMultiplier = 1;
    	
-   	lerpControlIn(3);
+   	lerpControlIn(3.0);
    	yield UIscriptComponent.fadeIn(true);
 }   	
 
@@ -323,31 +329,73 @@ function lerpControlIn(timer : float) {
 
 function lerpControlOut(timer : float) {
 
-    var start = MoveController.controlMultiplier;
-    var end = 0.0;
+    var startControl : float = MoveController.controlMultiplier;
+    var end : float = 0.0;
+    var startMaxVelocity : float = simpleVelocityLimiterComponent.GetMaxVelocity();
+    var endVelocity : float = 0; // startMaxVelocity * .15; // / 3;
+
+    // timer 1 and 2 run sequentially via the two `yields` /
+    // inner `while` looops below, adding up to the overall `timer` argument:
+    var timer2 : float = 0.65;
+    var timer1 : float = timer - timer2;
+
     var i = 0.0;
-    var step = 1.0/timer;
- 
+    var step = 1.0/timer1;
+
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        var t : float = i*i * (3f - 2f*i); // smoothstep lerp
-        MoveController.controlMultiplier = Mathf.Lerp(start, end, t);
+
+        var controlT : float = Mathf.Sin(i * Mathf.PI * 0.5f); // ease-out lerp
+
+        MoveController.controlMultiplier = Mathf.Lerp(startControl, end, controlT);
         
         if (isAlive == 0) {
-            MoveController.controlMultiplier = start; 
+            MoveController.controlMultiplier = startControl; 
+            simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
             break;
         }
 
         yield;
 
-        if (i >= 1.0 || isAlive == 0) {
-            MoveController.controlMultiplier = start; 
+        // the && is because the smootherstep math can overshoot 1.0 on its own:
+        if (i >= 1.0 && isAlive == 0) {
+            MoveController.controlMultiplier = startControl; 
+            simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
             break;
         } 
 	}
-    yield WaitForSeconds (timer);
+
+    // In the final bit of time (timer2), lerp the speed cap down to zero:
+    var i2 : float = 0.0;
+    var step2 = 1.0/timer2;
+
+    while (i2 <= 1.0) { 
+        i2 += step2 * Time.deltaTime;
+        
+        // var maxVelocityT : float = i2*i2*i2 * (i2 * (6f*i2 - 15f) + 10f); // smootherstep lerp
+        var maxVelocityT : float = Mathf.Sin(i2 * Mathf.PI * 0.5f); // ease-out lerp
+
+        var newMaxVelocity : float = Mathf.Lerp(startMaxVelocity, endVelocity, maxVelocityT);
+        
+        simpleVelocityLimiterComponent.SetMaxVelocity(newMaxVelocity);
+        
+        if (isAlive == 0) {
+            MoveController.controlMultiplier = startControl;
+            simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
+            break;
+        }
+
+        yield;
+
+        // the && is because the smootherstep math can overshoot 1.0 on its own:
+        if (i2 >= 1.0 && isAlive == 0) {
+            MoveController.controlMultiplier = startControl; 
+            simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
+            break;
+        } 
+    }
 }
-	 
+
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
 // Screen.sleepTimeout = 0.0f;
@@ -435,6 +483,9 @@ function OnTriggerEnter (other : Collider) {
         "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
         FallingLaunch.secondsInLevel
     );
+    
+    // reset the level area identifier for analytics purposes:
+    FallingLaunch.thisLevelArea = "0-start";
 
 	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
 	
@@ -442,10 +493,11 @@ function OnTriggerEnter (other : Collider) {
 	script.IncrementScore(25);
 		
 	audioLevelEnd.Play();
-	lerpControlOut(3);
-	//yield WaitForSeconds (audioLevelEnd.clip.length - 3);
-	//yield WaitForSeconds (1);
-	UIscriptComponent.LevelComplete();
+
+    // the lerpControlOut timer argument must be equal to levelComplete's first argument
+    // for a convincing slowdown lerp and UI/camera fadeout:
+    lerpControlOut(3.0);
+	UIscriptComponent.LevelComplete(3.0, 1.0);
   }	
 }
 			
