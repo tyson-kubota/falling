@@ -98,6 +98,7 @@ function OnTriggerEnter (other : Collider) {
 
 	else if (other.gameObject.CompareTag ("changeBackdrop2")) { 
 		// Debug.Log("You hit an alt changeBackdrop trigger!");
+        
 		FadeCameraFarClipPlane (2);
 		if (FogOnly == true) {SmoothFogFade (2);}
 		if (ShouldUseOceanCamera == true) {enableOceanCamera(); SmoothFogFade (2);}
@@ -147,25 +148,25 @@ function FadeCameraFarClipPlane (type : int) {
 }
 
 function SmoothFogFade (type : int) {
-    if (type == 2) {
-    iTween.ValueTo ( gameObject,
-        {
-            "from" : FallingPlayer.startingFogEndDistance,
-            "to" : fogEndValue2,
-            "onupdate" : "ChangeFogEndDistance",
-            "time" : farClipPlaneFadeTime2,
-            "easetype" : "easeInExpo"
-       });
-	} else if (type == 2) {
-    iTween.ValueTo ( gameObject,
-        {
-            "from" : FallingPlayer.startingFogEndDistance,
-            "to" : fogEndValue,
-            "onupdate" : "ChangeFogEndDistance",
-            "time" : 3,
-            "easetype" : "easeInExpo"
-//			"oncomplete" : "CameraFadeEnd"
-       });
+    if (type == 1) {
+        iTween.ValueTo ( gameObject,
+            {
+                "from" : FallingPlayer.startingFogEndDistance,
+                "to" : fogEndValue,
+                "onupdate" : "ChangeFogEndDistance",
+                "time" : 3,
+                "easetype" : "easeInExpo"
+    //          "oncomplete" : "CameraFadeEnd"
+           });
+    } else if (type == 2) {
+        iTween.ValueTo ( gameObject,
+            {
+                "from" : FallingPlayer.startingFogEndDistance,
+                "to" : fogEndValue2,
+                "onupdate" : "ChangeFogEndDistance",
+                "time" : farClipPlaneFadeTime2,
+                "easetype" : "easeInExpo"
+           });
 	} else if (type == 3) {
         // Effectively zeroes out fog via gentler distance dispersal.
         // Assumes that fogEndValue is large enough that halving it 
