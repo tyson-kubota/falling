@@ -74,7 +74,7 @@ var level4Unlocked : boolean = false;
 static var holdingPauseButton : boolean = false;
 static var origPauseButtonArea : Rect;
 
-private var savedTimeScale:float;
+private var savedTimeScale : float;
 //var x:float;
 //var y:float;
 // private var lifeBar = UIProgressBar.create( "lifeBarRedTest.png", 0, 0 );
@@ -108,8 +108,7 @@ function Start () {
 	bgSprite.hidden = true;
 	//Debug.Log("your highest level achieved is " + FallingLaunch.levelAchieved);
 
-	if (FallingLaunch.levelAchieved == 5) {
-		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+	if (FallingLaunch.debugMode || FallingLaunch.levelAchieved == 5) {
 		level2Unlocked = true;
 		level3Unlocked = true;
 		level4Unlocked = true;
@@ -120,12 +119,6 @@ function Start () {
 	}		
 	else if (FallingLaunch.levelAchieved == 3) {
 		level2Unlocked = true;
-	}
-
-	if (FallingLaunch.debugMode) {
-		level2Unlocked = true;
-		level3Unlocked = true;
-		level4Unlocked = true;
 	}
 
 	var tiltPlacementRatio : float;
@@ -636,16 +629,25 @@ function LevelComplete(timer1 : float, timer2 : float) {
 	//loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
 	nextLevelLabel.hidden = false;
 	nextLevelLabel.alphaFromTo( timer2, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);    
-    fallingPlayerComponent.FadeAudio (.9, FadeDir.Out);
+    fallingPlayerComponent.FadeAudio (.9 * timer2, FadeDir.Out);
+
     yield WaitForSeconds (timer2);
+	
 	//  Time.timeScale = 0;
 	player.GetComponent.<Rigidbody>().isKinematic = true;
     AudioListener.pause = true;
-	Application.LoadLevel(levelToLoad);
 	
-	FallingLaunch.levelAchieved = (Application.loadedLevel + 1);
- 	PlayerPrefs.SetInt("HighestLevel", (Application.loadedLevel + 1));
+	// Only increment `HighestLevel` pref if it's higher than the current `levelAchieved` value
+	// (fixes bug where beaten levels reset on beating level one of New Game Plus):
+	if ((Application.loadedLevel + 1) > FallingLaunch.levelAchieved) {
+		FallingLaunch.levelAchieved = (Application.loadedLevel + 1);
+ 		PlayerPrefs.SetInt("HighestLevel", (Application.loadedLevel + 1));
+ 	}
+
 	Time.timeScale = savedTimeScale;
+	Application.LoadLevel(levelToLoad);
+
+	// Calling Save right after loadLevel, since saving to disk can cause a potential FPS hiccup:
 	PlayerPrefs.Save();
 }
 
@@ -655,28 +657,20 @@ function BeginOutroUI() {
 	player.GetComponent.<Rigidbody>().isKinematic = true;
 }
 
-function OldGameCompleteUI() {
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 4.5f, 0.0f, 0.99f, Easing.Sinusoidal.easeInOut);
-	fallingPlayerComponent.FadeAudio (2.0, FadeDir.Out);
-	yield WaitForSeconds (1.0);
-	yield WaitForSeconds (2.0);
-}
-
-function GameComplete() {
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeIn);
-	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
-	yield WaitForSeconds (.5);
-    savedTimeScale = Time.timeScale;
-//	loadingLabel.hidden = false;
-//	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
-    yield WaitForSeconds (1);
-    AudioListener.pause = true;
-	FallingPlayer.isTiltable = true;
-	Application.LoadLevel(levelToLoad);
-	Time.timeScale = savedTimeScale;
-}
+// function GameComplete() {
+// 	bgSprite.hidden = false;
+// 	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeIn);
+// 	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
+// 	yield WaitForSeconds (.5);
+//     savedTimeScale = Time.timeScale;
+// //	loadingLabel.hidden = false;
+// //	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
+//     yield WaitForSeconds (1);
+//     AudioListener.pause = true;
+// 	FallingPlayer.isTiltable = true;
+// 	Application.LoadLevel(levelToLoad);
+// 	Time.timeScale = savedTimeScale;
+// }
 
 function GameCompleteUI() {
 	bgSprite.hidden = false;

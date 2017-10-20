@@ -48,8 +48,9 @@ function PlayOutro () {
 
 	FallingPlayer.isPausable = false;
 	ScoreController.enabled = false;
-	LifeController.enabled = false;	
-	FallingPlayer.isTiltable = false;			
+	LifeController.enabled = false;
+	FallingPlayer.isTiltable = false;
+
 	PlayerController.lerpSlowdown(1);
 	OutroMusic.Play();
 	//PlayerController.SpeedLinesOff(1);

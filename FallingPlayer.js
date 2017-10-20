@@ -336,7 +336,7 @@ function lerpControlOut(timer : float) {
 
     // timer 1 and 2 run sequentially via the two `yields` /
     // inner `while` looops below, adding up to the overall `timer` argument:
-    var timer2 : float = 0.65;
+    var timer2 : float = 1.25;
     var timer1 : float = timer - timer2;
 
     var i = 0.0;
@@ -427,77 +427,76 @@ function OnCollisionEnter (collision : Collision) {
 
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){
+    //  Debug.Log("You scored!"); 
+    //  Camera.main.SendMessage("flashOut");
+  	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
 
-//  Debug.Log("You scored!"); 
-//    Camera.main.SendMessage("flashOut");
-	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
+  	script.IncrementScore(6);
+  	UIscriptComponent.flashProgressBar(1);
+  	
+  	if (audioScore) {
+  		//Debug.Log(Random.Range(0,2));
+  		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
+  		clipToPlay = Random.Range(0.3f, 0.9f);
+  		pitchRand = Random.Range(0.98f,1.03f);
+  		
+  		if (playAltScoreAudio) {
+  			audioToPlay = audioScoreAlt;
+  			playAltScoreAudio = false;
+  		}
+  		else {
+  			audioToPlay = audioScore;
+  			playAltScoreAudio = true;
+  		}
+  		
+  		audioToPlay.pitch = pitchRand;
 
-	script.IncrementScore(6);
-	UIscriptComponent.flashProgressBar(1);
-	
-	if (audioScore) {
-		//Debug.Log(Random.Range(0,2));
-		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
-		clipToPlay = Random.Range(0.3f, 0.9f);
-		pitchRand = Random.Range(0.98f,1.03f);
-		
-		if (playAltScoreAudio) {
-			audioToPlay = audioScoreAlt;
-			playAltScoreAudio = false;
-		}
-		else {
-			audioToPlay = audioScore;
-			playAltScoreAudio = true;
-		}
-		
-		audioToPlay.pitch = pitchRand;
+  		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
+  		if (clipToPlay > 0.6f) {
+  			audioToPlay.panStereo = (-clipToPlay/2);
+  			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol/2), peakVol);
+  		}
+  		else {
+  			audioToPlay.volume = clipToPlay;
+  			audioToPlay.panStereo = (clipToPlay/2);
+  		}
+  		
+  		//audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
+  		audioToPlay.Play();
+  	}
+  	
+  	//yield WaitForSeconds(.2);
 
-		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
-		if (clipToPlay > 0.6f) {
-			audioToPlay.panStereo = (-clipToPlay/2);
-			audioToPlay.volume = Mathf.Clamp(myVol, (peakVol/2), peakVol);
-		}
-		else {
-			audioToPlay.volume = clipToPlay;
-			audioToPlay.panStereo = (clipToPlay/2);
-		}
-		
-		//audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
-		audioToPlay.Play();
-	}
-	
-	//yield WaitForSeconds(.2);
-
-//	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?
-
-//  Camera.main.SendMessage("flashUp");	  	
+    //	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?
+    //  Camera.main.SendMessage("flashUp");	  	
 	}
 	
   if (other.gameObject.CompareTag ("LevelEnd") && isExitingLevel == false) {
   	isExitingLevel = true;
-	isPausable = false;
+  	isPausable = false;
   	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
-	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
-	
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-        "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
-        FallingLaunch.secondsInLevel
-    );
-    
-    // reset the level area identifier for analytics purposes:
-    FallingLaunch.thisLevelArea = "0-start";
+  	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
+  	
+      GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+          "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
+          FallingLaunch.secondsInLevel
+      );
+      
+      // reset the level area identifier for analytics purposes:
+      FallingLaunch.thisLevelArea = "0-start";
 
-	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
-	
-	// to keep you from dying after you strike the levelend trigger
-	script.IncrementScore(25);
-		
-	audioLevelEnd.Play();
+  	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
+  	
+  	// to keep you from dying after you strike the levelend trigger
+  	script.IncrementScore(25);
+  		
+  	audioLevelEnd.Play();
 
-    // the lerpControlOut timer argument must be equal to levelComplete's first argument
-    // for a convincing slowdown lerp and UI/camera fadeout:
-    lerpControlOut(3.0);
-	UIscriptComponent.LevelComplete(3.0, 1.0);
+    // the lerpControlOut timer argument must be equal to, or just less than, 
+    // the sum of levelComplete's first argument,
+    // in order to create a convincing slowdown lerp and UI/camera fadeout:
+    lerpControlOut(4.0);
+    UIscriptComponent.LevelComplete(3.0, 1.5);
   }	
 }
 			
