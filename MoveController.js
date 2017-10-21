@@ -8,6 +8,8 @@ private var startTime : float;
 
 static var Slowdown : float = 0.0;
 static var maxSlowdown : float = 18000.0;
+private var maxSlowdownThreshold : float = maxSlowdown - 1;
+
 static var lateralSpeedBoost : float = 0.0;
 static var maxLateralSpeed : float = 0.5;
 
@@ -38,7 +40,12 @@ static var SpeedLinesMeshScript : SpeedLines;
 var audioSource : AudioSource;
 
 var changingPitch : boolean = false;
+
+// this is on for all levels but lvl1/tutorial, which has music baked 
+// into the background wind sound, and thus shouldn't get pitch-shifted:
 var shouldChangePitch : boolean = true;
+
+var maxDuckedVolume : float = 1.0;
 
 static var pauseButtonArea : Rect;
 
@@ -51,7 +58,6 @@ function Awake() {
 
 
 function Start() {
-
     // HACK: Force landscape left orientation in VR for Cardboard compatibility. 
     // Or is this best off just being removed?
     // NB: If your phone is tilted a little beyond flat (away from you) on level load,
@@ -177,7 +183,7 @@ function Update () {
             myHead = mainCameraObj.GetComponent.<StereoController>().Head;
         }
     }
-    
+
     FallingSpeed();
     // Debug.Log("Slowdown = " + Slowdown);
 }
@@ -223,9 +229,13 @@ function FallingSpeed () {
                 //     FallingLaunch.secondsAlive
                 // );
             }
-        }
-        else if (fingerCount < 1) {
-            if (Slowdown > 0) { speedingUp = 0; speedsUp(); lerpSlowdown(.5); }
+        } else if (fingerCount < 1) {
+            // rounding Slowdown, since as lerp approaches zero, floating-point errors creep in
+            if (Mathf.Round(Slowdown) > 0) {
+                speedingUp = 0; speedsUp(); lerpSlowdown(.5); 
+            } else {
+                audioSource.volume = maxDuckedVolume;
+            }
         }
     }
 
@@ -282,7 +292,11 @@ function speedsUp () {
         speedingUp = 1;
         SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
         FallingPlayer.UIscriptComponent.showThreatBar(1);
-        if (audioSource && shouldChangePitch == true) {lerpPitchUp(.5, 2, .3);}
+        if (audioSource && shouldChangePitch == true) {
+            // a bit of randomness to vary the end wind-noise pitch; 
+            // generally, we want a value near 2:
+            lerpPitchUp(.5, Random.Range(1.85, 2.25), .3);
+        }
     }
     else {
         SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
@@ -291,8 +305,15 @@ function speedsUp () {
     }       
 }
 
-function lerpSlowdown (timer : float) {
+function getMaxDuckedVolume() {
+    return maxDuckedVolume;
+}
 
+function setMaxDuckedVolume(maxVol : float) {
+    maxDuckedVolume = maxVol;
+}
+
+function lerpSlowdown (timer : float) {
     var start = Slowdown;
     var end = 0.0;
     var i = 0.0;
@@ -303,7 +324,7 @@ function lerpSlowdown (timer : float) {
         Slowdown = Mathf.Lerp(start, end, i);
         yield;
         
-        if (Slowdown > 17999) {break;}
+        if (Slowdown > maxSlowdownThreshold) {break;}
         }
     yield WaitForSeconds (timer);
  
@@ -323,11 +344,11 @@ function lerpPitchUp (timer : float, endPitch : float, endVolume : float) {
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         audioSource.pitch = Mathf.Lerp(start, end, i);
-        audioSource.volume = Mathf.SmoothStep(startVol, endVol, i);
+        audioSource.volume = Mathf.SmoothStep(startVol, endVol * maxDuckedVolume, i);
         yield;
         
         if (Slowdown < 1) {break;}
-        }
+    }
     yield WaitForSeconds (timer);
 }
 
@@ -346,11 +367,11 @@ function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
         audioSource.pitch = Mathf.Lerp(start, end, i);
-        audioSource.volume = Mathf.SmoothStep(startVol, endVol, i);
+        audioSource.volume = Mathf.SmoothStep(startVol, endVol * maxDuckedVolume, i);
         yield;
 
-        if (Slowdown > 17999) {changingPitch = false; break;}        
-        }
+        if (Slowdown > maxSlowdownThreshold) {changingPitch = false; break;}        
+    }
     
     yield WaitForSeconds (timer);    
     changingPitch = false;

@@ -8,11 +8,14 @@ static var inOutro : boolean = false;
 static var isAlive : int = 0;
 var UIscriptName : GameObject;
 
+private var maxSlowdownThreshold : float;
+
 function Awake () {
-	   	script = GetComponent("ScoreController");
+   	script = GetComponent("ScoreController");
 }
 
 function Start () {
+	maxSlowdownThreshold = MoveController.maxSlowdown - 1;
    	isAlive = 1;
    	Loop ();
    	Loop2 ();
@@ -43,12 +46,12 @@ function ScoreLerpLoop () {
 	   	
 function TickingAway (delay : float) {
 	if (script.currentScore > 0) {
-		if (MoveController.Slowdown > 17999) {
+		if (MoveController.Slowdown > maxSlowdownThreshold) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4));
 		}
 		
-		else if (MoveController.Slowdown < 18000) {
+		else if (MoveController.Slowdown < MoveController.maxSlowdown) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
 	   	}

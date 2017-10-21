@@ -1,12 +1,14 @@
 #pragma strict
 
 var duckingObject : GameObject;
+var moveControllerComponent : MoveController;
 var duckingVal : float = .5f;
 var StopAudioOnComplete : boolean = false;
 var audioSource : AudioSource;
 
 function Start () {
 	audioSource = duckingObject.GetComponent.<AudioSource>();
+    moveControllerComponent = duckingObject.transform.parent.GetComponent.<MoveController>();
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -22,7 +24,6 @@ function OnTriggerExit (other : Collider) {
 }
 
 function lerpDuck (timer : float, endVal : float) {
-
     var start = audioSource.volume;
     var end = endVal;
     var i = 0.0;
@@ -30,9 +31,9 @@ function lerpDuck (timer : float, endVal : float) {
 
     while (i <= 1.0) { 
         i += step * Time.deltaTime;
-        audioSource.volume = Mathf.Lerp(start, end, i);
-        yield;        
-    	}
+        moveControllerComponent.setMaxDuckedVolume( Mathf.Lerp(start, end, i) );
+        yield;
+	}
     yield WaitForSeconds (timer);
 
     if (StopAudioOnComplete) {audioSource.Stop();}
