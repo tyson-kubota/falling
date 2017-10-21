@@ -107,8 +107,7 @@ function DeathRespawn () {
 		changeLevelBackdrop ();
 	}
 	
-//	fadeOutAudio ();
-  	FadeAudio ((fadeTime/2), FadeDir.Out);
+  	FadeAudio (fadeTime/2, FadeDir.Out);
   	      
     gameObject.SendMessage ("ResetScore", 0);
   	yield WaitForSeconds(1);
