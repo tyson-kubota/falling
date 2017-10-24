@@ -10,8 +10,8 @@ static var Slowdown : float = 0.0;
 static var maxSlowdown : float = 18000.0;
 private var maxSlowdownThreshold : float = maxSlowdown - 1;
 
-static var lateralSpeedBoost : float = 0.0;
-static var maxLateralSpeed : float = 0.5;
+private var lateralSpeedBoost : float = 0.0;
+private var maxLateralSpeed : float = 0.5;
 
 var forceComponent : ConstantForce;
 
@@ -20,7 +20,8 @@ var extraForce = Vector3.zero;
 private var clampedModifierVR : float;
 
 private var dir = Vector3.zero;
-var speed : float = 2.4;
+private var speed : float = 2.4;
+
 static var speedingUp : int = 1;
 
 static var controlMultiplier : float = 1.0;
@@ -113,8 +114,9 @@ function FixedUpdate () {
             // if not in VR mode, call movePlayer and honor the playerPrefs axis settings:
             MovePlayer(FallingLaunch.invertHorizAxisVal, FallingLaunch.invertVertAxisVal);
         }
+    } else {
+        dir = Vector3.zero;
     }
-    else {dir = Vector3.zero;}
 
     // Address any speedups due to screen presses in FixedUpdate, not here! 
     // FallingSpeed();
@@ -138,15 +140,25 @@ function MovePlayerVR () {
     // Debug.Log('dir x final ' + dir.x);
     // Debug.Log('dir z final ' + dir.z);
 
+    var speedRatio : float = Slowdown / maxSlowdown;
+
     // Cap the lateral speed (it should be translation, not a force, 
-    // so you don't keep moving after you lift the trigger):
-    lateralSpeedBoost = Mathf.Max((Slowdown/maxSlowdown) * maxLateralSpeed, 0.0);
+    // so you don't keep moving after you lift the trigger).
+    // Distinguish between two categories of movement: 
+    // while in boost mode and just afterwards (speedRatio > .25; value range is 1.25-2.4),
+    // vs. regular (speedRatio < .25) movement. 
+    // The latter is more constrained (possible value range 1-1.5).
+    lateralSpeedBoost = speedRatio > .25 ? 
+        Mathf.Max(1.25, speedRatio * speed) : 1.0 + (speedRatio * maxLateralSpeed);
+
     // Debug.Log('lateralSpeedBoost: ' + lateralSpeedBoost);
 
-    // Clamped to 2 units/frame (and avoiding speed multiplier) to obtain 
-    // more 'realistic' 1:1 movement, with just a little amplification,
+    // Dir is clamped to +/-2 units/frame (and avoiding direct use of the speed multiplier)
+    // to obtain more 'realistic' 1:1 movement, with just a little amplification,
     // and with lateralSpeedBoost as the extra if you're touching the screen.
-    myTransform.Translate (dir * (1.0 + lateralSpeedBoost), Space.World);   
+    // myTransform.Translate (dir * (1.0 + lateralSpeedBoost), Space.World);
+    // myTransform.Translate (dir * lateralSpeedBoost, Space.World);
+    myTransform.Translate (dir * lateralSpeedBoost, Space.World);
 }
 
 function MovePlayer(horizAxisInversionVal: int, vertAxisInversionVal: int) {

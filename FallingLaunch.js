@@ -53,7 +53,7 @@ enum iPads {
 };
 
 function Awake () {
-	isVRMode = false; // TODO: Let user pick this via UI
+	isVRMode = true; // TODO: Let user pick this via UI
 }
 
 function Start () {

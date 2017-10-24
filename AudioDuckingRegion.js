@@ -8,7 +8,10 @@ var audioSource : AudioSource;
 
 function Start () {
 	audioSource = duckingObject.GetComponent.<AudioSource>();
-    moveControllerComponent = duckingObject.transform.parent.GetComponent.<MoveController>();
+    // go one or two levels up:
+    moveControllerComponent = 
+        duckingObject.transform.parent.GetComponent.<MoveController>() ||
+        duckingObject.transform.parent.parent.GetComponent.<MoveController>();
 }
 
 function OnTriggerEnter (other : Collider) {
