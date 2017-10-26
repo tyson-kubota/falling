@@ -11,7 +11,6 @@ var peakLifeFlashValueVR : float = 0.33;
 
 static var inOutro : boolean = false;
 
-static var isAlive : int = 0;
 var UIscriptName : GameObject;
 
 private var maxSlowdownThreshold : float;
@@ -28,7 +27,6 @@ function Start () {
 	}
 
 	maxSlowdownThreshold = MoveController.maxSlowdown - 1;
-   	isAlive = 1;
    	Loop ();
    	Loop2 ();
    	ScoreLerpLoop ();
@@ -70,6 +68,11 @@ function FadeFlashVR (timer : float, fadeType : FadeDir) {
 }
 
 function TickingAway (delay : float) {
+	// Early return if player's not alive, so we stop flashing red:
+	if (FallingPlayer.isAlive == 0) {
+		return;
+	}
+
 	if (script.currentScore > 0) {
 		if (MoveController.Slowdown > maxSlowdownThreshold) {
 			script.DecrementScore(delay);
@@ -81,11 +84,11 @@ function TickingAway (delay : float) {
 	   		yield WaitForSeconds(delay);
 	   	}
 	} else {
-		   	isAlive = 0;
+		   	FallingPlayer.isAlive = 0;
 		   	FallingPlayer.isPausable = false;
 
 		   	if (FallingLaunch.isVRMode) {
-		   		FadeFlashVR (1, FadeDir.Out);
+		   		FadeFlashVR(1, FadeDir.Out);
 		   	} else {
 		   		LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
 		   	}
@@ -99,8 +102,11 @@ function TickingAway (delay : float) {
 		   		FallingLaunch.secondsAlive
 	   		);
 
-		   	yield GetComponent(FallingPlayer).DeathRespawn ();
-			GetComponent(FallingPlayer).ShowDeathHelp();
+		   	yield GetComponent(FallingPlayer).DeathRespawn();
+		   	
+		   	if (!FallingLaunch.isVRMode) {
+				GetComponent(FallingPlayer).ShowDeathHelp();
+			}
 
 			// New GameAnalytics "Design" event syntax: 
 			// GameAnalytics.NewDesignEvent (string eventName, float eventValue);
@@ -112,7 +118,11 @@ function TickingAway (delay : float) {
 
 
 function LifeFlashCheck (delay : float, score : int) {
-
+	// Early return if player's not alive, so we stop flashing red:
+	if (!FallingPlayer.isAlive) {
+		return;
+	}
+	
 	if (script.currentScore < score && inOutro == false) {
 	    //Camera.main.SendMessage("lifeFlashOut");
 	   	if (FallingLaunch.isVRMode) {

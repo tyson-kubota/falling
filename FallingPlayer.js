@@ -44,8 +44,7 @@ var tiltAroundX : float;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-static var isAlive : int = 0;
-isAlive = lifeCountdown.isAlive;
+static var isAlive : int = 1;
 
 static var lifeStartTime : float = 0;
 static var levelStartTime : float = 0;
@@ -220,8 +219,12 @@ function DeathRespawn () {
 	}
 	
   	FadeAudio (fadeTime, FadeDir.Out);
-  	      
-    script.ResetScore(0);
+
+    // VR mode does its own score reset later, due to a longer fade interval/
+    // interstitial 'back to menu' screen.
+    if (!FallingLaunch.isVRMode) {
+      script.ResetScore();
+    }
 
   	yield WaitForSeconds(1);
 
@@ -265,6 +268,10 @@ function DeathRespawn () {
     
     // TODO: Fade out material here instead of toggling the whole object outright?
     deathUIVR.SetActive(false);
+    
+    // resetting score to max here for VR, to avoid the score
+    // ticking away over the preceding ~4 WaitForSeconds.
+    script.ResetScore();
 
     lerpControlIn(3.0);
 
@@ -310,7 +317,7 @@ function LatestCheckpointRespawn () {
 }   
 
 function ShowDeathHelp() {
-  if (introComponent && !FallingLaunch.isVRMode) {
+  if (introComponent) {
     introComponent.DeathHelp();
   }
 }

@@ -45,8 +45,7 @@ private var mainCamera: Camera;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-static var isAlive : int = 0;
-isAlive = lifeCountdown.isAlive;
+var isAlive : int = 1;
 
 static var isPausable : boolean = true;
 
