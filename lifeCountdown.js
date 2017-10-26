@@ -3,6 +3,12 @@ var script : ScoreController;
 var LifeFlashTexture : GameObject;
 static var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
+
+var lifeFlashUIVR : GameObject;
+var lifeFlashUIRenderer : Renderer;
+var lifeFlashUIMatl : Material;
+var peakLifeFlashValueVR : float = 0.33;
+
 static var inOutro : boolean = false;
 
 static var isAlive : int = 0;
@@ -15,6 +21,12 @@ function Awake () {
 }
 
 function Start () {
+	if (FallingLaunch.isVRMode) {
+		lifeFlashUIRenderer = lifeFlashUIVR.GetComponent.<Renderer>();
+        lifeFlashUIMatl = lifeFlashUIRenderer.material;
+        lifeFlashUIMatl.color.a = 0;
+	}
+
 	maxSlowdownThreshold = MoveController.maxSlowdown - 1;
    	isAlive = 1;
    	Loop ();
@@ -42,8 +54,21 @@ function ScoreLerpLoop () {
 		yield WaitForSeconds(.25);
 	}
 }
-	   
-	   	
+
+function FadeFlashVR (timer : float, fadeType : FadeDir) {
+
+    var start = fadeType == FadeDir.In? 0.0 : peakLifeFlashValueVR;
+    var end = fadeType == FadeDir.In? peakLifeFlashValueVR : 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        lifeFlashUIMatl.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
+}
+
 function TickingAway (delay : float) {
 	if (script.currentScore > 0) {
 		if (MoveController.Slowdown > maxSlowdownThreshold) {
@@ -55,12 +80,16 @@ function TickingAway (delay : float) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
 	   	}
-	}
-	
-	else {
+	} else {
 		   	isAlive = 0;
 		   	FallingPlayer.isPausable = false;
-		   	LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+
+		   	if (FallingLaunch.isVRMode) {
+		   		FadeFlashVR (1, FadeDir.Out);
+		   	} else {
+		   		LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+		   	}
+		   	
 		   	FallingLaunch.secondsAlive = (Time.time - FallingPlayer.lifeStartTime);
 
 		   	//Debug.Log("You died!");
@@ -86,11 +115,19 @@ function LifeFlashCheck (delay : float, score : int) {
 
 	if (script.currentScore < score && inOutro == false) {
 	    //Camera.main.SendMessage("lifeFlashOut");
-		LifeFlashTextureScript.FadeFlash (delay, FadeDir.In);
+	   	if (FallingLaunch.isVRMode) {
+	   		FadeFlashVR(delay, FadeDir.In);
+	   	} else {
+			LifeFlashTextureScript.FadeFlash (delay, FadeDir.In);
+		}
 		yield WaitForSeconds(delay);
 //		Camera.main.SendMessage("lifeFlashUp");
-		LifeFlashTextureScript.FadeFlash (delay, FadeDir.Out);
-		yield WaitForSeconds((delay*3));		
+		if (FallingLaunch.isVRMode) {
+	   		FadeFlashVR(delay, FadeDir.Out);
+	   	} else {
+			LifeFlashTextureScript.FadeFlash (delay, FadeDir.Out);
+		}
+		yield WaitForSeconds((delay*3)); // stagger the flash timing (compare w/ `delay` above)
 	}
 }
 

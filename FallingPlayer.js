@@ -1,7 +1,8 @@
 #pragma strict 
 
+// 10/25/2017: `Color` uses a 0-1 float range, not 0-2, in Unity.
 // 2 = 255 for rgba in this color array
-static var startingFogColor : Color = Color(1.17, 1.17, 1.17, 2);
+// static var startingFogColor : Color = Color(1.17, 1.17, 1.17, 2);
 static var startingFogEndDistance : int = 1500;
 static var startingFogStartDistance : int = 150;
 static var startingCameraFarClipPlane : int = 1700;
@@ -57,6 +58,19 @@ var isExitingLevel : boolean = false;
 var UIscriptName : GameObject;
 static var UIscriptComponent : fallingUITest;
 
+// todo: handle spherical fade-out UI in script
+// var blackUIVR : GameObject;
+
+var deathUIVR : GameObject;
+
+var scoreUIVR : GameObject;
+var scoreUIVRRenderer : Renderer;
+var scoreUIVRMatl : Material;
+var peakScoreFlashValueVR : float = 1.0;
+
+var reticleVRUIObj : GameObject;
+var reticleVRUIScript : VRLifeMeter;
+
 var clearDestroyedObjects : boolean = false;
 
 var whiteFader : FadeInOutAlt;
@@ -103,7 +117,19 @@ function Start() {
     BackdropMist = GameObject.Find("Cylinder");
     myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
 
-    myVRViewer = GameObject.Find("GvrViewerMain");
+    if (FallingLaunch.isVRMode) {
+      myVRViewer = GameObject.Find("GvrViewerMain");
+      scoreUIVRRenderer = scoreUIVR.GetComponent.<Renderer>();
+      scoreUIVRMatl = scoreUIVRRenderer.material;
+      scoreUIVRMatl.color.a = 0;
+      if (reticleVRUIObj) {
+        reticleVRUIScript = reticleVRUIObj.GetComponent.<VRLifeMeter>();
+      } else {
+        Debug.LogError("You forgot to assign an object for the VR reticle... trying to look up manually");
+        reticleVRUIScript = GameObject.Find("vr-radial-life-meter").GetComponent.<VRLifeMeter>();
+      }
+      reticleVRUIScript.FadeReticleIn(1.5);
+    }
 
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
@@ -184,8 +210,8 @@ function DeathRespawn () {
 	isPausable = false;
 	rb.isKinematic = true;
 	lifeStartTime = Time.time;
-   	var respawnPosition = Respawn.currentRespawn.transform.position;
-	
+ 	var respawnPosition = Respawn.currentRespawn.transform.position;  
+
 	UIscriptComponent.fadeOut();
 // 	Camera.main.SendMessage("fadeOut");
 
@@ -220,9 +246,39 @@ function DeathRespawn () {
 //   	isAlive = 1;
 	
 	MoveController.controlMultiplier = 1;
-   	
-   	lerpControlIn(3.0);
-   	yield UIscriptComponent.fadeIn(true);
+ 	  
+  if (FallingLaunch.isVRMode && deathUIVR) {
+
+    rb.isKinematic = true; 
+    isAlive = 0;
+
+    deathUIVR.SetActive(true);
+    reticleVRUIScript.FadeReticleOut(0.5);
+
+    yield UIscriptComponent.fadeIn(false);
+    
+    yield WaitForSeconds(4);
+    
+    yield UIscriptComponent.fadeOut();
+    // UIscriptComponent.UnPauseGame(true);
+    rb.isKinematic = false;
+    
+    // TODO: Fade out material here instead of toggling the whole object outright?
+    deathUIVR.SetActive(false);
+
+    lerpControlIn(3.0);
+
+    yield UIscriptComponent.fadeIn(false);
+    yield WaitForSeconds(1);
+
+    reticleVRUIScript.FadeReticleIn(1.5);
+
+    isPausable = true;
+    isAlive = 1;
+  } else {
+    lerpControlIn(3.0);
+    yield UIscriptComponent.fadeIn(true);
+  }
 }   	
 
 function LatestCheckpointRespawn () {
@@ -254,13 +310,13 @@ function LatestCheckpointRespawn () {
 }   
 
 function ShowDeathHelp() {
-   	if (introComponent) {
-	introComponent.DeathHelp();
-	}
+  if (introComponent && !FallingLaunch.isVRMode) {
+    introComponent.DeathHelp();
+  }
 }
 
 function changeLevelBackdrop () {
-  	changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
+  changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
 	changeBackdrop.oceanRenderer.enabled = false;
 	changeBackdrop.cloudRenderer.enabled = false;
 	changeBackdrop.endSphereRenderer.enabled = false;
@@ -268,12 +324,12 @@ function changeLevelBackdrop () {
 	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-    RenderSettings.fogStartDistance = startingFogStartDistance;
+  RenderSettings.fogStartDistance = startingFogStartDistance;
 
-  	if (myMainCamera) {myMainCamera.farClipPlane = startingCameraFarClipPlane;}
-	if (myBackdropRenderer) {
-        myBackdropRenderer.materials = [origMat];
-    }
+  if (myMainCamera) {myMainCamera.farClipPlane = startingCameraFarClipPlane;}
+  if (myBackdropRenderer) {
+      myBackdropRenderer.materials = [origMat];
+  }
 	iTween.ColorTo(BackdropMist,{"a": startingCloudsAlpha,"time": .5});
 	}
 	   		   	
@@ -281,6 +337,16 @@ function Update () {
 	// playerTilt moves camera on device tilt. Enable if not in VR mode:
     if (!FallingLaunch.isVRMode) {
         playerTilt();
+    }
+
+    // disable VR mode and return to menu on screen touch while dead:
+    if (FallingLaunch.isVRMode && isAlive == 0 && deathUIVR.activeInHierarchy) {
+      for (var i = 0; i < Input.touchCount; ++i) {
+        if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
+          FallingLaunch.isVRMode = false;
+          Application.LoadLevel("Falling-scene-menu");
+        }
+      }
     }
 
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
@@ -395,6 +461,20 @@ function lerpControlOut(timer : float) {
     }
 }
 
+function ScoreFlashVR (timer : float, fadeType : FadeDir) {
+
+    var start = fadeType == FadeDir.In? 0.0 : peakScoreFlashValueVR;
+    var end = fadeType == FadeDir.In? peakScoreFlashValueVR : 0.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        scoreUIVRMatl.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
+}
+
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
 // Screen.sleepTimeout = 0.0f;
@@ -428,7 +508,11 @@ function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){
     //  Debug.Log("You scored!"); 
     //  Camera.main.SendMessage("flashOut");
-  	ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
+    if (FallingLaunch.isVRMode) {
+      ScoreFlashVR(0.8, FadeDir.Out);
+    } else {
+  	 ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
+    }
 
   	script.IncrementScore(6);
   	UIscriptComponent.flashProgressBar(1);

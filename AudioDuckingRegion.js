@@ -8,7 +8,7 @@ var audioSource : AudioSource;
 
 function Start () {
 	audioSource = duckingObject.GetComponent.<AudioSource>();
-    // go one or two levels up:
+    // go one or two levels up, since in VR the parent may be shifted around:
     moveControllerComponent = 
         duckingObject.transform.parent.GetComponent.<MoveController>() ||
         duckingObject.transform.parent.parent.GetComponent.<MoveController>();

@@ -477,13 +477,13 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 	}
 }
 
-function animateThreatBar(lifeBar : UIProgressBar) {
-	while (true)
-	{
-	lifeBar.value = (1 - (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore)));
-	yield 0;
-	}
-}
+// function animateThreatBar(lifeBar : UIProgressBar) {
+// 	while (true)
+// 	{
+// 	lifeBar.value = (1 - (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore)));
+// 	yield 0;
+// 	}
+// }
 
 function flashProgressBar(delay : float) {
 	lifeBar.alphaTo( 0.01f, 1.0f, Easing.Sinusoidal.easeOut);
@@ -508,7 +508,7 @@ function flashThreatBar(delay : float) {
 }
 
 function PauseGame() {
-	if (FallingPlayer.isPausable == true) {
+	if (FallingPlayer.isPausable) {
 		FallingPlayer.isPausable = false;
 		
 		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
@@ -532,7 +532,7 @@ function PauseGame() {
 	    yield WaitForSeconds (.1);
 	    Time.timeScale = 0;
 	    AudioListener.pause = true;
-
+	    
    		rightArrow.hidden = false;
 		//leftArrow.hidden = false;
 		if (level2Unlocked) {loadNewLevelButton.hidden = false;}
@@ -549,6 +549,7 @@ function PauseGame() {
 		initialRespawn.SaveCheckpoint();
 
 	    FallingPlayer.isPausable = true;
+	    return;
     }
 }
 
@@ -576,7 +577,7 @@ function UnPauseGame(resume : boolean) {
 	FallingPlayer.isPausable = resume;	
 	holdingPauseButton = false;
 	MoveController.pauseButtonArea = origPauseButtonArea;
-    }
+}
     
 function IsGamePaused() {
     return Time.timeScale==0;
@@ -968,11 +969,11 @@ function OpenSite() {
 }
 
 function HideGUI() {
-		pauseButton.hidden = true;
-		circleReticle.hidden = true;
-		lifeBar.hidden = true;
-		lifeBarOutline.hidden = true;
-		lifeBarThreat.hidden = true;
+	pauseButton.hidden = true;
+	circleReticle.hidden = true;
+	lifeBar.hidden = true;
+	lifeBarOutline.hidden = true;
+	lifeBarThreat.hidden = true;
 }
 
 function FadeOutGUI() {
@@ -991,36 +992,36 @@ function FadeOutGUI() {
 
 
 function UnhideGUI() {
-		pauseButton.hidden = false;
-		circleReticle.hidden = false;
-		lifeBar.hidden = false;
-		lifeBarOutline.hidden = false;
-		lifeBarThreat.hidden = true;
-		
+	pauseButton.hidden = false;
+	circleReticle.hidden = false;
+	lifeBar.hidden = false;
+	lifeBarOutline.hidden = false;
+	lifeBarThreat.hidden = true;
+	
 //		lifeBarThreat.alphaFrom( 1.0f, 0.0f, Easing.Quartic.easeIn);
-		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		lifeBar.alphaFromTo( 1.0f, 0.0f, 0.5f, Easing.Quartic.easeIn);
-		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
-		yield WaitForSeconds (1.0);
-		FallingPlayer.isPausable = true;
+	pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+	lifeBar.alphaFromTo( 1.0f, 0.0f, 0.5f, Easing.Quartic.easeIn);
+	lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+	circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
+	yield WaitForSeconds (1.0);
+	FallingPlayer.isPausable = true;
 //		lifeBarThreat.hidden = false;
 }
 
 function fadeIn( shouldUnhideGUI : boolean ) {
-		fadeSprite.hidden = false;
-		fadeSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-		yield WaitForSeconds(.5);
-		if (shouldUnhideGUI == true) {UnhideGUI();}
-		yield WaitForSeconds(.5);
-		fadeSprite.hidden = true;
+	fadeSprite.hidden = false;
+	fadeSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds(.5);
+	if (shouldUnhideGUI == true) {UnhideGUI();}
+	yield WaitForSeconds(.5);
+	fadeSprite.hidden = true;
 }
 
 function fadeOut() {
-		fadeSprite.hidden = false;
-		fadeSprite.alphaTo( 1.0f, 1.0f, Easing.Sinusoidal.easeOut);
-		yield WaitForSeconds(1);
-		fadeSprite.hidden = true;
+	fadeSprite.hidden = false;
+	fadeSprite.alphaTo( 1.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds(1);
+	fadeSprite.hidden = true;
 }
 
 
@@ -1054,16 +1055,16 @@ function PauseGameNow() {
 	//DisplayTiltOnPause();
 }
 
-function PauseGameBackgroundCheck() {
-	if (FallingPlayer.isPausable == true) {
-		if (Time.timeScale == 0) {
-			UnPauseGame(true);
-		}
-		else {
-			PauseGameNow();
-		}
-	}
-}
+// function PauseGameBackgroundCheck() {
+// 	if (FallingPlayer.isPausable == true) {
+// 		if (Time.timeScale == 0) {
+// 			UnPauseGame(true);
+// 		}
+// 		else {
+// 			PauseGameNow();
+// 		}
+// 	}
+// }
 
 function setHoldingPauseButtonTrue() {
 	holdingPauseButton = true;

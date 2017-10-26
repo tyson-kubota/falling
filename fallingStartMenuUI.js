@@ -70,6 +70,8 @@ var isSaving : boolean = false;
 
 var openSiteButtonText : UIButton;
 
+var vrModeButton : UIButton;
+var vrModeLabel : UITextInstance;
 
 private var savedTimeScale:float;
 
@@ -300,8 +302,23 @@ function Start () {
 	0, 0, 0.8f, 1, Color.white, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
     text3.positionFromBottom(.3f);
 
+    // TODO: Use real VR Mode icon and button sprite here.
+    // HACK: reusing existing button sprite as a transparent background 
+    // for the "VR Mode" text label (which is not clickable):
+	vrModeButton = UIButton.create("newgame.png", "newgame.png", 0,0); 
+	vrModeButton.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
+	vrModeButton.normalTouchOffsets = new UIEdgeOffsets( 40 );
+	vrModeButton.highlightedTouchOffsets = new UIEdgeOffsets( 40 );
+	vrModeButton.onTouchUpInside += LaunchVRMode;
+	vrModeButton.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+
+	// vrModeButton.hidden = true;
+
+	vrModeLabel = boldText.addTextInstance( "VR MODE", 0, 0 );
+	vrModeLabel.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
 
 	optionsButton = UIButton.create("options.png", "options.png", 0,0);
+
 	//optionsButton.positionFromBottomRight( .05f, .05f );
 	//optionsButton.pixelsFromBottomRight ( 14, 14 );
 	optionsButton.positionFromBottomRight ( .05f, (.05f * screenAspectRatio) );
@@ -987,6 +1004,11 @@ function OpenAbout() {
 	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
 }
 
+function LaunchVRMode() {
+	FallingLaunch.isVRMode = true;
+	ResumeGame();
+}
+
 function ShowOptions() {
 	fadeInOptions();
 	DisplayTiltChooser();
@@ -1207,7 +1229,6 @@ function downLevel4() {
 		loadLevelFour.alphaTo(.05f, 1.0f, Easing.Sinusoidal.easeOut);	
 	}
 }
-
 
 function upLevel1() {
 	if (aboutToLoad == false) {
