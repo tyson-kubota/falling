@@ -57,18 +57,23 @@ var isExitingLevel : boolean = false;
 var UIscriptName : GameObject;
 static var UIscriptComponent : fallingUITest;
 
-// todo: handle spherical fade-out UI in script
-// var blackUIVR : GameObject;
+var deathFadeUIVR : GameObject;
+private var deathFadeUIVRRenderer : Renderer;
+private var deathFadeUIVRMatl : Material;
 
-var deathUIVR : GameObject;
+var opaqueDeathFadeUIVR : GameObject;
+private var opaqueDeathFadeUIVRRenderer : Renderer;
+private var opaqueDeathFadeUIVRMatl : Material;
+
+var deathPauseUIVR : GameObject;
 
 var scoreUIVR : GameObject;
-var scoreUIVRRenderer : Renderer;
-var scoreUIVRMatl : Material;
-var peakScoreFlashValueVR : float = 1.0;
+private var scoreUIVRRenderer : Renderer;
+private var scoreUIVRMatl : Material;
+private var peakScoreFlashValueVR : float = 1.0;
 
 var reticleVRUIObj : GameObject;
-var reticleVRUIScript : VRLifeMeter;
+private var reticleVRUIScript : VRLifeMeter;
 
 var clearDestroyedObjects : boolean = false;
 
@@ -121,6 +126,28 @@ function Start() {
       scoreUIVRRenderer = scoreUIVR.GetComponent.<Renderer>();
       scoreUIVRMatl = scoreUIVRRenderer.material;
       scoreUIVRMatl.color.a = 0;
+
+      // Hack to have two separate death/fade-to-black sphere objects, 
+      // but neither shader does everything. The inverted transparent shader occludes
+      // all physical objects, but the UIToolkit one is needed for covering light halos.
+      // Both materials have manual RenderQueue settings of 5000 (the max).
+      if (deathFadeUIVR && opaqueDeathFadeUIVR) {
+        deathFadeUIVRRenderer = deathFadeUIVR.GetComponent.<Renderer>();
+        deathFadeUIVRMatl = deathFadeUIVRRenderer.material;
+
+        opaqueDeathFadeUIVRRenderer = opaqueDeathFadeUIVR.GetComponent.<Renderer>();
+        opaqueDeathFadeUIVRMatl = opaqueDeathFadeUIVRRenderer.material;
+
+        if (deathFadeUIVRMatl.HasProperty("_Color")) {
+          deathFadeUIVRMatl.color.a = 0;
+        } 
+        if (opaqueDeathFadeUIVRMatl.HasProperty("_TintColor")) {
+          var currentColor : Color = opaqueDeathFadeUIVRMatl.GetColor("_TintColor");
+          currentColor.a = 0;
+          opaqueDeathFadeUIVRMatl.SetColor("_TintColor", currentColor);
+        }
+      }
+
       if (reticleVRUIObj) {
         reticleVRUIScript = reticleVRUIObj.GetComponent.<VRLifeMeter>();
       } else {
@@ -211,7 +238,11 @@ function DeathRespawn () {
 	lifeStartTime = Time.time;
  	var respawnPosition = Respawn.currentRespawn.transform.position;  
 
-	UIscriptComponent.fadeOut();
+  if (FallingLaunch.isVRMode) {
+    DeathFadeVR(1.0, FadeDir.Out);
+  } else {
+	 UIscriptComponent.fadeOut();
+  }
 // 	Camera.main.SendMessage("fadeOut");
 
 	if (levelChangeBackdrop == true) {
@@ -250,24 +281,26 @@ function DeathRespawn () {
 	
 	MoveController.controlMultiplier = 1;
  	  
-  if (FallingLaunch.isVRMode && deathUIVR) {
+  if (FallingLaunch.isVRMode && deathPauseUIVR && deathFadeUIVR) {
 
     rb.isKinematic = true; 
     isAlive = 0;
 
-    deathUIVR.SetActive(true);
+    deathPauseUIVR.SetActive(true);
     reticleVRUIScript.FadeReticleOut(0.5);
 
-    yield UIscriptComponent.fadeIn(false);
+    DeathFadeVR(1.0, FadeDir.In);
+    // yield UIscriptComponent.fadeIn(false);
     
     yield WaitForSeconds(4);
     
-    yield UIscriptComponent.fadeOut();
-    // UIscriptComponent.UnPauseGame(true);
+    yield DeathFadeVR(1.0, FadeDir.Out);
+    // yield UIscriptComponent.fadeOut();
+    // // UIscriptComponent.UnPauseGame(true);
     rb.isKinematic = false;
     
     // TODO: Fade out material here instead of toggling the whole object outright?
-    deathUIVR.SetActive(false);
+    deathPauseUIVR.SetActive(false);
     
     // resetting score to max here for VR, to avoid the score
     // ticking away over the preceding ~4 WaitForSeconds.
@@ -275,8 +308,9 @@ function DeathRespawn () {
 
     lerpControlIn(3.0);
 
-    yield UIscriptComponent.fadeIn(false);
-    yield WaitForSeconds(1);
+    yield DeathFadeVR(1.0, FadeDir.In);
+    // yield UIscriptComponent.fadeIn(false);
+    // yield WaitForSeconds(1);
 
     reticleVRUIScript.FadeReticleIn(1.5);
 
@@ -347,7 +381,7 @@ function Update () {
     }
 
     // disable VR mode and return to menu on screen touch while dead:
-    if (FallingLaunch.isVRMode && isAlive == 0 && deathUIVR.activeInHierarchy) {
+    if (FallingLaunch.isVRMode && isAlive == 0 && deathPauseUIVR.activeInHierarchy) {
       for (var i = 0; i < Input.touchCount; ++i) {
         if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
           FallingLaunch.isVRMode = false;
@@ -478,6 +512,31 @@ function ScoreFlashVR (timer : float, fadeType : FadeDir) {
     while (i <= 1.0) {
         i += step * Time.deltaTime;
         scoreUIVRMatl.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
+}
+
+function DeathFadeVR (timer : float, fadeType : FadeDir) {
+
+    var start = fadeType == FadeDir.In ? 1.0 : 0.0;
+    var end = fadeType == FadeDir.In ? 0.0 : 1.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        // ease-out lerp, to match non-VR fade timing:
+        var t : float = Mathf.Sin(i * Mathf.PI * 0.5f);
+        
+        if (deathFadeUIVRMatl.HasProperty("_Color")) {
+          deathFadeUIVRMatl.color.a = Mathf.Lerp(start, end, t);
+        }
+        if (opaqueDeathFadeUIVRMatl.HasProperty("_TintColor")) {
+          var currentColor : Color = opaqueDeathFadeUIVRMatl.GetColor("_TintColor");
+          currentColor.a = Mathf.Lerp(start, end, t);
+          opaqueDeathFadeUIVRMatl.SetColor("_TintColor", currentColor);
+        }
+
         yield;
     }
 }
