@@ -46,13 +46,13 @@ var mainRespawnScript : boolean = false;
 private var audioSource: AudioSource;
 
 function Start()
-{	
+{
 	// Get some of the objects we need later.
-	// This is often done in a script's Start function. That way, we've got all our initialization code in one place, 
+	// This is often done in a script's Start function. That way, we've got all our initialization code in one place,
 	// And can simply count on the code being fine.
 
 	RespawnState = 0;
-	
+
 	// set up the looping "RespawnActive" sound, but leave it switched off for now:
 	if (SFXRespawnActiveLoop)
 	{
@@ -61,15 +61,15 @@ function Start()
 		audioSource.loop = true;
 		audioSource.playOnAwake = false;
 	}
-	
+
 	// Assign the respawn point to be this one - Since the player is positioned on top of a respawn point, it will come in and overwrite it.
 	// This is just to make sure that we always have a respawn point.
 
-	// mainRespawnScript boolean is to keep multiple instances of Respawn from all trying to write 
+	// mainRespawnScript boolean is to keep multiple instances of Respawn from all trying to write
 	// to PlayerPrefs within a single Update call.
-	if (mainRespawnScript) {	
+	if (mainRespawnScript) {
 		if (PlayerPrefs.HasKey("LatestLevel") && PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName)
-		{	
+		{
 			myCheckpoint = PlayerPrefs.GetString("LatestCheckpoint");
 			currentRespawn = GameObject.Find(myCheckpoint).GetComponent(Respawn);
 			var tempPlayer : GameObject = GameObject.Find("Player");
@@ -86,7 +86,7 @@ function Start()
 		}
 		else {
 			currentRespawn = initialRespawn;
-		}		
+		}
 	}
 
 	SaveCheckpoint();
@@ -99,11 +99,11 @@ function OnTriggerEnter(other : Collider)
 		{
 			// turn the old respawn point off
 			//currentRespawn.SetInactive ();
-			
+
 			// play the "Activated" one-shot sound effect if one has been supplied:
 			if (SFXRespawnActivate)
 				AudioSource.PlayClipAtPoint(SFXRespawnActivate, transform.position, SFXVolume);
-	
+
 			// Set the current respawn point to be us and make it visible.
 			currentRespawn = this;
 		}
@@ -116,7 +116,7 @@ function OnApplicationPause(pauseStatus: boolean) {
     }
 }
 
-// NB: We currently only persistently save checkpoints on pause 
+// NB: We currently only persistently save checkpoints on pause
 // (including app-to-background auto-pausing) and level loading.
 // Writing to PlayerPrefs can be slow and introduce visual stutter, so we do NOT
 // save in prefs when you pass a checkpoint during gameplay, although we do update the global
