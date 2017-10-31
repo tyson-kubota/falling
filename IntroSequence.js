@@ -5,8 +5,9 @@ var introCamera : GameObject;
 var mainCamera : GameObject;
 
 function Start () {
-	FallingPlayer.UIscriptComponent.HideGUI();
-	
+    if (!FallingLaunch.isVRMode) {
+	   FallingPlayer.UIscriptComponent.HideGUI();
+    }
 }
 
 function EndIntro () {

@@ -60,14 +60,14 @@ function Start () {
 
 
 	if (!alreadyLaunched) {
-		
+
 //		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
 		if (Debug.isDebugBuild) {
 			Debug.Log("Your device orientation is " + Input.deviceOrientation + "!");
 		}
-		
+
 		initialInputDeviceOrientation = Input.deviceOrientation;
-		
+
 		// if (!hasSetOrientation) {
 		// 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 		// 		flipMultiplier = flipMultiplier * -1;
@@ -79,7 +79,7 @@ function Start () {
 		// 		flipMultiplier = flipMultiplier * 1;
 		// 		//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
 		// 		neutralPosTilted = neutralPosTiltedRegular;
-		// 	}	
+		// 	}
 
 		// 	hasSetOrientation = true;
 		// }
@@ -90,16 +90,16 @@ function Start () {
 		// Debug.Log("Device orientation after Input.compensateSensors = false is " + Input.deviceOrientation);
 
 		// NB: still doesn't work, sensor 'correctness' depends on starting device orientation as read by Cardboard.
-		// HACK: Force landscape left orientation for Cardboard compatibility. 
+		// HACK: Force landscape left orientation for Cardboard compatibility.
 		// TODO: make conditional on isVRMode?
 		// Screen.orientation = ScreenOrientation.LandscapeLeft;
-	
+
 		var iOSGen = iOS.Device.generation;
-		
+
 		// Debug.Log("this is an " + iOSGen  + " device!");
 
 		// Reduce target framerate for very old iOS devices:
-		if (iOSGen == UnityEngine.iOS.DeviceGeneration.iPad1Gen || iOSGen == UnityEngine.iOS.DeviceGeneration.iPad2Gen || 
+		if (iOSGen == UnityEngine.iOS.DeviceGeneration.iPad1Gen || iOSGen == UnityEngine.iOS.DeviceGeneration.iPad2Gen ||
 		iOSGen == UnityEngine.iOS.DeviceGeneration.iPhone4 || iOSGen == UnityEngine.iOS.DeviceGeneration.iPodTouch4Gen ||
 		iOSGen.ToString().Contains("iPhone3G")) {
 			QualitySettings.DecreaseLevel(false);
@@ -107,13 +107,13 @@ function Start () {
 		}
 		else {
 			targetFPS = 60;
-		}	
+		}
 
 		var screenDPI : float = Screen.dpi;
 		var screenWidthInInches: float = (Screen.width / screenDPI);
 		var screenHeightInInches: float = (Screen.height / screenDPI);
 
-		var hasLargeScreen: boolean = screenDPI > 0 && (screenWidthInInches > 8 && screenHeightInInches > 5);		
+		var hasLargeScreen: boolean = screenDPI > 0 && (screenWidthInInches > 8 && screenHeightInInches > 5);
 		// Debug.Log("Screen DPI: " + screenDPI);
 		// Debug.Log("Screen width in inches: " + screenWidthInInches);
 		// Debug.Log("Screen height in inches: " + screenHeightInInches);
@@ -125,30 +125,30 @@ function Start () {
 			// Debug.Log("Based on reported screen size, not a tablet...");
 			isTablet = false;
 		}
-		
+
 		if (!Input.gyro.enabled) {
 			Debug.Log("Your device doesn't have a gyroscope...");
 		}
 
-	//	if ((iOSGen && 
+	//	if ((iOSGen &&
 	//	(iPads.iPad1Gen | iPads.iPad2Gen | iPads.iPad3Gen | iPads.iPad4Gen | iPads.iPadMini1Gen | iPads.iPadUnknown)) != 0) {
-		
+
 		flipMultiplier = isTablet ? 2 * flipMultiplier : 1.5 * flipMultiplier;
 
 		DontDestroyOnLoad (this);
 		alreadyLaunched = true;
 		Application.targetFrameRate = targetFPS;
-		
+
 		Application.LoadLevel("Falling-scene-menu");
 	}
 	else {
 		Destroy(this.gameObject);
 	}
-		
+
 //		myTimer = new GAUserTimer("Timer", "Session Length");
 //		myTimer.Start();
 	//Calibrate();
-	//Calibrating in Start here was unwise, in case the user is swinging 
+	//Calibrating in Start here was unwise, in case the user is swinging
 	//the device around and the accelerometer readings haven't settled yet.
 }
 
@@ -166,7 +166,7 @@ function OnLevelWasLoaded (level : int) {
 //	var loadedLevel : GALevel = new GALevel();
 //	GoogleAnalytics.instance.Add(loadedLevel);
 //	GoogleAnalytics.instance.Dispatch();
-	
+
 	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
 }
 
@@ -183,7 +183,7 @@ function Calibrate () {
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
 	else {restPosition = neutralPosFlat;}
-	
+
 	SetAxesInversion();
 	//acceleratorSnapshot = Input.acceleration;
 	acceleratorSnapshot = Vector3(0.0,0.0,-1.0);
@@ -194,7 +194,7 @@ function Calibrate () {
 
 function CalibrateInLevel () {
 	tiltable = false;
-	
+
 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
 	else {restPosition = neutralPosFlat;}
@@ -210,7 +210,7 @@ function ChangeTilt (toFlat : int) {
 	if (toFlat == 2) {
 		PlayerPrefs.SetInt("TiltNeutral", 2);
 		Debug.Log("tilt set to vertical.");
-	}	
+	}
 	else if (toFlat == 0) {
 		PlayerPrefs.SetInt("TiltNeutral", 0);
 		Debug.Log("tilt set to flat.");
@@ -218,14 +218,14 @@ function ChangeTilt (toFlat : int) {
 	else {
 		PlayerPrefs.SetInt("TiltNeutral", 1);
 		Debug.Log("tilt set to angled.");
-	}	
+	}
 	CalibrateInLevel();
 }
 
 // function Update () {
 // 	ListCurrentAccelerometer();
 // }
-// 
+//
 // function ListCurrentAccelerometer() {
 // 	Debug.Log ("Your rotation is " + Input.acceleration);
 // }

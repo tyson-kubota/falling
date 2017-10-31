@@ -31,7 +31,7 @@ function Start () {
    	Loop2 ();
    	ScoreLerpLoop ();
 }
-	   	
+
 function Loop () {
     while (true && inOutro == false) {
         yield TickingAway(.25);
@@ -62,7 +62,8 @@ function FadeFlashVR (timer : float, fadeType : FadeDir) {
 
     while (i <= 1.0) {
         i += step * Time.deltaTime;
-        lifeFlashUIMatl.color.a = Mathf.Lerp(start, end, i);
+        var t : float = i*i * (3f - 2f*i); // smoothstep lerp
+        lifeFlashUIMatl.color.a = Mathf.Lerp(start, end, t);
         yield;
     }
 }
@@ -78,7 +79,7 @@ function TickingAway (delay : float) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4));
 		}
-		
+
 		else if (MoveController.Slowdown < MoveController.maxSlowdown) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
@@ -90,28 +91,28 @@ function TickingAway (delay : float) {
 		   	if (FallingLaunch.isVRMode) {
 		   		FadeFlashVR(1, FadeDir.Out);
 		   	} else {
-		   		LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
+		   		LifeFlashTextureScript.FadeFlash(1, FadeDir.Out);
 		   	}
-		   	
+
 		   	FallingLaunch.secondsAlive = (Time.time - FallingPlayer.lifeStartTime);
 
 		   	//Debug.Log("You died!");
 
 		   	GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-		   		"Death:Drained:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea, 
+		   		"Death:Drained:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
 		   		FallingLaunch.secondsAlive
 	   		);
 
 		   	yield GetComponent(FallingPlayer).DeathRespawn();
-		   	
+
 		   	if (!FallingLaunch.isVRMode) {
 				GetComponent(FallingPlayer).ShowDeathHelp();
 			}
 
-			// New GameAnalytics "Design" event syntax: 
+			// New GameAnalytics "Design" event syntax:
 			// GameAnalytics.NewDesignEvent (string eventName, float eventValue);
 
-			// Original GameAnalytics syntax: GA.API.Design.NewEvent(String eventName, float eventValue, Vector3 trackPosition); 
+			// Original GameAnalytics syntax: GA.API.Design.NewEvent(String eventName, float eventValue, Vector3 trackPosition);
 
 		}
 }
@@ -122,20 +123,20 @@ function LifeFlashCheck (delay : float, score : int) {
 	if (!FallingPlayer.isAlive) {
 		return;
 	}
-	
+
 	if (script.currentScore < score && inOutro == false) {
 	    //Camera.main.SendMessage("lifeFlashOut");
 	   	if (FallingLaunch.isVRMode) {
 	   		FadeFlashVR(delay, FadeDir.In);
 	   	} else {
-			LifeFlashTextureScript.FadeFlash (delay, FadeDir.In);
+			LifeFlashTextureScript.FadeFlash(delay, FadeDir.In);
 		}
 		yield WaitForSeconds(delay);
 //		Camera.main.SendMessage("lifeFlashUp");
 		if (FallingLaunch.isVRMode) {
 	   		FadeFlashVR(delay, FadeDir.Out);
 	   	} else {
-			LifeFlashTextureScript.FadeFlash (delay, FadeDir.Out);
+			LifeFlashTextureScript.FadeFlash(delay, FadeDir.Out);
 		}
 		yield WaitForSeconds((delay*3)); // stagger the flash timing (compare w/ `delay` above)
 	}

@@ -1,4 +1,4 @@
-#pragma strict 
+#pragma strict
 
 // 10/25/2017: `Color` uses a 0-1 float range, not 0-2, in Unity.
 // 2 = 255 for rgba in this color array
@@ -20,6 +20,8 @@ var ScoreFlashTexture : GameObject;
 
 static var ScoreFlashTextureScript : GUITextureLaunch;
 ScoreFlashTextureScript = ScoreFlashTexture.GetComponent("GUITextureLaunch");
+
+var lifeCountdownScript : lifeCountdown;
 
 public var force:float = 1.0;
 var dir : Vector3 = Vector3.zero;
@@ -48,7 +50,7 @@ static var isAlive : int = 1;
 
 static var lifeStartTime : float = 0;
 static var levelStartTime : float = 0;
-  	  	
+
 static var isTiltable : boolean = true;
 
 static var isPausable : boolean = false;
@@ -120,6 +122,7 @@ function Start() {
     myBackdrop = GameObject.Find("plane-close");
     BackdropMist = GameObject.Find("Cylinder");
     myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
+    lifeCountdownScript = gameObject.GetComponent.<lifeCountdown>();
 
     if (FallingLaunch.isVRMode) {
       myVRViewer = GameObject.Find("GvrViewerMain");
@@ -127,10 +130,11 @@ function Start() {
       scoreUIVRMatl = scoreUIVRRenderer.material;
       scoreUIVRMatl.color.a = 0;
 
-      // Hack to have two separate death/fade-to-black sphere objects, 
+      // Hack to have two separate death/fade-to-black sphere objects,
       // but neither shader does everything. The inverted transparent shader occludes
       // all physical objects, but the UIToolkit one is needed for covering light halos.
-      // Both materials have manual RenderQueue settings of 5000 (the max).
+      // The opaque and transparent materials have manual RenderQueue settings
+      // of 5000 (the official max) and 6000, respectively.
       if (deathFadeUIVR && opaqueDeathFadeUIVR) {
         deathFadeUIVRRenderer = deathFadeUIVR.GetComponent.<Renderer>();
         deathFadeUIVRMatl = deathFadeUIVRRenderer.material;
@@ -140,7 +144,7 @@ function Start() {
 
         if (deathFadeUIVRMatl.HasProperty("_Color")) {
           deathFadeUIVRMatl.color.a = 0;
-        } 
+        }
         if (opaqueDeathFadeUIVRMatl.HasProperty("_TintColor")) {
           var currentColor : Color = opaqueDeathFadeUIVRMatl.GetColor("_TintColor");
           currentColor.a = 0;
@@ -160,7 +164,7 @@ function Start() {
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
     startingFogStartDistance = RenderSettings.fogStartDistance;
-    
+
 	startingCameraFarClipPlane = myMainCamera.farClipPlane;
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
@@ -174,7 +178,7 @@ function Start() {
 	peakVol = audioScore.volume;
 //	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
-	isPausable = false;  
+	isPausable = false;
 
 	rb = GetComponent.<Rigidbody>();
 	rb.isKinematic = false;
@@ -190,7 +194,7 @@ function Start() {
 }
 
 function LevelStartFade () {
-	if (PlayerPrefs.HasKey("LatestLevel") && 
+	if (PlayerPrefs.HasKey("LatestLevel") &&
         PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName) {
         FallingLaunch.LoadedLatestLevel = true;
     }
@@ -210,10 +214,10 @@ function introFade() {
 
 function introNow() {
 	LatestCheckpointRespawn();
-	yield WaitForSeconds (3);	
+	yield WaitForSeconds (3);
 	FallingLaunch.LoadedLatestLevel = false;
 	whiteFader = Camera.main.GetComponent(FadeInOutAlt);
-	whiteFader.enabled = false;
+	if (whiteFader) {whiteFader.enabled = false;}
 }
 
 
@@ -236,7 +240,7 @@ function DeathRespawn () {
 	isPausable = false;
 	rb.isKinematic = true;
 	lifeStartTime = Time.time;
- 	var respawnPosition = Respawn.currentRespawn.transform.position;  
+ 	var respawnPosition = Respawn.currentRespawn.transform.position;
 
   if (FallingLaunch.isVRMode) {
     DeathFadeVR(1.0, FadeDir.Out);
@@ -248,7 +252,7 @@ function DeathRespawn () {
 	if (levelChangeBackdrop == true) {
 		changeLevelBackdrop ();
 	}
-	
+
   	FadeAudio (fadeTime, FadeDir.Out);
 
     // VR mode does its own score reset later, due to a longer fade interval/
@@ -267,7 +271,7 @@ function DeathRespawn () {
 	isAlive = 1;
 	RenderSettings.fogEndDistance = startingFogEndDistance;
     RenderSettings.fogStartDistance = startingFogStartDistance;
-  	
+
 //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
 	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
@@ -278,12 +282,12 @@ function DeathRespawn () {
 //	thisOceanCamera.SendMessage("fadeIn");
 	rb.isKinematic = false;
 //   	isAlive = 1;
-	
+
 	MoveController.controlMultiplier = 1;
- 	  
+
   if (FallingLaunch.isVRMode && deathPauseUIVR && deathFadeUIVR) {
 
-    rb.isKinematic = true; 
+    rb.isKinematic = true;
     isAlive = 0;
 
     deathPauseUIVR.SetActive(true);
@@ -291,17 +295,15 @@ function DeathRespawn () {
 
     DeathFadeVR(1.0, FadeDir.In);
     // yield UIscriptComponent.fadeIn(false);
-    
+
     yield WaitForSeconds(4);
-    
+
     yield DeathFadeVR(1.0, FadeDir.Out);
-    // yield UIscriptComponent.fadeOut();
-    // // UIscriptComponent.UnPauseGame(true);
     rb.isKinematic = false;
-    
+
     // TODO: Fade out material here instead of toggling the whole object outright?
     deathPauseUIVR.SetActive(false);
-    
+
     // resetting score to max here for VR, to avoid the score
     // ticking away over the preceding ~4 WaitForSeconds.
     script.ResetScore();
@@ -320,7 +322,7 @@ function DeathRespawn () {
     lerpControlIn(3.0);
     yield UIscriptComponent.fadeIn(true);
   }
-}   	
+}
 
 function LatestCheckpointRespawn () {
 	isPausable = false;
@@ -342,13 +344,13 @@ function LatestCheckpointRespawn () {
 
   	FadeAudio (fadeTime, FadeDir.In);
 	rb.isKinematic = false;
-	
+
 	MoveController.controlMultiplier = 1;
-   	
+
    	lerpControlIn(3);
    	//yield UIscriptComponent.fadeIn(true);
    	UIscriptComponent.UnhideGUI();
-}   
+}
 
 function ShowDeathHelp() {
   if (introComponent) {
@@ -363,7 +365,7 @@ function changeLevelBackdrop () {
 	changeBackdrop.endSphereRenderer.enabled = false;
 
 	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
-	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	
+	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   RenderSettings.fogStartDistance = startingFogStartDistance;
 
@@ -373,7 +375,7 @@ function changeLevelBackdrop () {
   }
 	iTween.ColorTo(BackdropMist,{"a": startingCloudsAlpha,"time": .5});
 	}
-	   		   	
+
 function Update () {
 	// playerTilt moves camera on device tilt. Enable if not in VR mode:
     if (!FallingLaunch.isVRMode) {
@@ -393,7 +395,7 @@ function Update () {
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
 	//Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
 }
-	  
+
 function playerTilt() {
 	if (isTiltable == true) {
 	    var dir : Vector3 = Vector3.zero;
@@ -407,28 +409,28 @@ function playerTilt() {
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
 	                // Dampen towards the target rotation
 	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,
-	                                   Time.deltaTime * smooth);  
+	                                   Time.deltaTime * smooth);
     }
-}	 
+}
 
 function lerpControlIn(timer : float) {
-	
+
 	//Debug.Log("your flip multiplier is " + FallingLaunch.flipMultiplier);
 	//Debug.Log("your control multiplier is " + MoveController.controlMultiplier);
-    
+
     var start = 0.0;
     var end = MoveController.controlMultiplier;
     var i = 0.0;
     var step = 1.0/timer;
- 
 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         MoveController.controlMultiplier = Mathf.Lerp(start, end, i);
-        if (isAlive == 0) {MoveController.controlMultiplier = end; break;}        
+        if (isAlive == 0) {MoveController.controlMultiplier = end; break;}
 		yield;
-        
-        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = end; break;}        
+
+        if (i >= 1.0 || isAlive == 0) {MoveController.controlMultiplier = end; break;}
     	}
     yield WaitForSeconds (timer);
 }
@@ -448,15 +450,15 @@ function lerpControlOut(timer : float) {
     var i = 0.0;
     var step = 1.0/timer1;
 
-    while (i <= 1.0) { 
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
 
         var controlT : float = Mathf.Sin(i * Mathf.PI * 0.5f); // ease-out lerp
 
         MoveController.controlMultiplier = Mathf.Lerp(startControl, end, controlT);
-        
+
         if (isAlive == 0) {
-            MoveController.controlMultiplier = startControl; 
+            MoveController.controlMultiplier = startControl;
             simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
             break;
         }
@@ -465,26 +467,26 @@ function lerpControlOut(timer : float) {
 
         // the && is because the smootherstep math can overshoot 1.0 on its own:
         if (i >= 1.0 && isAlive == 0) {
-            MoveController.controlMultiplier = startControl; 
+            MoveController.controlMultiplier = startControl;
             simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
             break;
-        } 
+        }
 	}
 
     // In the final bit of time (timer2), lerp the speed cap down to zero:
     var i2 : float = 0.0;
     var step2 = 1.0/timer2;
 
-    while (i2 <= 1.0) { 
+    while (i2 <= 1.0) {
         i2 += step2 * Time.deltaTime;
-        
+
         // var maxVelocityT : float = i2*i2*i2 * (i2 * (6f*i2 - 15f) + 10f); // smootherstep lerp
         var maxVelocityT : float = Mathf.Sin(i2 * Mathf.PI * 0.5f); // ease-out lerp
 
         var newMaxVelocity : float = Mathf.Lerp(startMaxVelocity, endVelocity, maxVelocityT);
-        
+
         simpleVelocityLimiterComponent.SetMaxVelocity(newMaxVelocity);
-        
+
         if (isAlive == 0) {
             MoveController.controlMultiplier = startControl;
             simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
@@ -495,10 +497,10 @@ function lerpControlOut(timer : float) {
 
         // the && is because the smootherstep math can overshoot 1.0 on its own:
         if (i2 >= 1.0 && isAlive == 0) {
-            MoveController.controlMultiplier = startControl; 
+            MoveController.controlMultiplier = startControl;
             simpleVelocityLimiterComponent.SetMaxVelocity(startMaxVelocity);
             break;
-        } 
+        }
     }
 }
 
@@ -527,7 +529,7 @@ function DeathFadeVR (timer : float, fadeType : FadeDir) {
         i += step * Time.deltaTime;
         // ease-out lerp, to match non-VR fade timing:
         var t : float = Mathf.Sin(i * Mathf.PI * 0.5f);
-        
+
         if (deathFadeUIVRMatl.HasProperty("_Color")) {
           deathFadeUIVRMatl.color.a = Mathf.Lerp(start, end, t);
         }
@@ -549,19 +551,25 @@ function OnCollisionEnter (collision : Collision) {
   	if (isPausable == true || collision.gameObject.layer == 17 ) {
   		isAlive = 0;
   		isPausable = false;
-  		lifeCountdown.LifeFlashTextureScript.FadeFlash (1, FadeDir.Out);
-  		UIscriptComponent.HideGUI();
+
+      if (!FallingLaunch.isVRMode) {
+        lifeCountdown.LifeFlashTextureScript.FadeFlash(1, FadeDir.Out);
+        UIscriptComponent.HideGUI();
+      } else {
+        lifeCountdownScript.FadeFlashVR(1.0, FadeDir.Out);
+      }
+
   		FallingLaunch.secondsAlive = (Time.time - lifeStartTime);
-  		
+
   		if (audioDeath) {audioDeath.Play();}
-  		
+
         GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
             "Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
             FallingLaunch.secondsAlive
         );
   		//Debug.Log("you died in the area " + FallingLaunch.thisLevelArea);
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
-    	
+
     	yield DeathRespawn ();
 		//isPausable = true;
 		//UIscriptComponent.UnhideGUI();
@@ -572,23 +580,23 @@ function OnCollisionEnter (collision : Collision) {
 
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){
-    //  Debug.Log("You scored!"); 
+    //  Debug.Log("You scored!");
     //  Camera.main.SendMessage("flashOut");
     if (FallingLaunch.isVRMode) {
       ScoreFlashVR(0.8, FadeDir.Out);
     } else {
-  	 ScoreFlashTextureScript.FadeFlash (0.8, FadeDir.Out);
+  	 ScoreFlashTextureScript.FadeFlash(0.8, FadeDir.Out);
     }
 
   	script.IncrementScore(6);
   	UIscriptComponent.flashProgressBar(1);
-  	
+
   	if (audioScore) {
   		//Debug.Log(Random.Range(0,2));
   		myVol = ((MoveController.Slowdown / MoveController.maxSlowdown) * peakVol);
   		clipToPlay = Random.Range(0.3f, 0.9f);
   		pitchRand = Random.Range(0.98f,1.03f);
-  		
+
   		if (playAltScoreAudio) {
   			audioToPlay = audioScoreAlt;
   			playAltScoreAudio = false;
@@ -597,7 +605,7 @@ function OnTriggerEnter (other : Collider) {
   			audioToPlay = audioScore;
   			playAltScoreAudio = true;
   		}
-  		
+
   		audioToPlay.pitch = pitchRand;
 
   		//if (clipToPlay == 1) {audioToPlay = audioScoreAlt;}
@@ -609,44 +617,44 @@ function OnTriggerEnter (other : Collider) {
   			audioToPlay.volume = clipToPlay;
   			audioToPlay.panStereo = (clipToPlay/2);
   		}
-  		
+
   		//audioToPlay.volume = Mathf.Clamp(myVol, (peakVol * .5), peakVol);
   		audioToPlay.Play();
   	}
-  	
+
   	//yield WaitForSeconds(.2);
 
     //	try using PlayClipAtPoint here so score sound fades away in 3D space as you fall?
-    //  Camera.main.SendMessage("flashUp");	  	
+    //  Camera.main.SendMessage("flashUp");
 	}
-	
+
   if (other.gameObject.CompareTag ("LevelEnd") && isExitingLevel == false) {
   	isExitingLevel = true;
   	isPausable = false;
   	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
   	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
-  	
+
       GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
           "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
           FallingLaunch.secondsInLevel
       );
-      
+
       // reset the level area identifier for analytics purposes:
       FallingLaunch.thisLevelArea = "0-start";
 
   	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
-  	
+
   	// to keep you from dying after you strike the levelend trigger
   	script.IncrementScore(25);
-  		
+
   	audioLevelEnd.Play();
 
-    // the lerpControlOut timer argument must be equal to, or just less than, 
+    // the lerpControlOut timer argument must be equal to, or just less than,
     // the sum of levelComplete's first argument,
     // in order to create a convincing slowdown lerp and UI/camera fadeout:
     lerpControlOut(4.0);
     UIscriptComponent.LevelComplete(3.0, 1.5);
-  }	
+  }
 }
-			
+
 @script AddComponentMenu("Scripts/FallingPlayer")
