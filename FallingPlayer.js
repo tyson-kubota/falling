@@ -54,6 +54,7 @@ static var levelStartTime : float = 0;
 static var isTiltable : boolean = true;
 
 static var isPausable : boolean = false;
+private var isExitableFromVR : boolean = true;
 var isExitingLevel : boolean = false;
 
 var UIscriptName : GameObject;
@@ -177,7 +178,7 @@ function Start() {
 	myVol = audioScore.volume;
 	peakVol = audioScore.volume;
 //	fadeInAudio ();
-  	FadeAudio (0.1, FadeDir.In);
+  	FadeAudio(0.1, FadeDir.In);
 	isPausable = false;
 
 	rb = GetComponent.<Rigidbody>();
@@ -221,7 +222,7 @@ function introNow() {
 }
 
 
-function FadeAudio (timer : float, fadeType : FadeDir) {
+function FadeAudio(timer : float, fadeType : FadeDir) {
 
     var start = fadeType == FadeDir.In? 0.0 : 1.0;
     var end = fadeType == FadeDir.In? 1.0 : 0.0;
@@ -230,6 +231,7 @@ function FadeAudio (timer : float, fadeType : FadeDir) {
 
     while (i <= 1.0) {
         i += step * Time.deltaTime;
+        // var t : float = Mathf.Sin(i * Mathf.PI * 0.5f); // ease-out lerp
         AudioListener.volume = Mathf.Lerp(start, end, i);
         yield;
     }
@@ -243,28 +245,26 @@ function DeathRespawn () {
  	var respawnPosition = Respawn.currentRespawn.transform.position;
 
   if (FallingLaunch.isVRMode) {
-    DeathFadeVR(1.0, FadeDir.Out);
+    reticleVRUIScript.FadeReticleOut(0.5);
+    FadeAudio(1.5, FadeDir.Out);
+    yield DeathFadeVR(1.0, FadeDir.Out);
   } else {
-	 UIscriptComponent.fadeOut();
+    FadeAudio(fadeTime, FadeDir.Out);
+    yield UIscriptComponent.fadeOut();
   }
-// 	Camera.main.SendMessage("fadeOut");
 
-	if (levelChangeBackdrop == true) {
-		changeLevelBackdrop ();
-	}
+  if (levelChangeBackdrop == true) {
+    changeLevelBackdrop ();
+  }
 
-  	FadeAudio (fadeTime, FadeDir.Out);
+  // VR mode does its own score reset later, due to a longer fade interval/
+  // interstitial 'back to menu' screen.
+  if (!FallingLaunch.isVRMode) {
+    script.ResetScore();
+  }
 
-    // VR mode does its own score reset later, due to a longer fade interval/
-    // interstitial 'back to menu' screen.
-    if (!FallingLaunch.isVRMode) {
-      script.ResetScore();
-    }
-
-  	yield WaitForSeconds(1);
-
-//	if you want to clear destroyed projectiles...
-	if (clearDestroyedObjects == true) {
+  // If you want to clear destroyed projectiles (set per-level)...
+	if (clearDestroyedObjects) {
   		Resources.UnloadUnusedAssets();
 	}
 
@@ -276,12 +276,8 @@ function DeathRespawn () {
 	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
 	myTransform.position = respawnPosition; // + Vector3.up;
-//	Camera.main.SendMessage("fadeIn");
 
-  	FadeAudio (fadeTime, FadeDir.In);
-//	thisOceanCamera.SendMessage("fadeIn");
 	rb.isKinematic = false;
-//   	isAlive = 1;
 
 	MoveController.controlMultiplier = 1;
 
@@ -291,14 +287,18 @@ function DeathRespawn () {
     isAlive = 0;
 
     deathPauseUIVR.SetActive(true);
-    reticleVRUIScript.FadeReticleOut(0.5);
 
     DeathFadeVR(1.0, FadeDir.In);
     // yield UIscriptComponent.fadeIn(false);
 
+    // Managing isExitableFromVR gives finer control over the exit UI,
+    // preventing the player from tapping mid-respawn fadeout.
+    isExitableFromVR = true;
     yield WaitForSeconds(4);
+    isExitableFromVR = false;
 
-    yield DeathFadeVR(1.0, FadeDir.Out);
+    yield DeathFadeVR(0.5, FadeDir.Out);
+
     rb.isKinematic = false;
 
     // TODO: Fade out material here instead of toggling the whole object outright?
@@ -308,17 +308,19 @@ function DeathRespawn () {
     // ticking away over the preceding ~4 WaitForSeconds.
     script.ResetScore();
 
-    lerpControlIn(3.0);
+    // In VR mode, we ignore fadeTime in favor of a longer fade-in
+    // matched to the longer waiting interval below:
+    FadeAudio(2.0, FadeDir.In);
 
-    yield DeathFadeVR(1.0, FadeDir.In);
-    // yield UIscriptComponent.fadeIn(false);
-    // yield WaitForSeconds(1);
+    DeathFadeVR(1.0, FadeDir.In);
+    lerpControlIn(3.0);
 
     reticleVRUIScript.FadeReticleIn(1.5);
 
     isPausable = true;
     isAlive = 1;
   } else {
+    FadeAudio(fadeTime, FadeDir.In);
     lerpControlIn(3.0);
     yield UIscriptComponent.fadeIn(true);
   }
@@ -342,7 +344,7 @@ function LatestCheckpointRespawn () {
 	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	myTransform.position = respawnPosition; // + Vector3.up;
 
-  	FadeAudio (fadeTime, FadeDir.In);
+  FadeAudio(fadeTime, FadeDir.In);
 	rb.isKinematic = false;
 
 	MoveController.controlMultiplier = 1;
@@ -383,9 +385,10 @@ function Update () {
     }
 
     // disable VR mode and return to menu on screen touch while dead:
-    if (FallingLaunch.isVRMode && isAlive == 0 && deathPauseUIVR.activeInHierarchy) {
+    if (FallingLaunch.isVRMode && isAlive == 0 && deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
       for (var i = 0; i < Input.touchCount; ++i) {
         if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
+          isPausable = false;
           FallingLaunch.isVRMode = false;
           Application.LoadLevel("Falling-scene-menu");
         }
@@ -581,7 +584,7 @@ function OnCollisionEnter (collision : Collision) {
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Score")){
     //  Debug.Log("You scored!");
-    //  Camera.main.SendMessage("flashOut");
+
     if (FallingLaunch.isVRMode) {
       ScoreFlashVR(0.8, FadeDir.Out);
     } else {

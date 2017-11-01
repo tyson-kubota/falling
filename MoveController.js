@@ -42,7 +42,7 @@ var audioSource : AudioSource;
 
 var changingPitch : boolean = false;
 
-// this is on for all levels but lvl1/tutorial, which has music baked 
+// this is on for all levels but lvl1/tutorial, which has music baked
 // into the background wind sound, and thus shouldn't get pitch-shifted:
 var shouldChangePitch : boolean = true;
 
@@ -59,13 +59,13 @@ function Awake() {
 
 
 function Start() {
-    // HACK: Force landscape left orientation in VR for Cardboard compatibility. 
+    // HACK: Force landscape left orientation in VR for Cardboard compatibility.
     // Or is this best off just being removed?
     // NB: If your phone is tilted a little beyond flat (away from you) on level load,
-    // then all other game objects will be behind you when you look up: 180deg wrong 
-    // in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse 
-    // quaternion in some cases based on Head gaze direction/ gameObj position, 
-    // or in the menu UI, ensure the phone orientation is not flat before 
+    // then all other game objects will be behind you when you look up: 180deg wrong
+    // in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse
+    // quaternion in some cases based on Head gaze direction/ gameObj position,
+    // or in the menu UI, ensure the phone orientation is not flat before
     // letting the user load the scene...
     if (FallingLaunch.isVRMode) {
         // TODO FIXME FOR VR MODE: see above
@@ -75,7 +75,7 @@ function Start() {
     // Screen.sleepTimeout = 0.0f;
     // deprecated, now should use NeverSleep
     Screen.sleepTimeout = SleepTimeout.NeverSleep;
-    startTime = Time.time; 
+    startTime = Time.time;
     Slowdown = FallingLaunch.levelEndSlowdown;
 
     if (mainCameraObj) {
@@ -85,9 +85,9 @@ function Start() {
         mainCameraObj = GameObject.FindWithTag("MainCamera");
         mainCamera = Camera.main;
     }
-    
+
     audioSource = mainCamera.GetComponent.<AudioSource>();
-                
+
     //Calibrate();
 
     // resetting controlMultiplier in case it was zeroed from the previous level
@@ -118,7 +118,7 @@ function FixedUpdate () {
         dir = Vector3.zero;
     }
 
-    // Address any speedups due to screen presses in FixedUpdate, not here! 
+    // Address any speedups due to screen presses in FixedUpdate, not here!
     // FallingSpeed();
 }
 
@@ -142,13 +142,13 @@ function MovePlayerVR () {
 
     var speedRatio : float = Slowdown / maxSlowdown;
 
-    // Cap the lateral speed (it should be translation, not a force, 
+    // Cap the lateral speed (it should be translation, not a force,
     // so you don't keep moving after you lift the trigger).
-    // Distinguish between two categories of movement: 
+    // Distinguish between two categories of movement:
     // while in boost mode and just afterwards (speedRatio > .25; value range is 1.25-2.4),
-    // vs. regular (speedRatio < .25) movement. 
+    // vs. regular (speedRatio < .25) movement.
     // The latter is more constrained (possible value range 1-1.5).
-    lateralSpeedBoost = speedRatio > .25 ? 
+    lateralSpeedBoost = speedRatio > .25 ?
         Mathf.Max(1.25, speedRatio * speed) : 1.0 + (speedRatio * maxLateralSpeed);
 
     // Debug.Log('lateralSpeedBoost: ' + lateralSpeedBoost);
@@ -168,7 +168,7 @@ function MovePlayer(horizAxisInversionVal: int, vertAxisInversionVal: int) {
     // Debug.Log("MoveController FallingLaunch.calibrationRotation: " + FallingLaunch.calibrationRotation);
     // Debug.Log("Input.acceleration: " + Input.acceleration);
     // Debug.Log( "MoveController FallingLaunch.flipMultiplier: " + FallingLaunch.flipMultiplier );
-    
+
     // Debug.Log("MoveController FallingLaunch.accelerator: " + FallingLaunch.accelerator);
 
     dir.x = 4 * FallingPlayer.isAlive * controlMultiplier * FallingLaunch.flipMultiplier * -((FallingLaunch.accelerator.y) * Mathf.Abs(FallingLaunch.accelerator.y));
@@ -208,12 +208,12 @@ function Update () {
 function FallingSpeed () {
 
     fingerCount = 0;
-    
+
     if (FallingPlayer.isAlive == 1 && FallingPlayer.isPausable == true) {
         //for (touch in Input.touches) {
         //  if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled) {
         for (var i = 0; i < Input.touchCount; ++i) {
-            if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {                
+            if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
                 fingerCount++;
 
                 if (pauseButtonArea.Contains(Input.GetTouch(i).position)) {
@@ -226,11 +226,11 @@ function FallingSpeed () {
                 // }
                 // else {
                 //  Debug.Log("Not in pause area.");
-                // }                
+                // }
             }
         }
-    
-            
+
+
         if (fingerCount > 0) {
             if (Slowdown < 1) {
                 Slowdown = maxSlowdown;
@@ -244,7 +244,7 @@ function FallingSpeed () {
         } else if (fingerCount < 1) {
             // rounding Slowdown, since as lerp approaches zero, floating-point errors creep in
             if (Mathf.Round(Slowdown) > 0) {
-                speedingUp = 0; speedsUp(); lerpSlowdown(.5); 
+                speedingUp = 0; speedsUp(); lerpSlowdown(.5);
             } else {
                 audioSource.volume = maxDuckedVolume;
             }
@@ -255,20 +255,22 @@ function FallingSpeed () {
         Slowdown = 0;
         speedingUp = 1;
         SpeedLinesMeshScript.LinesOff();
-        if (shouldChangePitch == true && changingPitch == false) {lerpPitchDown(.5, 1, 1);}
+        if (shouldChangePitch && !changingPitch) {lerpPitchDown(.5, 1, 1);}
         dir = Vector3.zero;
-        FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
+        if (!FallingLaunch.isVRMode && FallingPlayer.isPausable) {
+            FallingPlayer.UIscriptComponent.hideThreatBar(0.1);
+        }
     }
 
     // Debug.Log("Slowdown = " + Slowdown + ", speedingUp = " + speedingUp );
     // Debug.Log("You have " + fingerCount + " fingers touching the screen." );
 
-    // In non-VR mode, relativeForce assumes the Player GameObject transform is tilted 
-    // (by the device accelerometer) in space; it relies on device tilt 
+    // In non-VR mode, relativeForce assumes the Player GameObject transform is tilted
+    // (by the device accelerometer) in space; it relies on device tilt
     // to provide some worldspace lateral speedup to the local (relative) down vector.
 
     // In VR, the head's gaze direction supplies our y vector, which is attenuated
-    // based on the gaze x/z (clampedModifierVR). 
+    // based on the gaze x/z (clampedModifierVR).
     // That vector is multiplied by Slowdown to get a final downwards force.
 
     // Any x/z movement during a speed boost is handled in MovePlayerVR, since applying
@@ -278,16 +280,16 @@ function FallingSpeed () {
         // Debug.Log('extraForceRaw: ' + extraForceRaw);
         // Debug.Log('myHead.Gaze.direction: ' + myHead.Gaze.direction);
 
-        clampedModifierVR = 
+        clampedModifierVR =
             Mathf.Max(Mathf.Abs(myHead.Gaze.direction.x), Mathf.Abs(myHead.Gaze.direction.z));
         extraForce = Vector3.ClampMagnitude(extraForceRaw, (1.0 - clampedModifierVR));
         // Debug.Log('clampedModifierVR: ' + clampedModifierVR);
 
-        // If you wanted to directly set the downward vector, 
+        // If you wanted to directly set the downward vector,
         // you could use set extraForce.y to be myHead.Gaze.direction.y below...
         // but the attenuated version is easier on the neck to control!
 
-        // Mutate into a downwards vector that insists on negative y values 
+        // Mutate into a downwards vector that insists on negative y values
         // (so you can't fly upwards).
         extraForce = Vector3(0, Mathf.Min(extraForce.y, 0.0) * Slowdown, 0);
     }
@@ -303,18 +305,23 @@ function speedsUp () {
     if (speedingUp == 2) {
         speedingUp = 1;
         SpeedLinesMeshScript.LinesFlash (0.25, FadeDir.In);
-        FallingPlayer.UIscriptComponent.showThreatBar(1);
-        if (audioSource && shouldChangePitch == true) {
-            // a bit of randomness to vary the end wind-noise pitch; 
+        if (!FallingLaunch.isVRMode) {
+            FallingPlayer.UIscriptComponent.showThreatBar(1);
+        }
+        if (audioSource && shouldChangePitch) {
+            // a bit of randomness to vary the end wind-noise pitch;
             // generally, we want a value near 2:
             lerpPitchUp(.5, Random.Range(1.85, 2.25), .3);
         }
-    }
-    else {
+    } else {
         SpeedLinesMeshScript.LinesFlashOut (0.5, FadeDir.In);
-        FallingPlayer.UIscriptComponent.hideThreatBar(.5);
-        if (audioSource && shouldChangePitch == true && changingPitch == false) {lerpPitchDown(1, 1, 1);}
-    }       
+        if (!FallingLaunch.isVRMode) {
+            FallingPlayer.UIscriptComponent.hideThreatBar(.5);
+        }
+        if (audioSource && shouldChangePitch && !changingPitch) {
+            lerpPitchDown(1, 1, 1);
+        }
+    }
 }
 
 function getMaxDuckedVolume() {
@@ -330,62 +337,62 @@ function lerpSlowdown (timer : float) {
     var end = 0.0;
     var i = 0.0;
     var step = 1.0/timer;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         Slowdown = Mathf.Lerp(start, end, i);
         yield;
-        
+
         if (Slowdown > maxSlowdownThreshold) {break;}
         }
     yield WaitForSeconds (timer);
- 
+
 }
 
 function lerpPitchUp (timer : float, endPitch : float, endVolume : float) {
-    
+
     var startVol = audioSource.volume;
     var endVol = endVolume;
-    
+
     var start = audioSource.pitch;
     var end = endPitch;
     var i = 0.0;
     var step = 1.0/timer;
- 
 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         audioSource.pitch = Mathf.Lerp(start, end, i);
         audioSource.volume = Mathf.SmoothStep(startVol, endVol * maxDuckedVolume, i);
         yield;
-        
+
         if (Slowdown < 1) {break;}
     }
     yield WaitForSeconds (timer);
 }
 
 function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
-    
+
     changingPitch = true;
 
     var startVol = audioSource.volume;
     var endVol = endVolume;
-    
+
     var start = audioSource.pitch;
     var end = endPitch;
     var i = 0.0;
     var step = 1.0/timer;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         audioSource.pitch = Mathf.Lerp(start, end, i);
         audioSource.volume = Mathf.SmoothStep(startVol, endVol * maxDuckedVolume, i);
         yield;
 
-        if (Slowdown > maxSlowdownThreshold) {changingPitch = false; break;}        
+        if (Slowdown > maxSlowdownThreshold) {changingPitch = false; break;}
     }
-    
-    yield WaitForSeconds (timer);    
+
+    yield WaitForSeconds (timer);
     changingPitch = false;
 }
 
@@ -395,9 +402,9 @@ function lerpControl(timer : float) {
     var end = controlMultiplier;
     var i = 0.0;
     var step = 1.0/timer;
- 
 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         controlMultiplier = Mathf.Lerp(start, end, i);
         yield;
