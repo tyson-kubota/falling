@@ -74,13 +74,16 @@ function TickingAway (delay : float) {
 		return;
 	}
 
-	if (script.currentScore > 0) {
+	// The visibleScore check is to ensure that the onscreen health UI
+	// is actually empty before the player dies; if we used currentScore directly,
+	// the UI health bar's lerp would lag behind the actual value, so the player would
+	// appear to die too soon in some cases.
+	if (ScoreController.currentScore > 0 || ScoreController.visibleScore > 0) {
+		
 		if (MoveController.Slowdown > maxSlowdownThreshold) {
 			script.DecrementScore(delay);
-	   		yield WaitForSeconds((delay/4));
-		}
-
-		else if (MoveController.Slowdown < MoveController.maxSlowdown) {
+	   		yield WaitForSeconds((delay/4)); // 4x health penalty during player speedup
+		} else if (MoveController.Slowdown < MoveController.maxSlowdown) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds(delay);
 	   	}
@@ -124,30 +127,18 @@ function LifeFlashCheck (delay : float, score : int) {
 		return;
 	}
 
-	if (script.currentScore < score && inOutro == false) {
-	    //Camera.main.SendMessage("lifeFlashOut");
+	if (ScoreController.currentScore < score && inOutro == false) {
+
 	   	if (FallingLaunch.isVRMode) {
 	   		FadeFlashVR(delay, FadeDir.In);
-	   	} else {
-			LifeFlashTextureScript.FadeFlash(delay, FadeDir.In);
-		}
-		yield WaitForSeconds(delay);
-//		Camera.main.SendMessage("lifeFlashUp");
-		if (FallingLaunch.isVRMode) {
+	   		yield WaitForSeconds(delay);
 	   		FadeFlashVR(delay, FadeDir.Out);
 	   	} else {
+			LifeFlashTextureScript.FadeFlash(delay, FadeDir.In);
+			yield WaitForSeconds(delay);
 			LifeFlashTextureScript.FadeFlash(delay, FadeDir.Out);
 		}
+
 		yield WaitForSeconds((delay*3)); // stagger the flash timing (compare w/ `delay` above)
-	}
-}
-
-// not being used currently, due to more versatile LifeFlashCheck in a separate coroutine.
-function LifeFlash (delay : float, score : int) {
-
-	if (script.currentScore < score) {
-	    Camera.main.SendMessage("lifeFlashOut");
-		yield WaitForSeconds(delay);
-		Camera.main.SendMessage("lifeFlashUp");
 	}
 }

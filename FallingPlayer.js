@@ -314,11 +314,11 @@ function DeathRespawn () {
 
     DeathFadeVR(1.0, FadeDir.In);
     lerpControlIn(3.0);
-
-    reticleVRUIScript.FadeReticleIn(1.5);
-
     isPausable = true;
     isAlive = 1;
+    yield WaitForSeconds(1);
+    reticleVRUIScript.FadeReticleIn(1.5);
+
   } else {
     FadeAudio(fadeTime, FadeDir.In);
     lerpControlIn(3.0);
