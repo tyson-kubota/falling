@@ -70,6 +70,10 @@ private var opaqueDeathFadeUIVRMatl : Material;
 
 var deathPauseUIVR : GameObject;
 
+var whiteFadeUIVR : GameObject;
+private var whiteFadeUIVRRenderer : Renderer;
+private var whiteFadeUIVRMatl : Material;
+
 var scoreUIVR : GameObject;
 private var scoreUIVRRenderer : Renderer;
 private var scoreUIVRMatl : Material;
@@ -131,6 +135,9 @@ function Start() {
       scoreUIVRMatl = scoreUIVRRenderer.material;
       scoreUIVRMatl.color.a = 0;
 
+      whiteFadeUIVRRenderer = whiteFadeUIVR.GetComponent.<Renderer>();
+      whiteFadeUIVRMatl = whiteFadeUIVRRenderer.material;
+      whiteFadeUIVRMatl.color.a = 0;
       // Hack to have two separate death/fade-to-black sphere objects,
       // but neither shader does everything. The inverted transparent shader occludes
       // all physical objects, but the UIToolkit one is needed for covering light halos.
@@ -390,6 +397,8 @@ function Update () {
         if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
           isPausable = false;
           FallingLaunch.isVRMode = false;
+
+          UIscriptComponent.SaveCheckpointVR();
           Application.LoadLevel("Falling-scene-menu");
         }
       }
@@ -546,6 +555,20 @@ function DeathFadeVR (timer : float, fadeType : FadeDir) {
     }
 }
 
+function WhiteFadeVR (timer : float, fadeType : FadeDir) {
+
+    var start = fadeType == FadeDir.In ? 1.0 : 0.0;
+    var end = fadeType == FadeDir.In ? 0.0 : 1.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        whiteFadeUIVRMatl.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
+}
+
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
 // Screen.sleepTimeout = 0.0f;
@@ -637,13 +660,13 @@ function OnTriggerEnter (other : Collider) {
   	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
   	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 
-      GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-          "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
-          FallingLaunch.secondsInLevel
-      );
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+        "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
+        FallingLaunch.secondsInLevel
+    );
 
-      // reset the level area identifier for analytics purposes:
-      FallingLaunch.thisLevelArea = "0-start";
+    // reset the level area identifier for analytics purposes:
+    FallingLaunch.thisLevelArea = "0-start";
 
   	// TestFlightUnity.TestFlight.PassCheckpoint( "LevelComplete:" + Application.loadedLevelName );
 
@@ -656,6 +679,12 @@ function OnTriggerEnter (other : Collider) {
     // the sum of levelComplete's first argument,
     // in order to create a convincing slowdown lerp and UI/camera fadeout:
     lerpControlOut(4.0);
+
+    if (FallingLaunch.isVRMode) {
+      WhiteFadeVR(3.0, FadeDir.Out);
+    }
+    // Handles 2D (non-VR) UI logic in its own conditional, 
+    // plus saves progress, loads the next level, etc. 
     UIscriptComponent.LevelComplete(3.0, 1.5);
   }
 }
