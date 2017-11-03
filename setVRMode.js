@@ -50,3 +50,16 @@ function Start () {
         GvrViewerMainObject.SetActive(false); // disable the GvrViewerMain gameObject to stop blank viewer from rendering
     }
 }
+
+function Update () {
+    if (FallingLaunch.isVRMode && VRViewerComponent) {
+        // See note in Start() about unfortunate-but-required type coercion:
+        if ( (VRViewerComponent as GvrViewer).BackButtonPressed ) {
+            // When Cardboard SDK close icon / back button tapped, return home:
+            FallingPlayer.isPausable = false;
+            FallingLaunch.isVRMode = false;              
+            FallingPlayer.UIscriptComponent.SaveCheckpointVR();
+            FallingPlayer.UIscriptComponent.LoadHomeNow();
+        } 
+    }
+}

@@ -632,11 +632,16 @@ function RestartLevel() {
 }
 
 function LevelComplete(timer1 : float, timer2 : float) {
-	HideGUI();
+	if (!FallingLaunch.isVRMode) {
+		HideGUI();
+	}
 	FallingPlayer.isPausable = false;
 	MoveController.Slowdown = 0;
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( timer1, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
+
+	if (!FallingLaunch.isVRMode && bgSprite) {
+		bgSprite.hidden = false;
+		bgSprite.alphaFromTo( timer1, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
+	}
 	FallingLaunch.levelEndSlowdown = MoveController.Slowdown;
 
 	yield WaitForSeconds(timer1);
@@ -645,8 +650,11 @@ function LevelComplete(timer1 : float, timer2 : float) {
     savedTimeScale = Time.timeScale;
 	//loadingLabel.hidden = false;
 	//loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
-	nextLevelLabel.hidden = false;
-	nextLevelLabel.alphaFromTo( timer2, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
+	if (!FallingLaunch.isVRMode && nextLevelLabel) {
+		nextLevelLabel.hidden = false;
+		nextLevelLabel.alphaFromTo( timer2, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
+	}
+
     fallingPlayerComponent.FadeAudio (.9 * timer2, FadeDir.Out);
 
     yield WaitForSeconds (timer2);
@@ -975,11 +983,14 @@ function LoadHomeViaMenu() {
 	flatTiltLabel.hidden = true;
 	verticalTiltLabel.hidden = true;
 
-	FallingLaunch.hasSetAccel = false;
-	Application.LoadLevel(homeLevel);
+	LoadHomeNow();
 	Time.timeScale = savedTimeScale;
 }
 
+function LoadHomeNow() {
+	FallingLaunch.hasSetAccel = false;
+	Application.LoadLevel(homeLevel);
+}
 
 function OpenSite() {
 	Application.OpenURL ("http://tysonkubota.net/");
@@ -1125,23 +1136,14 @@ function ToggleTiltNeutral () {
 	}
 }
 
-// function DisplayTilt () {
-// 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-// 		flatTiltLabel.hidden = true;
-// 		angledTiltLabel.hidden = false;
-// 		verticalTiltLabel.hidden = true;
-// 	}
-// 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
-// 		flatTiltLabel.hidden = true;
-// 		angledTiltLabel.hidden = true;
-// 		verticalTiltLabel.hidden = false;
-// 	}
-// 	else {
-// 		flatTiltLabel.hidden = false;
-// 		angledTiltLabel.hidden = true;
-// 		verticalTiltLabel.hidden = true;
-// 	}
-// }
+function SaveCheckpointVR () {
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+       	"ExitVRMode:" + SceneManagement.SceneManager.GetActiveScene().name,
+        FallingLaunch.secondsInLevel
+    );
+
+	initialRespawn.SaveCheckpoint();
+}
 
 function DisplayTiltOnPause () {
 
