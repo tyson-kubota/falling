@@ -1,5 +1,8 @@
 #pragma strict
 
+private var fallingLaunch : GameObject;
+private var fallingLaunchComponent : FallingLaunch;
+
 // 10/25/2017: `Color` uses a 0-1 float range, not 0-2, in Unity.
 // 2 = 255 for rgba in this color array
 // static var startingFogColor : Color = Color(1.17, 1.17, 1.17, 2);
@@ -123,51 +126,59 @@ function Awake() {
 }
 
 function Start() {
-    myMainCamera = Camera.main;
-    myBackdrop = GameObject.Find("plane-close");
-    BackdropMist = GameObject.Find("Cylinder");
-    myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
-    lifeCountdownScript = gameObject.GetComponent.<lifeCountdown>();
+  fallingLaunch = GameObject.Find("LaunchGameObject");
+  fallingLaunchComponent = fallingLaunch.GetComponent.<FallingLaunch>();
 
-    if (FallingLaunch.isVRMode) {
-      myVRViewer = GameObject.Find("GvrViewerMain");
-      scoreUIVRRenderer = scoreUIVR.GetComponent.<Renderer>();
-      scoreUIVRMatl = scoreUIVRRenderer.material;
-      scoreUIVRMatl.color.a = 0;
+  if (!FallingLaunch.isVRMode) {
+    // In case the calculation in the start menu was wrong/outmoded:
+    fallingLaunchComponent.LockDeviceOrientation(1.0);
+  }
 
-      whiteFadeUIVRRenderer = whiteFadeUIVR.GetComponent.<Renderer>();
-      whiteFadeUIVRMatl = whiteFadeUIVRRenderer.material;
-      whiteFadeUIVRMatl.color.a = 0;
-      // Hack to have two separate death/fade-to-black sphere objects,
-      // but neither shader does everything. The inverted transparent shader occludes
-      // all physical objects, but the UIToolkit one is needed for covering light halos.
-      // The opaque and transparent materials have manual RenderQueue settings
-      // of 5000 (the official max) and 6000, respectively.
-      if (deathFadeUIVR && opaqueDeathFadeUIVR) {
-        deathFadeUIVRRenderer = deathFadeUIVR.GetComponent.<Renderer>();
-        deathFadeUIVRMatl = deathFadeUIVRRenderer.material;
+  myMainCamera = Camera.main;
+  myBackdrop = GameObject.Find("plane-close");
+  BackdropMist = GameObject.Find("Cylinder");
+  myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
+  lifeCountdownScript = gameObject.GetComponent.<lifeCountdown>();
 
-        opaqueDeathFadeUIVRRenderer = opaqueDeathFadeUIVR.GetComponent.<Renderer>();
-        opaqueDeathFadeUIVRMatl = opaqueDeathFadeUIVRRenderer.material;
+  if (FallingLaunch.isVRMode) {
+    myVRViewer = GameObject.Find("GvrViewerMain");
+    scoreUIVRRenderer = scoreUIVR.GetComponent.<Renderer>();
+    scoreUIVRMatl = scoreUIVRRenderer.material;
+    scoreUIVRMatl.color.a = 0;
 
-        if (deathFadeUIVRMatl.HasProperty("_Color")) {
-          deathFadeUIVRMatl.color.a = 0;
-        }
-        if (opaqueDeathFadeUIVRMatl.HasProperty("_TintColor")) {
-          var currentColor : Color = opaqueDeathFadeUIVRMatl.GetColor("_TintColor");
-          currentColor.a = 0;
-          opaqueDeathFadeUIVRMatl.SetColor("_TintColor", currentColor);
-        }
+    whiteFadeUIVRRenderer = whiteFadeUIVR.GetComponent.<Renderer>();
+    whiteFadeUIVRMatl = whiteFadeUIVRRenderer.material;
+    whiteFadeUIVRMatl.color.a = 0;
+    // Hack to have two separate death/fade-to-black sphere objects,
+    // but neither shader does everything. The inverted transparent shader occludes
+    // all physical objects, but the UIToolkit one is needed for covering light halos.
+    // The opaque and transparent materials have manual RenderQueue settings
+    // of 5000 (the official max) and 6000, respectively.
+    if (deathFadeUIVR && opaqueDeathFadeUIVR) {
+      deathFadeUIVRRenderer = deathFadeUIVR.GetComponent.<Renderer>();
+      deathFadeUIVRMatl = deathFadeUIVRRenderer.material;
+
+      opaqueDeathFadeUIVRRenderer = opaqueDeathFadeUIVR.GetComponent.<Renderer>();
+      opaqueDeathFadeUIVRMatl = opaqueDeathFadeUIVRRenderer.material;
+
+      if (deathFadeUIVRMatl.HasProperty("_Color")) {
+        deathFadeUIVRMatl.color.a = 0;
       }
-
-      if (reticleVRUIObj) {
-        reticleVRUIScript = reticleVRUIObj.GetComponent.<VRLifeMeter>();
-      } else {
-        Debug.LogError("You forgot to assign an object for the VR reticle... trying to look up manually");
-        reticleVRUIScript = GameObject.Find("vr-radial-life-meter").GetComponent.<VRLifeMeter>();
+      if (opaqueDeathFadeUIVRMatl.HasProperty("_TintColor")) {
+        var currentColor : Color = opaqueDeathFadeUIVRMatl.GetColor("_TintColor");
+        currentColor.a = 0;
+        opaqueDeathFadeUIVRMatl.SetColor("_TintColor", currentColor);
       }
-      reticleVRUIScript.FadeReticleIn(1.5);
     }
+
+    if (reticleVRUIObj) {
+      reticleVRUIScript = reticleVRUIObj.GetComponent.<VRLifeMeter>();
+    } else {
+      Debug.LogError("You forgot to assign an object for the VR reticle... trying to look up manually");
+      reticleVRUIScript = GameObject.Find("vr-radial-life-meter").GetComponent.<VRLifeMeter>();
+    }
+    reticleVRUIScript.FadeReticleIn(1.5);
+  }
 
 //	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
@@ -197,8 +208,8 @@ function Start() {
 
 	LevelStartFade();
 
-    // since it was probably lerped down to zero at previous levelEnd, initialize it here.
-    MoveController.controlMultiplier = 1;
+  // since it was probably lerped down to zero at previous levelEnd, initialize it here.
+  MoveController.controlMultiplier = 1;
 }
 
 function LevelStartFade () {
@@ -231,17 +242,17 @@ function introNow() {
 
 function FadeAudio(timer : float, fadeType : FadeDir) {
 
-    var start = fadeType == FadeDir.In? 0.0 : 1.0;
-    var end = fadeType == FadeDir.In? 1.0 : 0.0;
-    var i = 0.0;
-    var step = 1.0/timer;
+  var start = fadeType == FadeDir.In? 0.0 : 1.0;
+  var end = fadeType == FadeDir.In? 1.0 : 0.0;
+  var i = 0.0;
+  var step = 1.0/timer;
 
-    while (i <= 1.0) {
-        i += step * Time.deltaTime;
-        // var t : float = Mathf.Sin(i * Mathf.PI * 0.5f); // ease-out lerp
-        AudioListener.volume = Mathf.Lerp(start, end, i);
-        yield;
-    }
+  while (i <= 1.0) {
+      i += step * Time.deltaTime;
+      // var t : float = Mathf.Sin(i * Mathf.PI * 0.5f); // ease-out lerp
+      AudioListener.volume = Mathf.Lerp(start, end, i);
+      yield;
+  }
 }
 
 

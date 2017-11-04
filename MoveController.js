@@ -59,19 +59,6 @@ function Awake() {
 
 
 function Start() {
-    // HACK: Force landscape left orientation in VR for Cardboard compatibility.
-    // Or is this best off just being removed?
-    // NB: If your phone is tilted a little beyond flat (away from you) on level load,
-    // then all other game objects will be behind you when you look up: 180deg wrong
-    // in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse
-    // quaternion in some cases based on Head gaze direction/ gameObj position,
-    // or in the menu UI, ensure the phone orientation is not flat before
-    // letting the user load the scene...
-    if (FallingLaunch.isVRMode) {
-        // TODO FIXME FOR VR MODE: see above
-        Screen.orientation = ScreenOrientation.LandscapeLeft;
-    }
-
     // Screen.sleepTimeout = 0.0f;
     // deprecated, now should use NeverSleep
     Screen.sleepTimeout = SleepTimeout.NeverSleep;

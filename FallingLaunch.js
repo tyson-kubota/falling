@@ -11,6 +11,7 @@ static var isTablet : boolean = false;
 static var tiltable : boolean = false;
 
 static var initialInputDeviceOrientation : DeviceOrientation;
+static var cachedScreenOrientation : ScreenOrientation;
 
 static var hasSetAccel : boolean = false;
 static var restPosition : Vector3;
@@ -67,32 +68,12 @@ function Start () {
 		}
 
 		initialInputDeviceOrientation = Input.deviceOrientation;
-
-		// if (!hasSetOrientation) {
-		// 	if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
-		// 		flipMultiplier = flipMultiplier * -1;
-		// 		//Debug.Log("I'm in LandscapeRight!");
-		// 		Screen.orientation = ScreenOrientation.LandscapeRight;
-		// 		neutralPosTilted = neutralPosTiltedFlipped;
-		// 	}
-		// 	else {	Screen.orientation = ScreenOrientation.LandscapeLeft;
-		// 		flipMultiplier = flipMultiplier * 1;
-		// 		//Debug.Log("I'm in LandscapeLeft, or Portrait, or FaceDown/Up!");
-		// 		neutralPosTilted = neutralPosTiltedRegular;
-		// 	}
-
-		// 	hasSetOrientation = true;
-		// }
+		cachedScreenOrientation = Screen.orientation;
 
 		// this is necessary to override Unity 4's auto-orientation code
 		Input.compensateSensors = false;
 
 		// Debug.Log("Device orientation after Input.compensateSensors = false is " + Input.deviceOrientation);
-
-		// NB: still doesn't work, sensor 'correctness' depends on starting device orientation as read by Cardboard.
-		// HACK: Force landscape left orientation for Cardboard compatibility.
-		// TODO: make conditional on isVRMode?
-		// Screen.orientation = ScreenOrientation.LandscapeLeft;
 
 		var iOSGen = iOS.Device.generation;
 
@@ -192,20 +173,6 @@ function Calibrate () {
 	tiltable = true;
 }
 
-function CalibrateInLevel () {
-	tiltable = false;
-
-	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {restPosition = neutralPosTilted;}
-	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {restPosition = neutralPosVertical;}
-	else {restPosition = neutralPosFlat;}
-
-	SetAxesInversion();
-	calibrationRotation = Quaternion.FromToRotation(acceleratorSnapshot, restPosition);
-
-	tiltable = true;
-}
-
-
 function ChangeTilt (toFlat : int) {
 	if (toFlat == 2) {
 		PlayerPrefs.SetInt("TiltNeutral", 2);
@@ -219,13 +186,122 @@ function ChangeTilt (toFlat : int) {
 		PlayerPrefs.SetInt("TiltNeutral", 1);
 		Debug.Log("tilt set to angled.");
 	}
-	CalibrateInLevel();
+	Calibrate();
 }
 
-// function Update () {
-// 	ListCurrentAccelerometer();
-// }
-//
-// function ListCurrentAccelerometer() {
-// 	Debug.Log ("Your rotation is " + Input.acceleration);
-// }
+function LockDeviceOrientation (waitTime: float) {
+	cachedScreenOrientation = Screen.orientation;
+
+	// Let the device auto-rotate if necessary:
+	Screen.autorotateToLandscapeLeft = true;
+	Screen.autorotateToLandscapeRight = true;
+	Screen.orientation = ScreenOrientation.AutoRotation;
+
+	// iOS/Unity can give strange/wrong orientation values while screen is mid-rotation
+	// or close to flat, so we manually add a wait yield.
+	yield WaitForSeconds(waitTime);
+
+	switch (Input.deviceOrientation) {
+		case DeviceOrientation.LandscapeLeft:
+			LockLandscapeLeftOrientation();
+
+			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeLeft", 0.0);
+			break;
+		case DeviceOrientation.LandscapeRight:
+			LockLandscapeRightOrientation();
+
+			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeRight", 0.0);
+			break;
+		default:
+			HandleDeviceOrientationMismatch();
+
+			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationCheck:NonLandscape:" + Input.deviceOrientation, 0.0);
+			break;
+	}
+
+	Screen.autorotateToLandscapeLeft = false;
+	Screen.autorotateToLandscapeRight = false;
+	
+	Calibrate();
+
+	if (Debug.isDebugBuild) {
+		Debug.Log("Final screen orientation is: " + Screen.orientation);
+	}
+
+	return;
+}
+
+
+function HandleDeviceOrientationMismatch() {
+	if (initialInputDeviceOrientation != Input.deviceOrientation) {
+
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    	"DeviceOrientationCheck:CachedAndCurrentMismatch:" + Input.deviceOrientation + ":" + initialInputDeviceOrientation,
+	    	0.0
+    	);
+
+    	if (initialInputDeviceOrientation == DeviceOrientation.LandscapeLeft) {
+    		if (Debug.isDebugBuild) {
+				Debug.Log("There's been a cached/current deviceOrientation mismatch. Setting to landscape left...");
+			}
+			initialInputDeviceOrientation = Input.deviceOrientation;
+    		LockLandscapeLeftOrientation();
+    	} else if (initialInputDeviceOrientation == DeviceOrientation.LandscapeRight) {
+    		if (Debug.isDebugBuild) {
+    			Debug.Log("There's been a cached/current deviceOrientation mismatch. Setting to landscape right...");
+    		}
+    		initialInputDeviceOrientation = Input.deviceOrientation;
+			LockLandscapeRightOrientation();
+    	} else {
+			DefaultToLandscapeLeftOrientation();		
+    	}
+
+	} else {
+		if (Debug.isDebugBuild) {
+			Debug.Log("InitialInputDeviceOrientation and Input.deviceOrientation do match, as " + Input.deviceOrientation);
+		}
+		GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:CachedAndCurrentMatch:" + Input.deviceOrientation, 0.0);
+
+		// But we must choose left or right, ultimately...
+		DefaultToLandscapeLeftOrientation();
+	}
+
+	return;
+}
+
+function DefaultToLandscapeLeftOrientation() {
+	if (Screen.orientation == ScreenOrientation.LandscapeRight || cachedScreenOrientation == ScreenOrientation.LandscapeRight ||
+		Input.deviceOrientation == DeviceOrientation.LandscapeRight) {
+			if (Debug.isDebugBuild) {
+				Debug.Log("Picking LandscapeRight, to match Screen.orientation or Input.deviceOrientation");
+			}
+			LockLandscapeRightOrientation();
+	} else {
+		if (Debug.isDebugBuild) {
+			Debug.Log("Defaulting to LandscapeLeft, since Screen.orientation / Input.deviceOrientation were not LandscapeRight");
+		}
+		LockLandscapeLeftOrientation();
+	}	
+}
+
+function LockLandscapeLeftOrientation () {
+	if (Debug.isDebugBuild) {Debug.Log("Locking LandscapeLeft orientation");}
+
+	Screen.orientation = ScreenOrientation.LandscapeLeft;
+	cachedScreenOrientation = Screen.orientation;
+
+	neutralPosTilted = neutralPosTiltedRegular;
+	neutralPosVertical = neutralPosVerticalRegular;
+	flipMultiplier = 1.0;
+}
+
+function LockLandscapeRightOrientation () {
+	if (Debug.isDebugBuild) {Debug.Log("Locking LandscapeRight orientation");}
+
+	Screen.orientation = ScreenOrientation.LandscapeRight;
+	cachedScreenOrientation = Screen.orientation;
+
+	neutralPosTilted = neutralPosTiltedFlipped;
+	neutralPosVertical = neutralPosVerticalFlipped;
+	flipMultiplier = -1.0;
+}
