@@ -77,12 +77,21 @@ function Start() {
 
     //Calibrate();
 
+    lerpSlowdown(.5);
+    
     // resetting controlMultiplier in case it was zeroed from the previous level
     // (since as a global/static var, it's cached across level loads);
-    controlMultiplier = 1.0;
+    // Also, since it was probably lerped down to zero at previous levelEnd, initialize it here, except in the case where .
+    if (FallingLaunch.shouldShowVRIntroUI && FallingLaunch.isVRMode) {
+        MoveController.controlMultiplier = 0.0;
+    } else {
+        MoveController.controlMultiplier = 1.0;
+    }
 
-    lerpSlowdown(.5);
-    lerpControl(3);
+    if (!FallingLaunch.isVRMode) {
+        lerpControlIn(3.0);
+    }
+
     //pauseButtonArea = Rect(0, 0, Screen.width / 2, Screen.height / 2);
     pauseButtonArea = Rect(Screen.width * .9, Screen.height * .8, Screen.width * .1, Screen.height * .2);
 
@@ -139,13 +148,14 @@ function MovePlayerVR () {
         Mathf.Max(1.25, speedRatio * speed) : 1.0 + (speedRatio * maxLateralSpeed);
 
     // Debug.Log('lateralSpeedBoost: ' + lateralSpeedBoost);
-
+    // Debug.Log('controlMultiplier: ' + controlMultiplier);
+    
     // Dir is clamped to +/-2 units/frame (and avoiding direct use of the speed multiplier)
     // to obtain more 'realistic' 1:1 movement, with just a little amplification,
     // and with lateralSpeedBoost as the extra if you're touching the screen.
     // myTransform.Translate (dir * (1.0 + lateralSpeedBoost), Space.World);
     // myTransform.Translate (dir * lateralSpeedBoost, Space.World);
-    myTransform.Translate (dir * lateralSpeedBoost, Space.World);
+    myTransform.Translate (dir * lateralSpeedBoost * controlMultiplier, Space.World);
 }
 
 function MovePlayer(horizAxisInversionVal: int, vertAxisInversionVal: int) {
@@ -193,7 +203,9 @@ function Update () {
 // decent collision detection.
 
 function FallingSpeed () {
-
+    // Debug.Log("FallingPlayer.isAlive: " + FallingPlayer.isAlive);
+    // Debug.Log('controlMultiplier: ' + controlMultiplier);
+    // Debug.Log("FallingPlayer.isPausable: " + FallingPlayer.isPausable);
     fingerCount = 0;
 
     if (FallingPlayer.isAlive == 1 && FallingPlayer.isPausable == true) {
@@ -383,19 +395,17 @@ function lerpPitchDown (timer : float, endPitch : float, endVolume : float) {
     changingPitch = false;
 }
 
-function lerpControl(timer : float) {
+function lerpControlIn(timer : float) {
 
-    var start = 0.0;
-    var end = controlMultiplier;
-    var i = 0.0;
+    var i : float = 0.0;
     var step = 1.0/timer;
-
 
     while (i <= 1.0) {
         i += step * Time.deltaTime;
-        controlMultiplier = Mathf.Lerp(start, end, i);
+        controlMultiplier = Mathf.Lerp(0.0, 1.0, i);
         yield;
-        //Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
+        // Debug.Log("My controlMultiplier is " + controlMultiplier);
+        // Debug.Log("My flipmultiplier is " + FallingLaunch.flipMultiplier + " and my end is " + end);
         }
     yield WaitForSeconds (timer);
 }

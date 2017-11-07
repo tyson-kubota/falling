@@ -144,7 +144,9 @@ function Start () {
 
 	FallingLaunch.levelAchieved = PlayerPrefs.GetInt("HighestLevel");
 
-//  yield WaitForSeconds(0.5f);
+	// every return to the Start menu means re-entering VR mode
+	// should show the in-level intro UI:
+	FallingLaunch.shouldShowVRIntroUI = true;
 
 //	  Testing to see if disabling this hard coded screen.orientation will allow auto detection of landscape
 //	  right or left mode on startup.

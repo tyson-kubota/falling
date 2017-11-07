@@ -71,6 +71,7 @@ var opaqueDeathFadeUIVR : GameObject;
 private var opaqueDeathFadeUIVRRenderer : Renderer;
 private var opaqueDeathFadeUIVRMatl : Material;
 
+var levelStartUIVR : GameObject;
 var deathPauseUIVR : GameObject;
 
 var whiteFadeUIVR : GameObject;
@@ -141,6 +142,7 @@ function Start() {
   lifeCountdownScript = gameObject.GetComponent.<lifeCountdown>();
 
   if (FallingLaunch.isVRMode) {
+
     myVRViewer = GameObject.Find("GvrViewerMain");
     scoreUIVRRenderer = scoreUIVR.GetComponent.<Renderer>();
     scoreUIVRMatl = scoreUIVRRenderer.material;
@@ -149,6 +151,7 @@ function Start() {
     whiteFadeUIVRRenderer = whiteFadeUIVR.GetComponent.<Renderer>();
     whiteFadeUIVRMatl = whiteFadeUIVRRenderer.material;
     whiteFadeUIVRMatl.color.a = 0;
+
     // Hack to have two separate death/fade-to-black sphere objects,
     // but neither shader does everything. The inverted transparent shader occludes
     // all physical objects, but the UIToolkit one is needed for covering light halos.
@@ -195,21 +198,25 @@ function Start() {
 	AudioListener.pause = false;
 	myVol = audioScore.volume;
 	peakVol = audioScore.volume;
-//	fadeInAudio ();
   	FadeAudio(0.1, FadeDir.In);
 	isPausable = false;
 
 	rb = GetComponent.<Rigidbody>();
-	rb.isKinematic = false;
+
+  if (FallingLaunch.isVRMode && levelStartUIVR) {
+    levelStartUIVR.SetActive(true);
+    isAlive = 0;
+    rb.isKinematic = true;
+  } else {
+    isAlive = 1;
+    rb.isKinematic = false;
+  }
 
 	if (!introComponent) {
 	   UIscriptComponent.UnhideGUI();
 	}
 
 	LevelStartFade();
-
-  // since it was probably lerped down to zero at previous levelEnd, initialize it here.
-  MoveController.controlMultiplier = 1;
 }
 
 function LevelStartFade () {
@@ -231,7 +238,7 @@ function introFade() {
 	whiteFader.enabled = false;
 }
 
-function introNow() {
+function introNow() {  
 	LatestCheckpointRespawn();
 	yield WaitForSeconds (3);
 	FallingLaunch.LoadedLatestLevel = false;
@@ -297,7 +304,7 @@ function DeathRespawn () {
 
 	rb.isKinematic = false;
 
-	MoveController.controlMultiplier = 1;
+	MoveController.controlMultiplier = 1.0;
 
   if (FallingLaunch.isVRMode && deathPauseUIVR && deathFadeUIVR) {
 
@@ -331,9 +338,13 @@ function DeathRespawn () {
     FadeAudio(2.0, FadeDir.In);
 
     DeathFadeVR(1.0, FadeDir.In);
-    lerpControlIn(3.0);
     isPausable = true;
+     
+    // setting isAlive is order-dependent with lerpControlIn below 
+    // (isAlive = 0 will break its loop):
     isAlive = 1;
+    lerpControlIn(3.0);
+
     yield WaitForSeconds(1);
     reticleVRUIScript.FadeReticleIn(1.5);
 
@@ -347,7 +358,7 @@ function DeathRespawn () {
 function LatestCheckpointRespawn () {
 	isPausable = false;
 	rb.isKinematic = true;
-   	var respawnPosition = Respawn.currentRespawn.transform.position;
+ 	var respawnPosition = Respawn.currentRespawn.transform.position;
 	//UIscriptComponent.fadeOut();
 
 	if (levelChangeBackdrop == true) {
@@ -355,21 +366,26 @@ function LatestCheckpointRespawn () {
 	}
 //  	yield WaitForSeconds(1);
 
-	isAlive = 1;
+  // if in VR intro, don't set isAlive yet, since that will start the lifeCountdown timer ticking:
+  if (FallingLaunch.isVRMode && FallingLaunch.shouldShowVRIntroUI) {
+    isAlive = 0;
+  } else {
+    isAlive = 1;
+  }
+
 	RenderSettings.fogEndDistance = startingFogEndDistance;
-  	RenderSettings.fogStartDistance = startingFogStartDistance;
+  RenderSettings.fogStartDistance = startingFogStartDistance;
 
 	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
 	myTransform.position = respawnPosition; // + Vector3.up;
 
   FadeAudio(fadeTime, FadeDir.In);
-	rb.isKinematic = false;
-
-	MoveController.controlMultiplier = 1;
-
-   	lerpControlIn(3);
-   	//yield UIscriptComponent.fadeIn(true);
-   	UIscriptComponent.UnhideGUI();
+	
+  if (!FallingLaunch.isVRMode) {
+    rb.isKinematic = false;
+    lerpControlIn(3.0);
+    UIscriptComponent.UnhideGUI();
+  }
 }
 
 function ShowDeathHelp() {
@@ -415,6 +431,14 @@ function Update () {
       }
     }
 
+    if (FallingLaunch.isVRMode && levelStartUIVR.activeInHierarchy && FallingLaunch.shouldShowVRIntroUI) {
+      for (var i2 = 0; i2 < Input.touchCount; ++i2) {
+        if (Input.GetTouch(i2).phase == TouchPhase.Ended && Input.GetTouch(i2).phase != TouchPhase.Canceled) {
+          ContinueFromLevelStartVR();
+        }
+      }
+    }
+
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
 	//Debug.Log("your current acceleration is: " + FallingLaunch.accelerator);
 }
@@ -438,11 +462,11 @@ function playerTilt() {
 
 function lerpControlIn(timer : float) {
 
-	//Debug.Log("your flip multiplier is " + FallingLaunch.flipMultiplier);
-	//Debug.Log("your control multiplier is " + MoveController.controlMultiplier);
+	// Debug.Log("your flip multiplier is " + FallingLaunch.flipMultiplier);
+	// Debug.Log("your control multiplier is " + MoveController.controlMultiplier);
 
     var start = 0.0;
-    var end = MoveController.controlMultiplier;
+    var end = 1.0; // MoveController.controlMultiplier;
     var i = 0.0;
     var step = 1.0/timer;
 
@@ -698,6 +722,17 @@ function OnTriggerEnter (other : Collider) {
     // plus saves progress, loads the next level, etc. 
     UIscriptComponent.LevelComplete(3.0, 1.5);
   }
+}
+
+function ContinueFromLevelStartVR () {
+  FallingLaunch.shouldShowVRIntroUI = false;
+
+  // TODO: Fade out material here instead of toggling the whole object outright?
+  levelStartUIVR.SetActive(false);
+  rb.isKinematic = false;
+  isAlive = 1;
+  isPausable = true;
+  lerpControlIn(1.5);
 }
 
 @script AddComponentMenu("Scripts/FallingPlayer")

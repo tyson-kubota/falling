@@ -70,7 +70,6 @@ function Start() {
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingStartMenuUI);  	
 	AudioListener.pause = false;
-//	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
 
