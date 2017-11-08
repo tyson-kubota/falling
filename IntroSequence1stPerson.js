@@ -15,6 +15,7 @@ function Start () {
     if (!FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = false;
 		ScoreController.enabled = false;
+
         if (!FallingLaunch.isVRMode) {
 		  FallingPlayer.UIscriptComponent.HideGUI();
         }
@@ -27,16 +28,15 @@ function Start () {
 	    	destructible.enabled = false;
 	    	shardColor = shardRenderer.material.color;
 	    }
-    }
-    else if (FallingLaunch.NewGamePlus) {
+    } else if (FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = true;
 		ScoreController.enabled = true;
 		LifeController.enabled = true;
-		//FallingPlayer.UIscriptComponent.HideGUI();
-		FallingPlayer.UIscriptComponent.UnhideGUI();
+
+        if (!FallingLaunch.isVRMode) {
+    		FallingPlayer.UIscriptComponent.UnhideGUI();
+        }
     }
-
-
 }
 
 function EndIntro (playAudio : boolean) {
@@ -47,6 +47,10 @@ function EndIntro (playAudio : boolean) {
 	if (!FallingLaunch.NewGamePlus) {
 		FallingPlayer.UIscriptComponent.UnhideGUI();
 	}
+
+    if (FallingLaunch.isVRMode) {
+        FallingPlayer.reticleVRUIScript.FadeReticleIn(1.5);
+    }
 
     for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
         destructible = shard.GetComponent(ProjectileDestroy);
@@ -69,7 +73,7 @@ function EndIntro (playAudio : boolean) {
         for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
         shard.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
-    	}
+	}
 }
 
 function DeathHelp() {

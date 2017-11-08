@@ -60,7 +60,7 @@ function Awake () {
 
 function Start () {
 
-
+	// PlayerPrefs.DeleteAll();
 	if (!alreadyLaunched) {
 
 //		TestFlightUnity.TestFlight.TakeOff( testFlightToken );

@@ -84,12 +84,12 @@ private var scoreUIVRMatl : Material;
 private var peakScoreFlashValueVR : float = 1.0;
 
 var reticleVRUIObj : GameObject;
-private var reticleVRUIScript : VRLifeMeter;
+static var reticleVRUIScript : VRLifeMeter;
 
 var clearDestroyedObjects : boolean = false;
 
 var whiteFader : FadeInOutAlt;
-var introComponent : IntroSequence1stPerson;
+private var introComponent : IntroSequence1stPerson;
 introComponent = GetComponent("IntroSequence1stPerson");
 
 var simpleVelocityLimiterComponent : SimpleVelocityLimiter;
@@ -180,7 +180,6 @@ function Start() {
       Debug.LogError("You forgot to assign an object for the VR reticle... trying to look up manually");
       reticleVRUIScript = GameObject.Find("vr-radial-life-meter").GetComponent.<VRLifeMeter>();
     }
-    reticleVRUIScript.FadeReticleIn(1.5);
   }
 
 //	startingFogColor = RenderSettings.fogColor * 2;
@@ -212,8 +211,16 @@ function Start() {
     rb.isKinematic = false;
   }
 
+  // introComponent's existence is a proxy for level 1, 
+  // where we don't want the reticle to be visible yet
+  // (resuming from a level 1 post-intro checkpoint
+  // is handled in Respawn.js (mainRespawnScript):
 	if (!introComponent) {
 	   UIscriptComponent.UnhideGUI();
+
+     if (FallingLaunch.isVRMode) {
+        reticleVRUIScript.FadeReticleIn(1.5);
+     }
 	}
 
 	LevelStartFade();

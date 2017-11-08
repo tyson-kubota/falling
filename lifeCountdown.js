@@ -1,13 +1,15 @@
-var script : ScoreController;
+private var script : ScoreController;
 
 var LifeFlashTexture : GameObject;
 static var LifeFlashTextureScript : GUITextureLaunch;
 LifeFlashTextureScript = LifeFlashTexture.GetComponent("GUITextureLaunch");
 
 var lifeFlashUIVR : GameObject;
-var lifeFlashUIRenderer : Renderer;
-var lifeFlashUIMatl : Material;
-var peakLifeFlashValueVR : float = 0.33;
+private var lifeFlashUIRenderer : Renderer;
+private var lifeFlashUIMatl : Material;
+private var peakLifeFlashValueVR : float = 0.7;
+
+var fallingIntroUIComponent : fallingIntroUI;
 
 static var inOutro : boolean = false;
 
@@ -110,6 +112,10 @@ function TickingAway (delay : float) {
 
 		   	if (!FallingLaunch.isVRMode) {
 				GetComponent(FallingPlayer).ShowDeathHelp();
+			} else if (fallingIntroUIComponent) {
+				// fallingIntroUIComponent only exists on intro level:
+				// 'tutorial-vr-intro-2' is the name of the 'gather orbs to survive' icon
+				fallingIntroUIComponent.ShowIconVR('tutorial-vr-intro-2', 8);
 			}
 
 			// New GameAnalytics "Design" event syntax:
