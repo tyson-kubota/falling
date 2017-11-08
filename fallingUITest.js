@@ -96,6 +96,11 @@ function Start () {
 //	Screen.orientation = ScreenOrientation.LandscapeRight;}
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
 
+	fallingPlayerComponent = player.GetComponent("FallingPlayer");
+	//moveControllerComponent = player.GetComponent("MoveController");
+	fallingLaunch = GameObject.Find("LaunchGameObject");
+	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
+
 	// VR mode is incompatible with orthographic cameras, and thus doesn't use UI Toolkit.
 	if (!FallingLaunch.isVRMode) {
 		SetupLevelUI();
@@ -105,11 +110,6 @@ function Start () {
 }
 
 function SetupLevelUI() {
-	fallingPlayerComponent = player.GetComponent("FallingPlayer");
-	//moveControllerComponent = player.GetComponent("MoveController");
-	fallingLaunch = GameObject.Find("LaunchGameObject");
-	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
-
     bgSprite = UIT.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);

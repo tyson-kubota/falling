@@ -44,11 +44,12 @@ function FadeReticleOut (timer : float) {
 }
 
 function Update () {
-    // Deactivate this and early return if we're not in VR mode.
+    // Deactivate the VR reticle and early return if we're not in VR mode.
     if (!FallingLaunch.isVRMode) {
         gameObject.SetActive(false);
         return;
     }
+    
     if (FallingPlayer.isAlive == 1 && isVisible) {
         lifePercentage = parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore);
         thisImage.fillAmount = lifePercentage;

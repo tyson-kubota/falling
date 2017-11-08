@@ -202,7 +202,7 @@ function Start() {
 
 	rb = GetComponent.<Rigidbody>();
 
-  if (FallingLaunch.isVRMode && levelStartUIVR) {
+  if (FallingLaunch.isVRMode && levelStartUIVR && FallingLaunch.shouldShowVRIntroUI) {
     levelStartUIVR.SetActive(true);
     isAlive = 0;
     rb.isKinematic = true;
@@ -702,6 +702,7 @@ function OnTriggerEnter (other : Collider) {
   	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
   	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 
+    // TODO: Send separate event indicating whether you were in VR mode?
     GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
         "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
         FallingLaunch.secondsInLevel
