@@ -8,7 +8,6 @@ private var fallingLaunchComponent : FallingLaunch;
 // static var startingFogColor : Color = Color(1.17, 1.17, 1.17, 2);
 static var startingFogEndDistance : int = 1500;
 static var startingFogStartDistance : int = 150;
-static var startingCameraFarClipPlane : int = 1700;
 static var startingCloudsAlpha : float = .25f; // Unity 4 used .39f (99 in RGBA)
 
 //original for corroded sky tubes level
@@ -182,17 +181,15 @@ function Start() {
     }
   }
 
-//	startingFogColor = RenderSettings.fogColor * 2;
 	startingFogEndDistance = RenderSettings.fogEndDistance;
-    startingFogStartDistance = RenderSettings.fogStartDistance;
+  startingFogStartDistance = RenderSettings.fogStartDistance;
 
-	startingCameraFarClipPlane = myMainCamera.farClipPlane;
-  	isAlive = 1;
-  	UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
-  	lifeStartTime = Time.time;
-  	levelStartTime = Time.time;
-  	isExitingLevel = false;
-  	FallingLaunch.thisLevel = Application.loadedLevelName;
+  isAlive = 1;
+  UIscriptComponent = UIscriptName.GetComponent(fallingUITest);
+  lifeStartTime = Time.time;
+  levelStartTime = Time.time;
+  isExitingLevel = false;
+  FallingLaunch.thisLevel = Application.loadedLevelName;
 	FallingLaunch.thisLevelArea = "0-start";
 	AudioListener.pause = false;
 	myVol = audioScore.volume;
@@ -402,17 +399,25 @@ function ShowDeathHelp() {
 }
 
 function changeLevelBackdrop () {
-  changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
-	changeBackdrop.oceanRenderer.enabled = false;
-	changeBackdrop.cloudRenderer.enabled = false;
-	changeBackdrop.endSphereRenderer.enabled = false;
+  if (!FallingLaunch.isVRMode) {
+    if (changeBackdrop.oceanCameraVR) {
+      changeBackdrop.oceanCameraVR.GetComponent(Camera).enabled = false;
+    }
+    if (changeBackdrop.oceanCamera) {
+      changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
+      changeBackdrop.oceanRenderer.enabled = false;
+    }
+  }
 
 	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 	// Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);
 	RenderSettings.fogEndDistance = startingFogEndDistance;
   RenderSettings.fogStartDistance = startingFogStartDistance;
 
-  if (myMainCamera) {myMainCamera.farClipPlane = startingCameraFarClipPlane;}
+  if (myMainCamera) {
+    // reset regular or VR cameras' clip planes (handles both cases internally):
+    changeBackdrop.ResetCameraClipPlane();
+  }
   if (myBackdropRenderer) {
       myBackdropRenderer.materials = [origMat];
   }

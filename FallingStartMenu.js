@@ -124,8 +124,6 @@ function DeathRespawn () {
 function changeLevelBackdrop () {
   	changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
 	changeBackdrop.oceanRenderer.enabled = false;
-	changeBackdrop.cloudRenderer.enabled = false;
-	changeBackdrop.endSphereRenderer.enabled = false;
 
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 //	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	

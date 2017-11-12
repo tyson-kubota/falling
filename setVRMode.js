@@ -30,7 +30,7 @@ function Start () {
         cameraVRParent = 
             Instantiate(cameraVRParentPrefab);
 
-        // Make the camera-VR-parent object (post-instantiation) a child of this (player) gameObject transform,
+        // Make the camera-VR-parent object (post-instantiation) a child of this (Player) gameObject transform,
         // then make the Camera (cameraObj) a child of the camera-VR-parent object:
         cameraVRParent.transform.SetParent(transform);
         cameraObj.transform.SetParent(cameraVRParent.transform);

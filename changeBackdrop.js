@@ -17,10 +17,18 @@ static var startingCloudAlpha : float; // Unity 4 used .39f (99 in RGBA)
 var newCloudAlpha : float = .3f;
 static var cloudOriginalMaterial : Material;
 
-static var oceanCamera : GameObject;
-static var oceanRenderer : Renderer;
-static var cloudRenderer : Renderer;
-static var endSphereRenderer : Renderer;
+var oceanCamera : GameObject;
+var oceanCameraVR : GameObject;
+var oceanCameraVRHead : GvrHead;
+
+var backdropCamera : GameObject;
+private var backdropCameraVRHead : GvrHead;
+
+var oceanRenderer : Renderer;
+var cloudRenderer : Renderer;
+
+var eyeCamerasVR : Array;
+var StereoControllerComponent : Component;
 
 //var foo : Material; //set this in the editor
 //var bar : Material; //set this in the editor
@@ -28,6 +36,7 @@ var oceanLevel : boolean = false;
 var ShouldUseOceanCamera : boolean = false;
 var ShouldChangeBackdrop : boolean = false;
 var FogOnly : boolean = false;
+var farClipPlaneValueOrig : int;
 var farClipPlaneValue : int = 2500;
 var fogEndValue : int = 3000;
 var farClipPlaneFadeTime : float = 3;
@@ -39,24 +48,29 @@ var farClipPlaneFadeTime2 : float = 2;
 function Start () {
 	if (oceanLevel == true) {
 		if (!mainCamera) {mainCamera = transform.FindChild("Camera").gameObject;}
-		
+        		
 		oceanCamera = transform.FindChild("Camera-for-ocean").gameObject;
-		
+
+        var oceanCameraVRTransform : Transform = mainCamera.transform.FindChild("Camera-for-ocean-VR");
+        oceanCameraVR = oceanCameraVRTransform ? oceanCameraVRTransform.gameObject : null;
+
+        var backdropCameraTransform : Transform = transform.FindChild("Camera-for-backdrop");
+        backdropCamera = backdropCameraTransform ? backdropCameraTransform.gameObject : null;
+
 		oceanRenderer = gameObject.Find("sky-water-ocean/Mesh").GetComponent.<Renderer>();
 		oceanRenderer.enabled = false;
 		
 		cloudRenderer = gameObject.Find("simple-cloud-plane/Mesh").GetComponent.<Renderer>();
 		cloudRenderer.enabled = false;
-		
-		endSphereRenderer = gameObject.Find("score-orbs-end/score-orb/Mesh").GetComponent.<Renderer>();
-		endSphereRenderer.enabled = false;
 	}
 	
 	cam = mainCamera.GetComponent.<Camera>();
     
+    farClipPlaneValueOrig = cam.farClipPlane;
+
     // Warn re. plane-close/Cylinder if they haven't been manually associated via the Inspector:
     if (ShouldChangeBackdrop || oceanLevel) {
-        if (!cloudCylinderObj) {
+        if (!cloudCylinderObj && Debug.isDebugBuild) {
             Debug.Log('Did you forget to link your cloudCylinderObj in the Inspector?');
         }
         if (cloudCylinderObj) {
@@ -72,7 +86,34 @@ function Start () {
             closePlaneRenderer = closePlaneTransform.GetComponent.<Renderer>();
         }
     }
+}
 
+function Update () {
+    // Existence check required for StereoControllerComponent in Update() 
+    // since it takes 1+ seconds to set up everything via GVR plugin:
+    if (FallingLaunch.isVRMode) {
+        if (mainCamera && !StereoControllerComponent) {
+            StereoControllerComponent = mainCamera.GetComponent.<StereoController>();
+        }
+
+        if (oceanLevel && oceanCameraVR && !oceanCameraVRHead) {
+            oceanCameraVRHead = oceanCameraVR.GetComponent.<StereoController>().Head;
+
+            // this GvrHead is already nested within the Player camera's 
+            // StereoController, so to stay aligned with its parent, 
+            // it shouldn't independently track rotation:
+            oceanCameraVRHead.trackRotation = false;
+        }
+
+        if (!backdropCameraVRHead) {
+            backdropCameraVRHead = backdropCamera.GetComponent.<StereoController>().Head;
+
+            // this GvrHead is already nested within the Player object,
+            // and the backdrop is meant to be static relative to the player, 
+            // so therefore shouldn't independently track rotation:
+            backdropCameraVRHead.trackRotation = false;
+        }
+    }
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -86,14 +127,18 @@ function OnTriggerEnter (other : Collider) {
             iTween.ColorTo(cloudCylinderObj,{"a": newCloudAlpha, "time": 1});
         }
 
-//		FadeBetweenCameras ();
-//		Enable the above method to re-add the fade 2d image backdrop on trigger enter.
-
 		// Debug.Log("You hit a changeBackdrop trigger! " + other.gameObject);
 		
 		FadeCameraFarClipPlane (1);
 		if (FogOnly == true) {SmoothFogFade (3);}
-		if (ShouldUseOceanCamera == true) {enableOceanCamera(); SmoothFogFade (1);}
+		if (ShouldUseOceanCamera) {
+            if (FallingLaunch.isVRMode) {
+                EnableOceanCamera(true);
+            } else {
+                EnableOceanCamera(false);
+            }
+            SmoothFogFade (1);
+        }
 	}
 
 	else if (other.gameObject.CompareTag ("changeBackdrop2")) { 
@@ -101,7 +146,14 @@ function OnTriggerEnter (other : Collider) {
         
 		FadeCameraFarClipPlane (2);
 		if (FogOnly == true) {SmoothFogFade (2);}
-		if (ShouldUseOceanCamera == true) {enableOceanCamera(); SmoothFogFade (2);}
+		if (ShouldUseOceanCamera) {
+            if (FallingLaunch.isVRMode) {
+                EnableOceanCamera(true);
+            } else {
+                EnableOceanCamera(false);
+            }
+            SmoothFogFade (2);
+        }
 	}
 	
 }
@@ -118,29 +170,32 @@ function OnTriggerExit (other : Collider) {
     }
 }
 
-function changeCameraFadeLayer() {
-    var cameraFadeObject : GameObject = GameObject.Find ("iTween Camera Fade");
-    if (cameraFadeObject) {cameraFadeObject.layer = 4;}
-}
-
+// TODO: Switch iTween clip plane transitions to a regular lerp
 function FadeCameraFarClipPlane (type : int) {
-    if (type == 2) {
+    if (Debug.isDebugBuild) {
+        Debug.Log("calling FadeCameraFarClipPlane");
+    }
 
-    iTween.ValueTo ( gameObject,
-        {
-            "from" : cam.farClipPlane,
-            "to" : farClipPlaneValue2,
-            "onupdate" : "ChangeCameraFarClipPlane",
-            "time" : farClipPlaneFadeTime2,
-            "easetype" : "easeInExpo"
-       });
- 	}
+    if (type == 2) {
+        iTween.ValueTo ( gameObject,
+            {
+                "from" : cam.farClipPlane,
+                "to" : farClipPlaneValue2,
+                "onstart" : "EnableStereoUpdatesVR",
+                "onupdate" : "ChangeCameraFarClipPlane",
+                "oncomplete" : "YieldDisableStereoUpdatesVR",
+                "time" : farClipPlaneFadeTime2,
+                "easetype" : "easeInExpo"
+           });
+     	}
  	else {
  		    iTween.ValueTo ( gameObject,
         {
             "from" : cam.farClipPlane,
             "to" : farClipPlaneValue,
+            "onstart" : "EnableStereoUpdatesVR",
             "onupdate" : "ChangeCameraFarClipPlane",
+            "oncomplete" : "YieldDisableStereoUpdatesVR",
             "time" : farClipPlaneFadeTime,
             "easetype" : "easeInExpo"
        });
@@ -156,7 +211,6 @@ function SmoothFogFade (type : int) {
                 "onupdate" : "ChangeFogEndDistance",
                 "time" : 3,
                 "easetype" : "easeInExpo"
-    //          "oncomplete" : "CameraFadeEnd"
            });
     } else if (type == 2) {
         iTween.ValueTo ( gameObject,
@@ -192,17 +246,38 @@ function SmoothFogFade (type : int) {
     }
 }
 
+function ResetCameraClipPlane() {
+    if (Debug.isDebugBuild) {
+        Debug.Log("called ResetCameraClipPlane with current clip plane " + cam.farClipPlane);
+        Debug.Log("...and farClipPlaneValueOrig" + farClipPlaneValueOrig);
+    }
 
-function FadeBetweenCameras () {
-		iTween.CameraFadeAdd(fadeTex);
-		changeCameraFadeLayer();
-		iTween.CameraFadeTo(0.75,.25);
-		yield WaitForSeconds(.25);
-		iTween.CameraFadeTo(0.0,3);
+    // This function gets called on first level load (via LatestCheckpointRespawn),
+    // so we only want to proceed if the current camera clip value doesn't match 
+    // the specified starting value. This should avoid having more than one iTween lerp
+    // occurring simultaneously and polluting each other.
+    // TODO: Switch iTween to regular lerps
+    if (FallingLaunch.isVRMode && farClipPlaneValueOrig != cam.farClipPlane) {
+        
+        if (Debug.isDebugBuild) {
+            Debug.Log("resetting main VR camera clip plane to " + farClipPlaneValueOrig);
+        }
+
+        // Set the primary camera's draw distance (far clip plane), 
+        // and enable the keepStereoUpdated boolean on the parent
+        // stereo controller, so the child eye cameras will update to match.
+        yield EnableStereoUpdatesVR(); 
+        yield ResetFarClipPlane();
+        yield DisableStereoUpdatesVR(); // Then disable `keepStereoUpdated` for performance
+
+    } else if (cam && cam.farClipPlane != farClipPlaneValueOrig) {
+        cam.farClipPlane = farClipPlaneValueOrig;
+    }
 }
 
-function CameraFadeEnd () {
-	iTween.CameraFadeTo(0.0,1);
+// this gets yielded so we can be sure the new value is set before proceeding:
+function ResetFarClipPlane() : IEnumerator {
+    cam.farClipPlane = farClipPlaneValueOrig;
 }
 
 function ChangeFogEndDistance (i : int) {
@@ -217,9 +292,74 @@ function ChangeCameraFarClipPlane (i : int) {
 	cam.farClipPlane = i;
 }
 
-function enableOceanCamera () {
-	oceanCamera.GetComponent(Camera).enabled = true;
+function EnableStereoUpdatesVR () {
+    Debug.Log("called EnableStereoUpdatesVR");
+    // Existence check required for StereoControllerComponent since 
+    // it takes 1+ seconds to instantiate via GVR plugin:
+    if (FallingLaunch.isVRMode && StereoControllerComponent) {
+        // Type coercion is required... details in setVRMode.Start():
+        (StereoControllerComponent as StereoController).keepStereoUpdated = true;
+        Debug.Log("keepStereoUpdated is true");
+    }
+    yield;
+}
+
+// needed because iTween can't directly call a function that yields;
+function YieldDisableStereoUpdatesVR () {
+    yield DisableStereoUpdatesVR();
+}
+
+function DisableStereoUpdatesVR () {
+    // Existence check required for StereoControllerComponent since 
+    // it takes 1+ seconds to instantiate via GVR plugin:
+    if (FallingLaunch.isVRMode && StereoControllerComponent) {
+        // Just to make sure the below parent camera alterations
+        // actually propagate to the relevant stereo cameras:
+        if ((StereoControllerComponent as StereoController).keepStereoUpdated == false) {
+            (StereoControllerComponent as StereoController).keepStereoUpdated = true;
+        }
+
+        eyeCamerasVR = getChildVRCameras(mainCamera);
+        // Debug.Log('eyeCamerasVR are: ' + eyeCamerasVR);
+        // Debug.Log("is keepStereoUpdated true ? " + 
+        //     (StereoControllerComponent as StereoController).keepStereoUpdated );
+        for (var camera : Camera in eyeCamerasVR) {
+            if (Debug.isDebugBuild) {
+                Debug.Log("Setting camera " + camera + "'s farClipPlane to " + cam.farClipPlane);
+            }
+            camera.farClipPlane = cam.farClipPlane;
+        }
+
+        // it takes at least one frame for the GVR plugin to update the relevant cameras 
+        // based on the keepStereoUpdated boolean, so this assumes at least 2fps:
+        
+        // ...or handle StereoController existence check via a coroutine/callbacks?
+        yield WaitForSeconds(.5);
+        // Type coercion is required... details in setVRMode.Start():
+        (StereoControllerComponent as StereoController).keepStereoUpdated = false;
+    }
+    return;
+}
+
+function EnableOceanCamera (isVR: boolean) {
+    if (!isVR) {
+	   oceanCamera.GetComponent(Camera).enabled = true;
+    }
+
 	oceanRenderer.enabled = true;
-	cloudRenderer.enabled = true;
-	endSphereRenderer.enabled = true;
+}
+
+
+function getChildVRCameras(obj : GameObject) : Array{
+    var children : Array = new Array();
+    for (var child : Transform in obj.transform) {
+        var eyeCam = child.GetComponent.<Camera>();
+        if (Debug.isDebugBuild) {
+            Debug.Log("eyeCam is" + eyeCam);
+        }
+        if (eyeCam) {
+            children.Add(eyeCam);
+        }
+    }
+    return children;
 }
