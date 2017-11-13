@@ -12,12 +12,15 @@ private var VRViewerComponent : Component;
 // var VRViewer : GvrViewer;
 private var hasCentered : boolean = false;
 
+var VRUICameraVRTransform : Transform;
+var oceanCameraVRTransform : Transform;
+
 var VRUICameraObj : GameObject;
 var VRUICamera : Camera;
 private var VRUICameraVRHead : GvrHead;
 
-var VRUICameraVRTransform : Transform;
-var oceanCameraVRTransform : Transform;
+var fogColor : Color;
+var fogColorVR : Color;
 
 function Awake () {
     if (!cameraObj) {cameraObj = transform.FindChild("Camera").gameObject;}
@@ -44,7 +47,17 @@ function Start () {
     // https://docs.unity3d.com/ScriptReference/Component.GetComponent.html
     VRViewerComponent = GvrViewerMainObject.GetComponent("GvrViewer");
 
+    fogColor = RenderSettings.fogColor;
+
     if (FallingLaunch.isVRMode && VRViewerComponent) {
+
+        // Clear is the Unity-default color:
+        if (fogColorVR.ToString() != Color.clear.ToString()) {
+            Debug.Log('fogColorVR.ToString is ' + fogColorVR.ToString() );
+            Debug.Log('Color.clear.ToString is ' + Color.clear.ToString() );
+            RenderSettings.fogColor = fogColorVR;
+        }
+
         (VRViewerComponent as MonoBehaviour).enabled = true; // type coercion required to access 'enabled'
         (VRViewerComponent as GvrViewer).VRModeEnabled = true;
         // Re-parent camera for 90deg tilt offset (so player can look forward in VR):

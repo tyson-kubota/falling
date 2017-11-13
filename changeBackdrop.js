@@ -21,7 +21,10 @@ var oceanCamera : GameObject;
 var oceanCameraVR : GameObject;
 private var oceanCameraVRHead : GvrHead;
 
-var backdropCamera : GameObject;
+var backdropCameraObj : GameObject;
+var backdropCamera : Camera;
+
+var backdropCameraVR : GameObject;
 private var backdropCameraVRHead : GvrHead;
 
 var oceanRenderer : Renderer;
@@ -54,16 +57,20 @@ function Start () {
         var oceanCameraVRTransform : Transform = mainCamera.transform.FindChild("Camera-for-ocean-VR");
         oceanCameraVR = oceanCameraVRTransform ? oceanCameraVRTransform.gameObject : null;
 
-        var backdropCameraTransform : Transform = transform.FindChild("Camera-for-backdrop");
-        backdropCamera = backdropCameraTransform ? backdropCameraTransform.gameObject : null;
-
 		oceanRenderer = gameObject.Find("sky-water-ocean/Mesh").GetComponent.<Renderer>();
 		oceanRenderer.enabled = false;
 		
 		cloudRenderer = gameObject.Find("simple-cloud-plane/Mesh").GetComponent.<Renderer>();
 		cloudRenderer.enabled = false;
 	}
-	
+
+    var backdropCameraTransform : Transform = transform.FindChild("Camera-for-backdrop");
+    backdropCameraObj = backdropCameraTransform ? backdropCameraTransform.gameObject : null;
+    backdropCamera = backdropCameraObj.GetComponent.<Camera>();
+
+    var backdropCameraVRTransform : Transform = mainCamera.transform.FindChild("Camera-for-bg-VR");
+    backdropCameraVR = backdropCameraVRTransform ? backdropCameraVRTransform.gameObject : null;
+
 	cam = mainCamera.GetComponent.<Camera>();
     
     farClipPlaneValueOrig = cam.farClipPlane;
@@ -92,8 +99,16 @@ function Start () {
     // only one master GvrHead is applied to the scene at all, so we don't have to worry
     // about manging its rotation and inherited stereo cameras' values.
     if (FallingLaunch.isVRMode) {
+        ClearNonVRBackground();
         CheckAndFixSecondaryVRCameras(1.5);
+    } else {
+        // if we want to keep the 'legacy' 2D rectangle-based backgrounds...
+        // SetupNonVRBackground();
     }
+    // For now, try using the same skybox for VR and regular play, although
+    // (the latter won't benefit from the three-dimensionality yet, 
+    // since the 3D cloud mesh group is a child of the Player object):
+    ClearNonVRBackground();
 }
 
 function Update () {
@@ -108,7 +123,29 @@ function Update () {
     }
 }
 
+function ClearNonVRBackground () {
+    if (cloudCylinderObj) {
+        Debug.Log("about to disable cloudCylinderObj " + cloudCylinderObj);
+        cloudCylinderObj.SetActive(false);       
+    }
+    if (backdropCameraObj) {
+        Debug.Log("about to disable backdropCameraObj " + backdropCameraObj);
+        backdropCameraObj.SetActive(false);
+    }
+}
+
+function SetupNonVRBackground () {
+    // backdropCamera starts as disabled, so it shouldn't get a stereoController or GvrHead
+    // auto-applied (and thus shouldn't need manual checking or rotation-fixing):
+    if (backdropCamera) {backdropCamera.enabled = true;}
+
+    if (backdropCameraVR) {backdropCameraVR.SetActive(false);}
+}
+
 function CheckAndFixSecondaryVRCameras (interval : float) {
+    MaintainOceanVRCamera();
+    MaintainBackdropVRCamera();
+    
     while (true && FallingLaunch.isVRMode) {
         yield WaitForSeconds(interval);
         MaintainOceanVRCamera();
@@ -117,16 +154,26 @@ function CheckAndFixSecondaryVRCameras (interval : float) {
 }
 
 function MaintainBackdropVRCamera () {
-    if (!backdropCameraVRHead) {
-        if (backdropCamera.GetComponent.<GvrHead>()) {
-            backdropCameraVRHead = backdropCamera.GetComponent.<GvrHead>();
+    if (!backdropCameraVRHead && backdropCameraVR && backdropCameraVR.GetComponent.<GvrHead>()) {
+        backdropCameraVRHead = backdropCameraVR.GetComponent.<GvrHead>();    
+    }
 
+    if (backdropCameraVRHead) {
+        if (backdropCameraVRHead.trackRotation || 
+            backdropCameraVR.transform.localRotation != Quaternion.identity
+        ) {
+            if (Debug.isDebugBuild) {
+                Debug.Log("backdropCameraVRHead.trackRotation value " + backdropCameraVRHead.trackRotation);
+                Debug.Log("backdropCameraVR.localRotation value " + backdropCameraVR.transform.localRotation);
+                Debug.Log("about to reset backdropCameraVR's rotation");
+            }
             // this GvrHead is already nested within the Player object,
             // and the backdrop is meant to be static relative to the player, 
             // so therefore shouldn't independently track rotation:
             backdropCameraVRHead.trackRotation = false;
+            backdropCameraVR.transform.localRotation = Quaternion.identity;
         }
-    }    
+    }
 }
 
 function MaintainOceanVRCamera () {

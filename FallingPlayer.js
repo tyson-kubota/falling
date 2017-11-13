@@ -423,8 +423,10 @@ function changeLevelBackdrop () {
   if (myBackdropRenderer) {
       myBackdropRenderer.materials = [origMat];
   }
-	iTween.ColorTo(BackdropMist,{"a": startingCloudsAlpha,"time": .5});
-	}
+  if (BackdropMist) {
+	 iTween.ColorTo(BackdropMist,{"a": startingCloudsAlpha,"time": .5});
+  }
+}
 
 function Update () {
 	// playerTilt moves camera on device tilt. Enable if not in VR mode:
