@@ -19,7 +19,7 @@ static var cloudOriginalMaterial : Material;
 
 var oceanCamera : GameObject;
 var oceanCameraVR : GameObject;
-var oceanCameraVRHead : GvrHead;
+private var oceanCameraVRHead : GvrHead;
 
 var backdropCamera : GameObject;
 private var backdropCameraVRHead : GvrHead;
@@ -97,22 +97,44 @@ function Update () {
         }
 
         if (oceanLevel && oceanCameraVR && !oceanCameraVRHead) {
-            oceanCameraVRHead = oceanCameraVR.GetComponent.<StereoController>().Head;
+            if (oceanCameraVR.GetComponent.<GvrHead>()) {
+                // See note in FallingPlayer.SetupVRUI() for explanation:
+                // oceanCameraVRHead = oceanCameraVR.GetComponent.<StereoController>().Head;
+                oceanCameraVRHead = oceanCameraVR.GetComponent.<GvrHead>();
 
-            // this GvrHead is already nested within the Player camera's 
-            // StereoController, so to stay aligned with its parent, 
-            // it shouldn't independently track rotation:
-            oceanCameraVRHead.trackRotation = false;
+                // this GvrHead is already nested within the Player camera's 
+                // StereoController, so to stay aligned with its parent, 
+                // it shouldn't independently track rotation:
+                oceanCameraVRHead.trackRotation = false;
+            }
         }
 
         if (!backdropCameraVRHead) {
-            backdropCameraVRHead = backdropCamera.GetComponent.<StereoController>().Head;
+            if (backdropCamera.GetComponent.<GvrHead>()) {
+                backdropCameraVRHead = backdropCamera.GetComponent.<GvrHead>();
 
-            // this GvrHead is already nested within the Player object,
-            // and the backdrop is meant to be static relative to the player, 
-            // so therefore shouldn't independently track rotation:
-            backdropCameraVRHead.trackRotation = false;
+                // this GvrHead is already nested within the Player object,
+                // and the backdrop is meant to be static relative to the player, 
+                // so therefore shouldn't independently track rotation:
+                backdropCameraVRHead.trackRotation = false;
+            }
         }
+
+        // Unfortunately necessary, since any object with a GvrHead could potentially get
+        // an out-of-whack rotation from player input if trackRotation is ever true (the default), 
+        // which causes dependent stereo cameras to have a rotational offset that needs zeroing.
+        // To correct for the race condition, we check whether trackRotation ever becomes true:
+        if (oceanLevel && oceanCameraVR) {
+            if (oceanCameraVRHead && oceanCameraVRHead.trackRotation) {
+                if (Debug.isDebugBuild) {
+                    Debug.Log("oceanCameraVRHead.trackRotation value " + oceanCameraVRHead.trackRotation);
+                    Debug.Log("about to reset oceanCameraVR's rotation");
+                }
+                oceanCameraVR.transform.localRotation = Quaternion.identity;
+            }
+        }
+    } else {
+        return;
     }
 }
 
@@ -249,7 +271,7 @@ function SmoothFogFade (type : int) {
 function ResetCameraClipPlane() {
     if (Debug.isDebugBuild) {
         Debug.Log("called ResetCameraClipPlane with current clip plane " + cam.farClipPlane);
-        Debug.Log("...and farClipPlaneValueOrig" + farClipPlaneValueOrig);
+        Debug.Log("...and farClipPlaneValueOrig " + farClipPlaneValueOrig);
     }
 
     // This function gets called on first level load (via LatestCheckpointRespawn),
@@ -310,6 +332,7 @@ function YieldDisableStereoUpdatesVR () {
 }
 
 function DisableStereoUpdatesVR () {
+    Debug.Log("DisableStereoUpdatesVR");
     // Existence check required for StereoControllerComponent since 
     // it takes 1+ seconds to instantiate via GVR plugin:
     if (FallingLaunch.isVRMode && StereoControllerComponent) {
@@ -319,10 +342,8 @@ function DisableStereoUpdatesVR () {
             (StereoControllerComponent as StereoController).keepStereoUpdated = true;
         }
 
-        eyeCamerasVR = getChildVRCameras(mainCamera);
-        // Debug.Log('eyeCamerasVR are: ' + eyeCamerasVR);
-        // Debug.Log("is keepStereoUpdated true ? " + 
-        //     (StereoControllerComponent as StereoController).keepStereoUpdated );
+        eyeCamerasVR = getMainChildVRCameras(mainCamera);
+
         for (var camera : Camera in eyeCamerasVR) {
             if (Debug.isDebugBuild) {
                 Debug.Log("Setting camera " + camera + "'s farClipPlane to " + cam.farClipPlane);
@@ -333,7 +354,7 @@ function DisableStereoUpdatesVR () {
         // it takes at least one frame for the GVR plugin to update the relevant cameras 
         // based on the keepStereoUpdated boolean, so this assumes at least 2fps:
         
-        // ...or handle StereoController existence check via a coroutine/callbacks?
+        // ...or handle StereoController existence check via a coroutine/callback?
         yield WaitForSeconds(.5);
         // Type coercion is required... details in setVRMode.Start():
         (StereoControllerComponent as StereoController).keepStereoUpdated = false;
@@ -350,14 +371,18 @@ function EnableOceanCamera (isVR: boolean) {
 }
 
 
-function getChildVRCameras(obj : GameObject) : Array{
+function getMainChildVRCameras(obj : GameObject) : Array{
     var children : Array = new Array();
     for (var child : Transform in obj.transform) {
         var eyeCam = child.GetComponent.<Camera>();
         if (Debug.isDebugBuild) {
-            Debug.Log("eyeCam is" + eyeCam);
+            Debug.Log("eyeCam is " + eyeCam);
+            Debug.Log("with name " + child.gameObject.name);
         }
-        if (eyeCam) {
+        if (eyeCam && (child.gameObject.name === 'Camera Left' || child.gameObject.name === 'Camera Right')) {
+            if (Debug.isDebugBuild) {
+                Debug.Log("Adding this eyeCam to results: " + eyeCam);
+            }
             children.Add(eyeCam);
         }
     }

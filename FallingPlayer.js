@@ -403,10 +403,12 @@ function changeLevelBackdrop () {
     if (changeBackdrop.oceanCameraVR) {
       changeBackdrop.oceanCameraVR.GetComponent(Camera).enabled = false;
     }
-    if (changeBackdrop.oceanCamera) {
-      changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
-      changeBackdrop.oceanRenderer.enabled = false;
-    }
+  }
+
+  // needed even in VR mode, so the ocean renderer disables on respawn:
+  if (changeBackdrop.oceanCamera) {
+    changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
+    changeBackdrop.oceanRenderer.enabled = false;
   }
 
 	// the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component

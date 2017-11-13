@@ -6,7 +6,7 @@ private var myTransform : Transform = null;
 private var myRendererMatl : Material;
 private var dist : Vector3;
 private var sqrLen : float;
-private var sqrRtLen : float;
+private var lenToObj : float;
 
 function Start () {
 	myTransform = transform;
@@ -18,16 +18,20 @@ function OnBecameVisible() {
 }
 
 function OnBecameInvisible() {
+	if (myRendererMatl) {myRendererMatl.color.a = 0.0;}
 	isEnabled = false;
 }
 
 function Update () {
-	if (isEnabled == true) {
-		//var dist = Vector3.Distance(myTransform.position, other.position);
+	if (isEnabled) {
 		dist = myTransform.position - other.position;
 		sqrLen = dist.sqrMagnitude;
-		sqrRtLen = Mathf.Sqrt(sqrLen);
-		if (sqrLen < solidDistance*solidDistance) {sqrRtLen = solidDistance;}
-		myRendererMatl.color.a = solidDistance / sqrRtLen;
+		lenToObj = Mathf.Sqrt(sqrLen);
+		
+		if (sqrLen < solidDistance*solidDistance) {
+			lenToObj = solidDistance;
+		}
+		
+		myRendererMatl.color.a = solidDistance / lenToObj;
 	}
 }
