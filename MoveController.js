@@ -289,8 +289,9 @@ function FallingSpeed () {
         // but the attenuated version is easier on the neck to control!
 
         // Mutate into a downwards vector that insists on negative y values
-        // (so you can't fly upwards).
-        extraForce = Vector3(0, Mathf.Min(extraForce.y, 0.0) * Slowdown, 0);
+        // (so you can't fly upwards). `controlMultiplier` is used so you 
+        // can't reach max speed (Slowdown) while still lerping control in:
+        extraForce = Vector3(0, Mathf.Min(extraForce.y, 0.0) * Slowdown * controlMultiplier, 0);
     }
     else {
         extraForce = Vector3.down * Slowdown;
