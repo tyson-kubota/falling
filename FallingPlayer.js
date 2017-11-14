@@ -108,6 +108,7 @@ var peakVol : float;
 
 private var myTransform : Transform;
 private var myMainCamera : Camera;
+private var myMainCameraTransform : Transform;
 
 private var myBackdrop : GameObject;
 private var myBackdropRenderer : Renderer;
@@ -135,6 +136,8 @@ function Start() {
   }
 
   myMainCamera = Camera.main;
+  // Go up one level; this is the Player-cameras container object, which will get rotated on tilt:
+  myMainCameraTransform = myMainCamera.gameObject.transform.parent;
   myBackdrop = GameObject.Find("plane-close");
   BackdropMist = GameObject.Find("Cylinder");
   myBackdropRenderer = myBackdrop ? myBackdrop.GetComponent.<Renderer>() : null;
@@ -470,8 +473,10 @@ function playerTilt() {
 		tiltAroundX = FallingLaunch.invertVertAxisVal * Mathf.Clamp((FallingLaunch.flipMultiplier * (-FallingLaunch.accelerator.x * tiltAngle)), -tiltAngle, tiltAngle);
 
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
-	                // Dampen towards the target rotation
-	    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, target,
+      // Dampen towards the target rotation
+      // Rotating the camera transform, not the Player transform itself, so the 3D clouds 
+      // (which are the child of the Player object) have correct tilt context.
+	    myMainCameraTransform.rotation = Quaternion.Lerp(myMainCameraTransform.rotation, target,
 	                                   Time.deltaTime * smooth);
     }
 }

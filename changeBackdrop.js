@@ -50,11 +50,16 @@ var farClipPlaneFadeTime2 : float = 2;
 
 function Start () {
 	if (oceanLevel == true) {
-		if (!mainCamera) {mainCamera = transform.FindChild("Camera").gameObject;}
+		if (!mainCamera) {
+            mainCamera = Camera.main.gameObject;
+            // mainCamera = transform.Find("Player-cameras/Camera").gameObject;
+        }
         		
-		oceanCamera = transform.FindChild("Camera-for-ocean").gameObject;
+		oceanCamera = 
+            transform.Find("Player-cameras/Camera-for-ocean") ? 
+            transform.Find("Player-cameras/Camera-for-ocean").gameObject : null;
 
-        var oceanCameraVRTransform : Transform = mainCamera.transform.FindChild("Camera-for-ocean-VR");
+        var oceanCameraVRTransform : Transform = mainCamera.transform.Find("Camera-for-ocean-VR");
         oceanCameraVR = oceanCameraVRTransform ? oceanCameraVRTransform.gameObject : null;
 
 		oceanRenderer = gameObject.Find("sky-water-ocean/Mesh").GetComponent.<Renderer>();
@@ -64,11 +69,11 @@ function Start () {
 		cloudRenderer.enabled = false;
 	}
 
-    var backdropCameraTransform : Transform = transform.FindChild("Camera-for-backdrop");
+    var backdropCameraTransform : Transform = transform.Find("Player-cameras/Camera-for-backdrop");
     backdropCameraObj = backdropCameraTransform ? backdropCameraTransform.gameObject : null;
     backdropCamera = backdropCameraObj.GetComponent.<Camera>();
 
-    var backdropCameraVRTransform : Transform = mainCamera.transform.FindChild("Camera-for-bg-VR");
+    var backdropCameraVRTransform : Transform = mainCamera.transform.Find("Camera-for-bg-VR");
     backdropCameraVR = backdropCameraVRTransform ? backdropCameraVRTransform.gameObject : null;
 
 	cam = mainCamera.GetComponent.<Camera>();
@@ -86,8 +91,8 @@ function Start () {
             startingCloudAlpha = cloudOriginalMaterial.color.a; // Storing for later use.
         }
 
-        if (!closePlaneTransform) {
-            closePlaneTransform = transform.Find("plane-close");
+        if (!closePlaneTransform && backdropCameraTransform) {
+            closePlaneTransform = backdropCameraTransform.Find("plane-close");
         }
         if (closePlaneTransform) {
             closePlaneRenderer = closePlaneTransform.GetComponent.<Renderer>();

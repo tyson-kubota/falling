@@ -27,8 +27,9 @@ static var speedingUp : int = 1;
 static var controlMultiplier : float = 1.0;
 private var controlModifierTotal : float;
 
-var mainCameraObj : GameObject;
 private var mainCamera : Camera;
+var mainCameraObj : GameObject;
+var playerCamerasTransform : Transform;
 
 private var myHead : GvrHead;
 var GvrViewerMainObject : GameObject; // In each scene, manually add the GvrViewerMain obj via Inspector
@@ -67,12 +68,13 @@ function Start() {
 
     if (mainCameraObj) {
         mainCamera = mainCameraObj.GetComponent.<Camera>();
-    }
-    else { // if it wasn't set already via the Inspector UI...
-        mainCameraObj = GameObject.FindWithTag("MainCamera");
+    } else { // if it wasn't set already via the Inspector UI...
+        // mainCameraObj = GameObject.FindWithTag("MainCamera");
         mainCamera = Camera.main;
+        mainCameraObj = Camera.main.gameObject;
     }
 
+    playerCamerasTransform = mainCameraObj.transform.parent;
     audioSource = mainCamera.GetComponent.<AudioSource>();
 
     //Calibrate();
@@ -294,7 +296,14 @@ function FallingSpeed () {
         extraForce = Vector3(0, Mathf.Min(extraForce.y, 0.0) * Slowdown * controlMultiplier, 0);
     }
     else {
-        extraForce = Vector3.down * Slowdown;
+        // Debug.Log("playerCamerasTransform.up " + playerCamerasTransform.up);
+        // Debug.Log("negative playerCamerasTransform.up " + -playerCamerasTransform.up);
+        // negative because we want to go "down" and not actually "up";
+        // this corresponds (more or less) to the non-VR camera tilt at this moment.
+        extraForce = -playerCamerasTransform.up * Slowdown;
+        
+        // Old way (when we could assume this script's transform was already tilted):
+        // extraForce = Vector3.down * Slowdown;
     }
 
     // Debug.Log('extraForce: ' + extraForce);

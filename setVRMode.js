@@ -23,20 +23,23 @@ var fogColor : Color;
 var fogColorVR : Color;
 
 function Awake () {
-    if (!cameraObj) {cameraObj = transform.FindChild("Camera").gameObject;}
+    if (!cameraObj) {
+        cameraObj = Camera.main.gameObject;
+        // cameraObj = transform.Find("Player-cameras/Camera").gameObject;
+    }
 }
 
 function Start () {
 
-    // oceanCameraVRTransform = cameraObj.transform.FindChild("Camera-for-ocean-VR");
-    // VRUICameraVRTransform = cameraObj.transform.FindChild("Camera-for-VR-UI");
+    // oceanCameraVRTransform = cameraObj.transform.Find("Camera-for-ocean-VR");
+    // VRUICameraVRTransform = cameraObj.transform.Find("Camera-for-VR-UI");
 
     // VR UI Camera lives two levels down from the Player GameObject, 
     // inside the main parent Camera:
 
-    oceanCameraVRTransform = cameraObj.transform.FindChild("Camera-for-ocean-VR");
+    oceanCameraVRTransform = cameraObj.transform.Find("Camera-for-ocean-VR");
 
-    VRUICameraVRTransform = cameraObj.transform.FindChild("Camera-for-VR-UI");
+    VRUICameraVRTransform = cameraObj.transform.Find("Camera-for-VR-UI");
     VRUICameraObj = VRUICameraVRTransform ? VRUICameraVRTransform.gameObject : null;
     VRUICamera = VRUICameraObj.GetComponent.<Camera>();
 
