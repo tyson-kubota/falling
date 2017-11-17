@@ -2,7 +2,6 @@
 static var flipMultiplier : float = 1.0;
 static var levelEndSlowdown : float = 0.0;
 static var alreadyLaunched : boolean = false;
-static var hasSetOrientation : boolean = false;
 static var NewGamePlus : boolean = false;
 
 var targetFPS : int = 30;
@@ -55,7 +54,7 @@ enum iPads {
 };
 
 function Awake () {
-	isVRMode = false; // TODO: Let user pick this via UI
+	isVRMode = false; // User can override this via start menu UI
 }
 
 function Start () {
@@ -190,8 +189,17 @@ function ChangeTilt (toFlat : int) {
 	Calibrate();
 }
 
+// Only relevant in non-VR mode. 
+// In VR mode, we simply set landscapeLeft in all cases to meet the Google Cardboard SDK's expectations.
 function LockDeviceOrientation (waitTime: float) {
 	cachedScreenOrientation = Screen.orientation;
+
+	// Our outer function shouldn't actually get called if in VR mode, but for
+	// safety, defensively force landscapeLeft and early return in that case...
+	if (isVRMode) {
+		LockLandscapeLeftOrientation(isVRMode);
+		return;
+	}
 
 	// Let the device auto-rotate if necessary:
 	Screen.autorotateToLandscapeLeft = true;
@@ -199,12 +207,12 @@ function LockDeviceOrientation (waitTime: float) {
 	Screen.orientation = ScreenOrientation.AutoRotation;
 
 	// iOS/Unity can give strange/wrong orientation values while screen is mid-rotation
-	// or close to flat, so we manually add a wait yield.
+	// or close to flat, so we manually add a wait yield (~1s).
 	yield WaitForSeconds(waitTime);
 
 	switch (Input.deviceOrientation) {
 		case DeviceOrientation.LandscapeLeft:
-			LockLandscapeLeftOrientation();
+			LockLandscapeLeftOrientation(isVRMode);
 
 			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeLeft", 0.0);
 			break;
@@ -220,8 +228,9 @@ function LockDeviceOrientation (waitTime: float) {
 			break;
 	}
 
-	Screen.autorotateToLandscapeLeft = false;
-	Screen.autorotateToLandscapeRight = false;
+	// These are handled within each individual LockLandscapeLeft/Right function:
+	// Screen.autorotateToLandscapeLeft = false;
+	// Screen.autorotateToLandscapeRight = false;
 	
 	Calibrate();
 
@@ -246,7 +255,7 @@ function HandleDeviceOrientationMismatch() {
 				Debug.Log("There's been a cached/current deviceOrientation mismatch. Setting to landscape left...");
 			}
 			initialInputDeviceOrientation = Input.deviceOrientation;
-    		LockLandscapeLeftOrientation();
+    		LockLandscapeLeftOrientation(isVRMode);
     	} else if (initialInputDeviceOrientation == DeviceOrientation.LandscapeRight) {
     		if (Debug.isDebugBuild) {
     			Debug.Log("There's been a cached/current deviceOrientation mismatch. Setting to landscape right...");
@@ -281,15 +290,35 @@ function DefaultToLandscapeLeftOrientation() {
 		if (Debug.isDebugBuild) {
 			Debug.Log("Defaulting to LandscapeLeft, since Screen.orientation / Input.deviceOrientation were not LandscapeRight");
 		}
-		LockLandscapeLeftOrientation();
+		LockLandscapeLeftOrientation(isVRMode);
 	}	
 }
 
-function LockLandscapeLeftOrientation () {
-	if (Debug.isDebugBuild) {Debug.Log("Locking LandscapeLeft orientation");}
+function LockLandscapeLeftOrientation (isVR : boolean) {
+	if (Debug.isDebugBuild) {Debug.Log("Locking LandscapeLeft orientation with isVR " + isVR);}
 
-	Screen.orientation = ScreenOrientation.LandscapeLeft;
+	// if the device is held in landscapeRight already,
+	// the autorotateToLandscapeRight = false below is not enough 
+	// to force the left-hand orientation needed for VR mode.
+	if (isVR) {
+		// We disable all autorotation before forcing the new orientation, to prevent
+		// UnityViewControllerBaseiOS.mm `UnityShouldAutorotate` assert crashes:
+		Screen.autorotateToLandscapeLeft = false;
+		Screen.autorotateToLandscapeRight = false;
+		Screen.autorotateToPortrait = false;
+		Screen.autorotateToPortraitUpsideDown = false;
+		Screen.orientation = ScreenOrientation.LandscapeLeft;
+	}
+
 	cachedScreenOrientation = Screen.orientation;
+
+	// Further interaction with Screen.autorotate... values will crash 
+	// the app if we've already forced a given Screen.orientation 
+	// (see UnityViewControllerBaseiOS.mm assert note above), so the below
+	// is for non-VR mode only:
+	if (!isVR) {
+		Screen.autorotateToLandscapeRight = false;
+	}
 
 	neutralPosTilted = neutralPosTiltedRegular;
 	neutralPosVertical = neutralPosVerticalRegular;
@@ -299,8 +328,10 @@ function LockLandscapeLeftOrientation () {
 function LockLandscapeRightOrientation () {
 	if (Debug.isDebugBuild) {Debug.Log("Locking LandscapeRight orientation");}
 
-	Screen.orientation = ScreenOrientation.LandscapeRight;
+	// Screen.orientation = ScreenOrientation.LandscapeRight;
 	cachedScreenOrientation = Screen.orientation;
+
+	Screen.autorotateToLandscapeLeft = false;
 
 	neutralPosTilted = neutralPosTiltedFlipped;
 	neutralPosVertical = neutralPosVerticalFlipped;

@@ -110,9 +110,10 @@ function Awake () {
 
 
 function Start () {
-	// Just to be safe, exclude portrait modes from potential autorotation:
-	Screen.autorotateToPortrait = false;
-	Screen.autorotateToPortraitUpsideDown = false;
+	// // Just to be safe, exclude portrait modes from potential autorotation:
+	// BUG: Causes crash if device actually is in portrait or portrait upside-down.
+	// Screen.autorotateToPortrait = false;
+	// Screen.autorotateToPortraitUpsideDown = false;
 
 	// We have to use autoRotation here, due to crashes on force-changing Screen.orientation
 	// in conjunction with permitted-via-settings autoRotation
@@ -125,7 +126,7 @@ function Start () {
 	// (the edge cases are iPads lying on a flat surface, which could have either screen orientation):
 
 	// This function waits an [arbitrary] second for iOS's autorotation to settle, then locks it.
-	// It's not yielded, so it doesn't delay execution of the `hasSetOrientation = true` below.
+	// It's not yielded, so it doesn't delay execution of the below.
 	if (!FallingLaunch.isVRMode) {
 		fallingLaunchComponent.LockDeviceOrientation(1.0);
 	}
@@ -986,17 +987,17 @@ function OpenVRModeMenu() {
 function LaunchVRMode() {
 	FallingLaunch.isVRMode = true;
 
-    // NB: If your phone is tilted a little beyond flat (away from you) on level load,
-    // then all other game objects will be behind you when you look up: 180deg wrong
-    // in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse
-    // quaternion in some cases based on Head gaze direction/ gameObj position,
-    // or in the menu UI, ensure the phone orientation is not flat before
-    // letting the user load the scene. 
+	// NB: If your phone is tilted a little beyond flat (away from you) on level load,
+	// then all other game objects will be behind you when you look up: 180deg wrong
+	// in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse
+	// quaternion in some cases based on Head gaze direction/ gameObj position,
+	// or in the menu UI, ensure the phone orientation is not flat before
+	// letting the user load the scene. 
 
-    // HACK: But as a temporary workaround, force landscape left orientation 
-    // in VR for Cardboard compatibility (Google's SDK also enforces this mode
+	// HACK: But as a temporary workaround, force landscape left orientation 
+	// in VR for Cardboard compatibility (Google's SDK also enforces this mode
 	// with 'tilt your phone' UI when device is in landscape right):
-	fallingLaunchComponent.LockLandscapeLeftOrientation();
+	fallingLaunchComponent.LockLandscapeLeftOrientation(FallingLaunch.isVRMode);
 	ResumeGame();
 }
 
