@@ -466,7 +466,8 @@ function Update () {
         for (var i = 0; i < Input.touchCount; ++i) {
           if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
             isPausable = false;
-            FallingLaunch.isVRMode = false;
+            
+            fallingLaunchComponent.DisableVRMode();
 
             UIscriptComponent.SaveCheckpointVR();
             Application.LoadLevel("Falling-scene-menu");
@@ -699,10 +700,10 @@ function OnCollisionEnter (collision : Collision) {
 
   		if (audioDeath) {audioDeath.Play();}
 
-        GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-            "Death:Collision:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
-            FallingLaunch.secondsAlive
-        );
+      GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+          "Death:Collision:" + FallingLaunch.vrModeAnalyticsString + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
+          FallingLaunch.secondsAlive
+      );
   		//Debug.Log("you died in the area " + FallingLaunch.thisLevelArea);
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
 
@@ -770,9 +771,8 @@ function OnTriggerEnter (other : Collider) {
   	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
   	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 
-    // TODO: Send separate event indicating whether you were in VR mode?
     GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-        "LevelComplete:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
+        "LevelComplete:" + FallingLaunch.vrModeAnalyticsString + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
         FallingLaunch.secondsInLevel
     );
 

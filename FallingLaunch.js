@@ -35,6 +35,7 @@ static var debugMode : boolean = false; // true;
 var testFlightToken : String;
 
 static var isVRMode : boolean = false;
+static var vrModeAnalyticsString : String = "nonVRMode:";
 static var shouldShowVRIntroUI : boolean = false;
 static var showingVREndGameUI : boolean = false;
 
@@ -150,6 +151,16 @@ function OnLevelWasLoaded (level : int) {
 //	GoogleAnalytics.instance.Dispatch();
 
 	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
+}
+
+function EnableVRMode () {
+	isVRMode = true;
+	vrModeAnalyticsString = "isVRMode:";
+}
+
+function DisableVRMode () {
+	isVRMode = false;
+	vrModeAnalyticsString = "nonVRMode:";
 }
 
 function SetAxesInversion () {

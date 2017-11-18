@@ -16,7 +16,7 @@ function OnCollisionEnter (collision : Collision) {
     
     // throw an analytics event!
     GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-        "Projectile:Collision:" + ProjectileName,
+        "Projectile:Collision:" + FallingLaunch.vrModeAnalyticsString + ProjectileName,
         FallingLaunch.secondsAlive
     );
 

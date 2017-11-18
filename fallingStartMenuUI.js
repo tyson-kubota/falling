@@ -985,7 +985,7 @@ function OpenVRModeMenu() {
 }
 
 function LaunchVRMode() {
-	FallingLaunch.isVRMode = true;
+	fallingLaunchComponent.EnableVRMode();
 
 	// NB: If your phone is tilted a little beyond flat (away from you) on level load,
 	// then all other game objects will be behind you when you look up: 180deg wrong

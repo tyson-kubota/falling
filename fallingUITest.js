@@ -105,6 +105,13 @@ function Start () {
 	if (!FallingLaunch.isVRMode) {
 		SetupLevelUI();
 	} else {
+	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	        "LevelBegin:" + 
+        	FallingLaunch.vrModeAnalyticsString + 
+        	SceneManagement.SceneManager.GetActiveScene().name + ":" + 
+        	FallingLaunch.thisLevelArea,
+	        	FallingLaunch.secondsInLevel
+	    );
 		return;
 	}
 }
@@ -427,8 +434,10 @@ function SetupLevelUI() {
 //	Loop ();
 
     GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
-        "LevelBegin:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
-        FallingLaunch.secondsInLevel
+        "LevelBegin:" + FallingLaunch.vrModeAnalyticsString + 
+    	SceneManagement.SceneManager.GetActiveScene().name + ":" + 
+    	FallingLaunch.thisLevelArea,
+        	FallingLaunch.secondsInLevel
     );
 
     // Analytics reporting for tilt prefs, and horizontal/vertical axis prefs, respectively:

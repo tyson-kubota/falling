@@ -1,5 +1,8 @@
 ﻿#pragma strict
 
+private var fallingLaunch : GameObject;
+private var fallingLaunchComponent : FallingLaunch;
+
 var GvrViewerMainObject : GameObject;
 
 // should be a prefab tilted 90 degrees in X axis, so the user faces forward in headset:
@@ -30,6 +33,8 @@ function Awake () {
 }
 
 function Start () {
+      fallingLaunch = GameObject.Find("LaunchGameObject");
+      fallingLaunchComponent = fallingLaunch.GetComponent.<FallingLaunch>();
 
     // oceanCameraVRTransform = cameraObj.transform.Find("Camera-for-ocean-VR");
     // VRUICameraVRTransform = cameraObj.transform.Find("Camera-for-VR-UI");
@@ -112,7 +117,7 @@ function Update () {
             if ( (VRViewerComponent as GvrViewer).BackButtonPressed ) {
                 // When Cardboard SDK close icon / back button tapped, return home:
                 FallingPlayer.isPausable = false;
-                FallingLaunch.isVRMode = false;              
+                fallingLaunchComponent.DisableVRMode();
                 FallingPlayer.UIscriptComponent.SaveCheckpointVR();
                 FallingPlayer.UIscriptComponent.LoadHomeNow();
             } 
