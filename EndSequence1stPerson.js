@@ -14,6 +14,7 @@ var MusicBedInterpolated : AudioVolumeInterpolate;
 
 var UIscriptEndMenuName : GameObject;
 var UIscriptEndMenuComponent : FallingEndMenuUI;
+var reticleVRUIScript : VRLifeMeter;
 
 //var outroShards : GameObject;
 var outroCompletedOrb : GameObject;
@@ -26,15 +27,19 @@ function Start () {
 	MusicBedInterpolated = OutroMusicBedObject.GetComponent("AudioVolumeInterpolate");
 	UIscriptEndMenuComponent = UIscriptEndMenuName.GetComponent("FallingEndMenuUI");
 	EndTriggerComponent = EndTriggerName.GetComponent("EndSequenceTrigger");
-
     
+    // Look up manually if not added in inspector:
+    if (!reticleVRUIScript) {
+        Debug.Log("Did you forget to select a reticleVRUIScript in the Unity Inspector?");
+        reticleVRUIScript = GameObject.Find("vr-radial-life-meter").GetComponent.<VRLifeMeter>();
+    }
     // Skip to the outro for testing. 
     // Make sure to disable EndSequenceTrigger's PlayOutro call so they don't compete:
     // PlayOutro();
 }
 
 function PlayOutro () {
-	//GameAnalytics events for beating the game
+	// GameAnalytics events for beating the game
     var isNewGamePlus : String = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 
 	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
@@ -56,7 +61,13 @@ function PlayOutro () {
 	//PlayerController.SpeedLinesOff(1);
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
-	FallingPlayer.UIscriptComponent.BeginOutroUI();
+    
+    if (FallingLaunch.isVRMode) {
+        reticleVRUIScript.FadeReticleOut(0.5);
+    } else {
+        FallingPlayer.UIscriptComponent.BeginOutroUI();
+    }
+
     ScoreController.IncrementScore(35);
     
     LerpTowardsDiamond(10);
@@ -91,7 +102,10 @@ function PlayOutro () {
 	ScoreController.enabled = true;
 	LifeController.enabled = true;
 	lifeCountdown.inOutro = false;
-	FallingPlayer.UIscriptComponent.GameCompleteUI();
+	if (!FallingLaunch.isVRMode) {
+        Debug.Log("Please add VR mode ending UI!");
+        FallingPlayer.UIscriptComponent.GameCompleteUI();
+    }
 	UIscriptEndMenuComponent.ShowEndGameUI();
 	FadeAudioListener (4);
 	yield WaitForSeconds(1);
@@ -187,7 +201,7 @@ function FadeEndMenuLogo(timer:float){
         i += step * Time.deltaTime;
         EndMenuLogoObject.GetComponent.<Renderer>().material.color.a = Mathf.Lerp(start, end, i);
         yield;
-    	}
+    }
     	
     yield WaitForSeconds (timer);
 }

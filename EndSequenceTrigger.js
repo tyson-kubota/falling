@@ -1,6 +1,7 @@
 #pragma strict
 
 var Player : GameObject;
+var FallingPlayerScript : FallingPlayer;
 var EndScriptComponent : EndSequence1stPerson;
 
 var shards : Array;
@@ -18,6 +19,7 @@ function Awake () {
 
 function Start () {
 	audioSource = GetComponent.<AudioSource>();
+    FallingPlayerScript = Player.GetComponent("FallingPlayer");
 }
 
 function OnTriggerEnter (other : Collider) {
@@ -55,9 +57,13 @@ function getDiamondCenter() {
 }
 
 function SwapDiamonds(timer : float){
-	FallingPlayer.ScoreFlashTextureScript.FadeFlash(3.0, FadeDir.Out);
-	FallingPlayer.UIscriptComponent.OutroDiamondFlash(2);
-	//yield WaitForSeconds (.2);
+    if (!FallingLaunch.isVRMode) {
+        FallingPlayer.ScoreFlashTextureScript.FadeFlash(3.0, FadeDir.Out);
+        FallingPlayer.UIscriptComponent.OutroDiamondFlash(2);
+    } else {
+        FallingPlayerScript.ScoreFlashVR(0.8, FadeDir.Out);
+    }
+	
 	endDiamond.active = true;
 
 	var start = shardColor.color;
@@ -68,7 +74,7 @@ function SwapDiamonds(timer : float){
     while (i <= 1.0) {
         i += step * Time.deltaTime;
 
-        for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
+        for (var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
         shard.transform.Find("sky-rock-angled-segment").GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
 
         yield;
