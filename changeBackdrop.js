@@ -232,7 +232,7 @@ function OnTriggerEnter (other : Collider) {
 		// Debug.Log("You hit a changeBackdrop trigger! " + other.gameObject);
 		
 		FadeCameraFarClipPlane (1);
-		if (FogOnly == true) {SmoothFogFade (3);}
+		if (FogOnly) { SmoothFogFade (3); }
 		if (ShouldUseOceanCamera) {
             if (FallingLaunch.isVRMode) {
                 EnableOceanCamera(true);
@@ -247,7 +247,7 @@ function OnTriggerEnter (other : Collider) {
 		// Debug.Log("You hit an alt changeBackdrop trigger!");
         
 		FadeCameraFarClipPlane (2);
-		if (FogOnly == true) {SmoothFogFade (2);}
+		if (FogOnly) {SmoothFogFade (2);}
 		if (ShouldUseOceanCamera) {
             if (FallingLaunch.isVRMode) {
                 EnableOceanCamera(true);
@@ -306,45 +306,42 @@ function FadeCameraFarClipPlane (type : int) {
 
 function SmoothFogFade (type : int) {
     if (type == 1) {
-        iTween.ValueTo ( gameObject,
-            {
-                "from" : FallingPlayer.startingFogEndDistance,
-                "to" : fogEndValue,
-                "onupdate" : "ChangeFogEndDistance",
-                "time" : 3,
-                "easetype" : "easeInExpo"
-           });
+        FogLerp(3.0, RenderSettings.fogEndDistance, fogEndValue);
     } else if (type == 2) {
-        iTween.ValueTo ( gameObject,
-            {
-                "from" : FallingPlayer.startingFogEndDistance,
-                "to" : fogEndValue2,
-                "onupdate" : "ChangeFogEndDistance",
-                "time" : farClipPlaneFadeTime2,
-                "easetype" : "easeInExpo"
-           });
+        FogLerp(farClipPlaneFadeTime2, RenderSettings.fogStartDistance, fogEndValue2);
 	} else if (type == 3) {
         // Effectively zeroes out fog via gentler distance dispersal.
         // Assumes that fogEndValue is large enough that halving it 
         // will still place the fog start far from the camera.
         var fogStartType3 : float = fogEndValue * .5;
-        
-        iTween.ValueTo ( gameObject,
-        {
-            "from" : FallingPlayer.startingFogStartDistance,
-            "to" : fogStartType3,
-            "onupdate" : "ChangeFogStartDistance",
-            "time" : 3,
-            "easetype" : "easeInExpo"
-       });
-        iTween.ValueTo ( gameObject,
-        {
-            "from" : FallingPlayer.startingFogEndDistance,
-            "to" : fogEndValue,
-            "onupdate" : "ChangeFogEndDistance",
-            "time" : 3,
-            "easetype" : "easeInExpo"
-       });
+
+        FogLerp(10.0, fogStartType3, fogEndValue);        
+    }
+}
+
+function FogLerp (timer : float, startVal : float, endVal : float) {
+    var initStart = RenderSettings.fogStartDistance;
+    var initEnd = RenderSettings.fogEndDistance;
+
+    var start = startVal;
+    var end = endVal;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        var t : float = i*i * (3f - 2f*i); // smoothstep lerp
+        RenderSettings.fogStartDistance = Mathf.Lerp(initStart, start, t);
+        RenderSettings.fogEndDistance = Mathf.Lerp(initEnd, end, t);
+
+        // Reset fog if player dies mid-fog-lerp: 
+        if (FallingPlayer.isAlive == 0) {
+            RenderSettings.fogStartDistance = initStart;
+            RenderSettings.fogEndDistance = initEnd;
+            break;
+        }
+
+        yield;
     }
 }
 
@@ -380,14 +377,6 @@ function ResetCameraClipPlane() {
 // this gets yielded so we can be sure the new value is set before proceeding:
 function ResetFarClipPlane() : IEnumerator {
     cam.farClipPlane = farClipPlaneValueOrig;
-}
-
-function ChangeFogEndDistance (i : int) {
-	RenderSettings.fogEndDistance = i;
-}
-
-function ChangeFogStartDistance (i : int) {
-    RenderSettings.fogStartDistance = i;
 }
 
 function ChangeCameraFarClipPlane (i : int) {
