@@ -1,10 +1,13 @@
 #pragma strict
 
+var Player : GameObject;
+private var FallingPlayerScript : FallingPlayer;
 var PlayerController : MoveController;
 var ScoreController : ScoreController;
 var LifeController : lifeCountdown;
 var EndTriggerName : GameObject;
 var EndTriggerComponent : EndSequenceTrigger;
+var EndMenuLogoObjectVR : GameObject;
 var EndMenuLogoObject : GameObject;
 var EndMenuLogoCamera : GameObject;
 var OutroMusic : AudioSource;
@@ -21,6 +24,7 @@ var outroCompletedOrb : GameObject;
 var outroCompletionPoint : GameObject;
 
 function Start () {
+    FallingPlayerScript = GetComponent("FallingPlayer");
 	PlayerController = GetComponent("MoveController");
 	ScoreController = GetComponent("ScoreController");
 	LifeController = GetComponent("lifeCountdown");
@@ -62,6 +66,9 @@ function PlayOutro () {
 	yield WaitForSeconds (1);
 	PlayerController.enabled = false;
     
+    FallingPlayer.isPausable = false;
+    Player.transform.GetComponent.<Rigidbody>().isKinematic = true;
+
     if (FallingLaunch.isVRMode) {
         reticleVRUIScript.FadeReticleOut(0.5);
     } else {
@@ -103,13 +110,18 @@ function PlayOutro () {
 	LifeController.enabled = true;
 	lifeCountdown.inOutro = false;
 	if (!FallingLaunch.isVRMode) {
-        Debug.Log("Please add VR mode ending UI!");
         FallingPlayer.UIscriptComponent.GameCompleteUI();
+        UIscriptEndMenuComponent.ShowEndGameUI();
     }
-	UIscriptEndMenuComponent.ShowEndGameUI();
 	FadeAudioListener (4);
 	yield WaitForSeconds(1);
-	FadeEndMenuLogo(3);
+
+    if (FallingLaunch.isVRMode) {
+        FadeEndMenuLogoVR(3.0);
+        FallingPlayerScript.WhiteFadeVREndGame(5.0);
+    } else {
+	   FadeEndMenuLogo(3.0);
+    }
 	FallingLaunch.NewGamePlus = true;
 	//UIscriptComponent.LevelComplete();
 }
@@ -187,6 +199,24 @@ function RotateTowardsDiamond (timer : float) {
 //     }
 
 // }
+
+function FadeEndMenuLogoVR(timer:float){
+
+    EndMenuLogoObjectVR.GetComponent.<Renderer>().enabled = true;
+    var start = 0;
+    var end = 1.0;
+    var i = 0.0;
+    var step = 1.0/timer;
+ 
+    while (i <= 1.0) { 
+        i += step * Time.deltaTime;
+        EndMenuLogoObjectVR.GetComponent.<Renderer>().material.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
+        
+    yield WaitForSeconds (timer);
+}
+
 
 function FadeEndMenuLogo(timer:float){
 

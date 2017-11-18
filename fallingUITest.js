@@ -679,8 +679,6 @@ function LevelComplete(timer1 : float, timer2 : float) {
 
 function BeginOutroUI() {
 	FadeOutGUI();
-	FallingPlayer.isPausable = false;
-	player.GetComponent.<Rigidbody>().isKinematic = true;
 }
 
 // function GameComplete() {

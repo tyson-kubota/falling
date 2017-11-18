@@ -61,7 +61,7 @@ function SwapDiamonds(timer : float){
         FallingPlayer.ScoreFlashTextureScript.FadeFlash(3.0, FadeDir.Out);
         FallingPlayer.UIscriptComponent.OutroDiamondFlash(2);
     } else {
-        FallingPlayerScript.ScoreFlashVR(0.8, FadeDir.Out);
+        FallingPlayerScript.ScoreFlashVR(3.0, FadeDir.Out);
     }
 	
 	endDiamond.active = true;

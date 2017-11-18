@@ -625,6 +625,20 @@ function WhiteFadeVR (timer : float, fadeType : FadeDir) {
     }
 }
 
+function WhiteFadeVREndGame (timer : float) {
+
+    var start = 0.0;
+    var end = 0.66;
+    var i = 0.0;
+    var step = 1.0/timer;
+
+    while (i <= 1.0) {
+        i += step * Time.deltaTime;
+        whiteFadeUIVRMatl.color.a = Mathf.Lerp(start, end, i);
+        yield;
+    }
+}
+
 function OnCollisionEnter (collision : Collision) {
 // Debug.Log("Hit something!" + collision.contacts[0].normal + dir.x + dir.z + Input.acceleration.x);
 // Screen.sleepTimeout = 0.0f;
