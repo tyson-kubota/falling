@@ -27,6 +27,9 @@ function OnTriggerExit (other : Collider) {
 }
 
 function lerpDuck (timer : float, endVal : float) {
+
+    if (!StopAudioOnComplete && !audioSource.isPlaying) {audioSource.UnPause();}
+
     var start = audioSource.volume;
     var end = endVal;
     var i = 0.0;
@@ -39,5 +42,5 @@ function lerpDuck (timer : float, endVal : float) {
 	}
     yield WaitForSeconds (timer);
 
-    if (StopAudioOnComplete) {audioSource.Stop();}
+    if (StopAudioOnComplete) {audioSource.Pause();}
 }
