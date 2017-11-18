@@ -77,6 +77,10 @@ var whiteFadeUIVR : GameObject;
 private var whiteFadeUIVRRenderer : Renderer;
 private var whiteFadeUIVRMatl : Material;
 
+var whiteFadeEndGameUIVR : GameObject;
+private var whiteFadeEndGameUIVRRenderer : Renderer;
+private var whiteFadeEndGameUIVRMatl : Material;
+
 var scoreUIVR : GameObject;
 private var scoreUIVRRenderer : Renderer;
 private var scoreUIVRMatl : Material;
@@ -84,6 +88,10 @@ private var peakScoreFlashValueVR : float = 1.0;
 
 var reticleVRUIObj : GameObject;
 static var reticleVRUIScript : VRLifeMeter;
+
+var endGameUIObjVR : GameObject;
+private var endGameUIVRRenderer : Renderer;
+private var endGameUIVRMatl : Material;
 
 var clearDestroyedObjects : boolean = false;
 
@@ -153,6 +161,12 @@ function Start() {
     whiteFadeUIVRRenderer = whiteFadeUIVR.GetComponent.<Renderer>();
     whiteFadeUIVRMatl = whiteFadeUIVRRenderer.material;
     whiteFadeUIVRMatl.color.a = 0;
+
+    if (whiteFadeEndGameUIVR) {
+      whiteFadeEndGameUIVRRenderer = whiteFadeEndGameUIVR.GetComponent.<Renderer>();
+      whiteFadeEndGameUIVRMatl = whiteFadeEndGameUIVRRenderer.material;
+      whiteFadeEndGameUIVRMatl.color.a = 0;
+    }
 
     // Hack to have two separate death/fade-to-black sphere objects,
     // but neither shader does everything. The inverted transparent shader occludes
@@ -438,24 +452,36 @@ function Update () {
     }
 
     // disable VR mode and return to menu on screen touch while dead:
-    if (FallingLaunch.isVRMode && isAlive == 0 && deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
-      for (var i = 0; i < Input.touchCount; ++i) {
-        if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
-          isPausable = false;
-          FallingLaunch.isVRMode = false;
+    if (FallingLaunch.isVRMode) {
 
-          UIscriptComponent.SaveCheckpointVR();
-          Application.LoadLevel("Falling-scene-menu");
+      if (FallingLaunch.showingVREndGameUI) {
+        for (var i3 = 0; i3 < Input.touchCount; ++i3) {
+          if (Input.GetTouch(i3).phase == TouchPhase.Ended && Input.GetTouch(i3).phase != TouchPhase.Canceled) {
+            Application.LoadLevel("Falling-scene-menu");
+          }
         }
       }
-    }
 
-    if (FallingLaunch.isVRMode && levelStartUIVR.activeInHierarchy && FallingLaunch.shouldShowVRIntroUI) {
-      for (var i2 = 0; i2 < Input.touchCount; ++i2) {
-        if (Input.GetTouch(i2).phase == TouchPhase.Ended && Input.GetTouch(i2).phase != TouchPhase.Canceled) {
-          ContinueFromLevelStartVR();
+      if (isAlive == 0 && deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
+        for (var i = 0; i < Input.touchCount; ++i) {
+          if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
+            isPausable = false;
+            FallingLaunch.isVRMode = false;
+
+            UIscriptComponent.SaveCheckpointVR();
+            Application.LoadLevel("Falling-scene-menu");
+          }
         }
       }
+
+      if (levelStartUIVR.activeInHierarchy && FallingLaunch.shouldShowVRIntroUI) {
+        for (var i2 = 0; i2 < Input.touchCount; ++i2) {
+          if (Input.GetTouch(i2).phase == TouchPhase.Ended && Input.GetTouch(i2).phase != TouchPhase.Canceled) {
+            ContinueFromLevelStartVR();
+          }
+        }
+      }
+      
     }
 
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
@@ -631,12 +657,26 @@ function WhiteFadeVREndGame (timer : float) {
     var end = 0.66;
     var i = 0.0;
     var step = 1.0/timer;
+    
+    if (endGameUIObjVR) {
+      endGameUIObjVR.SetActive(true);
+      endGameUIVRRenderer = endGameUIObjVR.GetComponent.<Renderer>();
+      endGameUIVRMatl = endGameUIVRRenderer.material;
+    }
+
+    if (whiteFadeEndGameUIVR) {
+      whiteFadeEndGameUIVR.SetActive(true);
+    }
 
     while (i <= 1.0) {
         i += step * Time.deltaTime;
-        whiteFadeUIVRMatl.color.a = Mathf.Lerp(start, end, i);
+        whiteFadeEndGameUIVRMatl.color.a = Mathf.Lerp(start, end, i);
+        if (endGameUIVRMatl) {endGameUIVRMatl.color.a = Mathf.Lerp(start, end, i);}
         yield;
     }
+
+    // this will allow screen taps to return to the main menu:
+    FallingLaunch.showingVREndGameUI = true;
 }
 
 function OnCollisionEnter (collision : Collision) {

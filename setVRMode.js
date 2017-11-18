@@ -102,12 +102,11 @@ function Start () {
 }
 
 function Update () {
-    MaintainVRUI();
     // Early return if not in VR mode:
-    // if (!FallingLaunch.isVRMode) {
-    //     return;
-    // } else 
-    if (FallingLaunch.isVRMode) {
+    if (!FallingLaunch.isVRMode) {
+        return;
+    } else if (FallingLaunch.isVRMode) {
+        MaintainVRUI();
         if (VRViewerComponent) {
             // See note in Start() about unfortunate-but-required type coercion:
             if ( (VRViewerComponent as GvrViewer).BackButtonPressed ) {

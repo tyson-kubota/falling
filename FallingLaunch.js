@@ -36,6 +36,7 @@ var testFlightToken : String;
 
 static var isVRMode : boolean = false;
 static var shouldShowVRIntroUI : boolean = false;
+static var showingVREndGameUI : boolean = false;
 
 //GameAnalytics variables
 static var secondsAlive : float = 0;

@@ -122,8 +122,8 @@ function PlayOutro () {
     } else {
 	   FadeEndMenuLogo(3.0);
     }
+
 	FallingLaunch.NewGamePlus = true;
-	//UIscriptComponent.LevelComplete();
 }
 
 function LerpTowardsDiamond (timer : float) {

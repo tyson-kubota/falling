@@ -145,6 +145,6 @@ function LifeFlashCheck (delay : float, score : int) {
 			LifeFlashTextureScript.FadeFlash(delay, FadeDir.Out);
 		}
 
-		yield WaitForSeconds((delay*3)); // stagger the flash timing (compare w/ `delay` above)
+		yield WaitForSeconds(delay*3); // stagger the flash timing (compare w/ `delay` above)
 	}
 }
