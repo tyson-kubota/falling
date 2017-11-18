@@ -975,6 +975,12 @@ function OpenAbout() {
 
 function OpenVRModeMenu() {
 
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+        "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString + 
+        Screen.orientation, 
+        FallingLaunch.levelAchieved
+    );
+
 	HideStartMenuElements();
 	ShowBackButton();
 
@@ -986,6 +992,12 @@ function OpenVRModeMenu() {
 
 function LaunchVRMode() {
 	fallingLaunchComponent.EnableVRMode();
+
+    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+        "EnteringVRMode:" + FallingLaunch.vrModeAnalyticsString + 
+        Screen.orientation, 
+        FallingLaunch.levelAchieved
+    );
 
 	// NB: If your phone is tilted a little beyond flat (away from you) on level load,
 	// then all other game objects will be behind you when you look up: 180deg wrong
