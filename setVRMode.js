@@ -66,6 +66,16 @@ function Start () {
 
         (VRViewerComponent as MonoBehaviour).enabled = true; // type coercion required to access 'enabled'
         (VRViewerComponent as GvrViewer).VRModeEnabled = true;
+
+        // Center Cardboard view post-instantiation, but before calling setParent on
+        // the main camera to make it the child of the 90-degree-offset prefab,
+        // since we want to map 'forward' in Cardboard-land to 'down' in world space:
+        if (!hasCentered) {
+            var VRViewer = GvrViewerMainObject.GetComponent.<GvrViewer>();
+            VRViewer.Instance.Recenter();
+            hasCentered = true;
+        }
+
         // Re-parent camera for 90deg tilt offset (so player can look forward in VR):
         cameraVRParent = 
             Instantiate(cameraVRParentPrefab);
@@ -88,13 +98,6 @@ function Start () {
             VRUICameraVRTransform.localRotation = Quaternion.identity;
         }
 
-        // center cardboard view post-instantiation:
-        // TODO: This recentering needs some kind of rotational offset to account for the parent head's 90-degree (we want to map 'forward' in cardboard to 'down' in world space)
-        // if (!hasCentered) {
-        //     VRViewer = GvrViewerMainObject.GetComponent.<GvrViewer>();
-        //     VRViewer.Instance.Recenter();
-        //     hasCentered = true;
-        // }
     } else if (VRViewerComponent) {
         (VRViewerComponent as GvrViewer).VRModeEnabled = false;
     }
