@@ -1,4 +1,7 @@
 #pragma strict
+
+static var Analytics : AnalyticsUtil;
+
 static var flipMultiplier : float = 1.0;
 static var levelEndSlowdown : float = 0.0;
 static var alreadyLaunched : boolean = false;
@@ -63,6 +66,7 @@ function Start () {
 
 	// PlayerPrefs.DeleteAll();
 	if (!alreadyLaunched) {
+		Analytics = GetComponent.<AnalyticsUtil>();
 
 //		TestFlightUnity.TestFlight.TakeOff( testFlightToken );
 		if (Debug.isDebugBuild) {
@@ -226,17 +230,17 @@ function LockDeviceOrientation (waitTime: float) {
 		case DeviceOrientation.LandscapeLeft:
 			LockLandscapeLeftOrientation(isVRMode);
 
-			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeLeft", 0.0);
+			FallingLaunch.Analytics.Event("DeviceOrientationSet:LandscapeLeft", 0.0);
 			break;
 		case DeviceOrientation.LandscapeRight:
 			LockLandscapeRightOrientation();
 
-			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:LandscapeRight", 0.0);
+			FallingLaunch.Analytics.Event("DeviceOrientationSet:LandscapeRight", 0.0);
 			break;
 		default:
 			HandleDeviceOrientationMismatch();
 
-			GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationCheck:NonLandscape:" + Input.deviceOrientation, 0.0);
+			FallingLaunch.Analytics.Event("DeviceOrientationCheck:NonLandscape:" + Input.deviceOrientation, 0.0);
 			break;
 	}
 
@@ -257,7 +261,7 @@ function LockDeviceOrientation (waitTime: float) {
 function HandleDeviceOrientationMismatch() {
 	if (initialInputDeviceOrientation != Input.deviceOrientation) {
 
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	    	"DeviceOrientationCheck:CachedAndCurrentMismatch:" + Input.deviceOrientation + ":" + initialInputDeviceOrientation,
 	    	0.0
     	);
@@ -282,7 +286,7 @@ function HandleDeviceOrientationMismatch() {
 		if (Debug.isDebugBuild) {
 			Debug.Log("InitialInputDeviceOrientation and Input.deviceOrientation do match, as " + Input.deviceOrientation);
 		}
-		GameAnalyticsSDK.GameAnalytics.NewDesignEvent ("DeviceOrientationSet:CachedAndCurrentMatch:" + Input.deviceOrientation, 0.0);
+		FallingLaunch.Analytics.Event("DeviceOrientationSet:CachedAndCurrentMatch:" + Input.deviceOrientation, 0.0);
 
 		// But we must choose left or right, ultimately...
 		DefaultToLandscapeLeftOrientation();

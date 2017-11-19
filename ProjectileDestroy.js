@@ -15,7 +15,7 @@ function OnCollisionEnter (collision : Collision) {
   if (collision.gameObject.CompareTag ("Player")) {
     
     // throw an analytics event!
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
         "Projectile:Collision:" + FallingLaunch.vrModeAnalyticsString + ProjectileName,
         FallingLaunch.secondsAlive
     );

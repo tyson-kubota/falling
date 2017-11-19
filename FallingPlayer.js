@@ -703,7 +703,7 @@ function OnCollisionEnter (collision : Collision) {
 
   		if (audioDeath) {audioDeath.Play();}
 
-      GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+      FallingLaunch.Analytics.Event(
           "Death:Collision:" + FallingLaunch.vrModeAnalyticsString + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
           FallingLaunch.secondsAlive
       );
@@ -774,7 +774,7 @@ function OnTriggerEnter (other : Collider) {
   	var isNewGamePlus = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
   	FallingLaunch.secondsInLevel = (Time.time - levelStartTime);
 
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
         "LevelComplete:" + FallingLaunch.vrModeAnalyticsString + SceneManagement.SceneManager.GetActiveScene().name + ":" + isNewGamePlus,
         FallingLaunch.secondsInLevel
     );

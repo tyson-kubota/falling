@@ -979,7 +979,7 @@ function OpenAbout() {
 
 function OpenVRModeMenu() {
 
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
         "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString + 
         Screen.orientation, 
         FallingLaunch.levelAchieved
@@ -997,7 +997,7 @@ function OpenVRModeMenu() {
 function LaunchVRMode() {
 	fallingLaunchComponent.EnableVRMode();
 
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
         "EnteringVRMode:" + FallingLaunch.vrModeAnalyticsString + 
         Screen.orientation, 
         FallingLaunch.levelAchieved

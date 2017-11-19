@@ -103,7 +103,7 @@ function TickingAway (delay : float) {
 
 		   	//Debug.Log("You died!");
 
-		   	GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+		   	FallingLaunch.Analytics.Event(
 		   		"Death:Drained:" + FallingLaunch.vrModeAnalyticsString + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
 		   		FallingLaunch.secondsAlive
 	   		);

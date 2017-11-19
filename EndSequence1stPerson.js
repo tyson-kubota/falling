@@ -47,7 +47,7 @@ function PlayOutro () {
     var isNewGamePlus : String = (FallingLaunch.NewGamePlus) ? "new_game_plus" : "first_game";
 
 	FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
         "GameComplete:" + FallingLaunch.vrModeAnalyticsString + isNewGamePlus,
         FallingLaunch.secondsInLevel
     );

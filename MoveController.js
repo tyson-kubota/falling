@@ -237,7 +237,7 @@ function FallingSpeed () {
                 Slowdown = maxSlowdown;
                 speedingUp = 2;
                 speedsUp();
-                // GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+                // FallingLaunch.Analytics.Event(
                 //     "Control:SpeedBoost:Start:" + Application.loadedLevelName + ":" + FallingLaunch.thisLevelArea,
                 //     FallingLaunch.secondsAlive
                 // );

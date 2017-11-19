@@ -105,7 +105,7 @@ function Start () {
 	if (!FallingLaunch.isVRMode) {
 		SetupLevelUI();
 	} else {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	        "LevelBegin:" + 
         	FallingLaunch.vrModeAnalyticsString + 
         	SceneManagement.SceneManager.GetActiveScene().name + ":" + 
@@ -433,7 +433,7 @@ function SetupLevelUI() {
 	animateProgressBar (lifeBar);
 //	Loop ();
 
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
         "LevelBegin:" + FallingLaunch.vrModeAnalyticsString + 
     	SceneManagement.SceneManager.GetActiveScene().name + ":" + 
     	FallingLaunch.thisLevelArea,
@@ -442,41 +442,41 @@ function SetupLevelUI() {
 
     // Analytics reporting for tilt prefs, and horizontal/vertical axis prefs, respectively:
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        0.0
 	    );
 	} else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        90.0f
 	    );
 	} else {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        45.0f
 	    );
 	}
 
 	if (FallingLaunch.invertHorizAxisVal == 1) {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        1.0f
 	    );
 	} else if (FallingLaunch.invertHorizAxisVal == -1) {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        -1.0f
 	    );
 	}
 
 	if (FallingLaunch.invertVertAxisVal == -1) {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        -1.0f
 	    );
 	} else if (FallingLaunch.invertVertAxisVal == 1) {
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name,
 	        1.0f
 	    );
@@ -538,7 +538,7 @@ function PauseGame() {
 
 		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
 
-	    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+	    FallingLaunch.Analytics.Event(
 	       	"GUI:PauseGame:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
 	        FallingLaunch.secondsInLevel
 	    );
@@ -629,7 +629,7 @@ function RestartLevel() {
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
 
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
        	"GUI:RestartLevel:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
         FallingLaunch.secondsInLevel
     );
@@ -1144,7 +1144,7 @@ function ToggleTiltNeutral () {
 }
 
 function SaveCheckpointVR () {
-    GameAnalyticsSDK.GameAnalytics.NewDesignEvent (
+    FallingLaunch.Analytics.Event(
        	"ExitVRMode:" + SceneManagement.SceneManager.GetActiveScene().name,
         FallingLaunch.secondsInLevel
     );
