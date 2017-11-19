@@ -754,6 +754,10 @@ function FadeAudio (timer : float) {
 }
 
 function ResumeGame() {
+	// This means we just beat the game, and are now continuing via menu:
+	if (FallingLaunch.NewGamePlus && PlayerPrefs.GetString("LatestLevel") == level4) {
+		StartLevelLoad(level1);
+	}
 	if (PlayerPrefs.HasKey("LatestLevel")) {
 		StartLevelLoad(PlayerPrefs.GetString("LatestLevel"));
 	} else if (FallingLaunch.isVRMode) {

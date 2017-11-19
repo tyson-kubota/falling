@@ -61,8 +61,6 @@ function Start () {
 
         // Clear is the Unity-default color:
         if (fogColorVR.ToString() != Color.clear.ToString()) {
-            Debug.Log('fogColorVR.ToString is ' + fogColorVR.ToString() );
-            Debug.Log('Color.clear.ToString is ' + Color.clear.ToString() );
             RenderSettings.fogColor = fogColorVR;
         }
 

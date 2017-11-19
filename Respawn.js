@@ -71,7 +71,7 @@ function Start()
 		if (PlayerPrefs.HasKey("LatestLevel") && PlayerPrefs.GetString("LatestLevel") == Application.loadedLevelName)
 		{
 			myCheckpoint = PlayerPrefs.GetString("LatestCheckpoint");
-			currentRespawn = GameObject.Find(myCheckpoint).GetComponent(Respawn);
+			currentRespawn = myCheckpoint ? GameObject.Find(myCheckpoint).GetComponent(Respawn) : initialRespawn;
 			var tempPlayer : GameObject = GameObject.Find("Player");
 			var tempPlayerComponent : FallingPlayer = tempPlayer.GetComponent("FallingPlayer");
 			var IntroScriptComponent : IntroSequence1stPerson = tempPlayer.GetComponent("IntroSequence1stPerson");

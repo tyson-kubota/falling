@@ -104,15 +104,12 @@ function Start () {
     // only one master GvrHead is applied to the scene at all, so we don't have to worry
     // about manging its rotation and inherited stereo cameras' values.
     if (FallingLaunch.isVRMode) {
-        ClearNonVRBackground();
         CheckAndFixSecondaryVRCameras(1.5);
     } else {
         // if we want to keep the 'legacy' 2D rectangle-based backgrounds...
         // SetupNonVRBackground();
     }
-    // For now, try using the same skybox for VR and regular play, although
-    // (the latter won't benefit from the three-dimensionality yet, 
-    // since the 3D cloud mesh group is a child of the Player object):
+    // For now, try using the same skybox for VR and regular play:
     ClearNonVRBackground();
 }
 

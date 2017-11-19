@@ -457,6 +457,9 @@ function Update () {
       if (FallingLaunch.showingVREndGameUI) {
         for (var i3 = 0; i3 < Input.touchCount; ++i3) {
           if (Input.GetTouch(i3).phase == TouchPhase.Ended && Input.GetTouch(i3).phase != TouchPhase.Canceled) {
+            // PlayerPrefs.DeleteKey("LatestCheckpoint");
+            // PlayerPrefs.SetString("LatestLevel", "Falling-scene-tutorial");
+            FallingLaunch.showingVREndGameUI = false;
             Application.LoadLevel("Falling-scene-menu");
           }
         }
