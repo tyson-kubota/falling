@@ -39,6 +39,10 @@ var oceanLevel : boolean = false;
 var ShouldUseOceanCamera : boolean = false;
 var ShouldChangeBackdrop : boolean = false;
 var FogOnly : boolean = false;
+
+private var origSkybox : Material;
+var altSkybox : Material;
+
 var farClipPlaneValueOrig : int;
 var farClipPlaneValue : int = 2500;
 var fogEndValue : int = 3000;
@@ -68,6 +72,10 @@ function Start () {
 		cloudRenderer = gameObject.Find("simple-cloud-plane/Mesh").GetComponent.<Renderer>();
 		cloudRenderer.enabled = false;
 	}
+
+    if (ShouldChangeBackdrop) {
+        origSkybox = RenderSettings.skybox;
+    }
 
     var backdropCameraTransform : Transform = transform.Find("Player-cameras/Camera-for-backdrop");
     backdropCameraObj = backdropCameraTransform ? backdropCameraTransform.gameObject : null;
@@ -218,6 +226,10 @@ function MaintainOceanVRCamera () {
 function OnTriggerEnter (other : Collider) {
 	if (other.gameObject.CompareTag ("changeBackdrop")) { 
 	
+        if (ShouldChangeBackdrop && altSkybox) {
+            RenderSettings.skybox = altSkybox;
+        }
+
 		if (ShouldChangeBackdrop && closePlaneRenderer) {
             closePlaneRenderer.materials = [newMat];
         }
@@ -266,6 +278,11 @@ function OnTriggerExit (other : Collider) {
         if ((ShouldChangeBackdrop || oceanLevel) && cloudOriginalMaterial) {
             iTween.ColorTo(cloudCylinderObj,{"a": startingCloudAlpha, "time": .5});
         }
+    }
+
+    // Only used by level 1/tutorial ending 'dawn' skybox:
+    if (other.gameObject.CompareTag ("changeBackdrop") && ShouldChangeBackdrop) {
+        RenderSettings.skybox = origSkybox;
     }
 }
 
