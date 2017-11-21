@@ -8,6 +8,8 @@ var lifeFlashUIVR : GameObject;
 private var lifeFlashUIRenderer : Renderer;
 private var lifeFlashUIMatl : Material;
 private var peakLifeFlashValueVR : float = 0.7;
+var lifeFlashAudioObj : GameObject;
+private var lifeFlashAudio : AudioSource;
 
 var fallingIntroUIComponent : fallingIntroUI;
 
@@ -28,6 +30,8 @@ function Start () {
         lifeFlashUIMatl.color.a = 0;
 	}
 
+    lifeFlashAudio = lifeFlashAudioObj.GetComponent.<AudioSource>();
+
 	maxSlowdownThreshold = MoveController.maxSlowdown - 1;
    	Loop ();
    	Loop2 ();
@@ -44,7 +48,7 @@ function Loop () {
 
 function Loop2 () {
     while (true && inOutro == false) {
-		yield LifeFlashCheck(.2, 5);
+		yield LifeFlashCheck(.2, ScoreController.maxScore/4.0);
     }
 }
 
@@ -57,8 +61,8 @@ function ScoreLerpLoop () {
 
 function FadeFlashVR (timer : float, fadeType : FadeDir) {
 
-    var start = fadeType == FadeDir.In? 0.0 : peakLifeFlashValueVR;
-    var end = fadeType == FadeDir.In? peakLifeFlashValueVR : 0.0;
+    var start = fadeType == FadeDir.In ? 0.0 : peakLifeFlashValueVR;
+    var end = fadeType == FadeDir.In ? peakLifeFlashValueVR : 0.0;
     var i = 0.0;
     var step = 1.0/timer;
 
@@ -81,7 +85,7 @@ function TickingAway (delay : float) {
 	// the UI health bar's lerp would lag behind the actual value, so the player would
 	// appear to die too soon in some cases.
 	if (ScoreController.currentScore > 0 || ScoreController.visibleScore > 0) {
-		
+
 		if (MoveController.Slowdown > maxSlowdownThreshold) {
 			script.DecrementScore(delay);
 	   		yield WaitForSeconds((delay/4)); // 4x health penalty during player speedup
@@ -135,16 +139,29 @@ function LifeFlashCheck (delay : float, score : int) {
 
 	if (ScoreController.currentScore < score && inOutro == false) {
 
+        if (lifeFlashAudio) {
+            var deathPromixityScore = 1.0 - (ScoreController.currentScore / score);
+            // Clamp to a min volume of 0.2, max volume of .75;
+            lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore, 0.2, 0.9);
+            // lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore, 0.2, 0.75);
+            // lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore / 1.5, 0.15, 0.75);
+        }
+
 	   	if (FallingLaunch.isVRMode) {
 	   		FadeFlashVR(delay, FadeDir.In);
+            if (lifeFlashAudio) {lifeFlashAudio.Play();}
 	   		yield WaitForSeconds(delay);
 	   		FadeFlashVR(delay, FadeDir.Out);
 	   	} else {
 			LifeFlashTextureScript.FadeFlash(delay, FadeDir.In);
+            if (lifeFlashAudio) {lifeFlashAudio.Play();}
 			yield WaitForSeconds(delay);
 			LifeFlashTextureScript.FadeFlash(delay, FadeDir.Out);
 		}
 
-		yield WaitForSeconds(delay*3); // stagger the flash timing (compare w/ `delay` above)
-	}
+        // increase the flash frequency as death draws near (compare w/ `delay` above):
+		yield WaitForSeconds(Mathf.Max(delay*(ScoreController.currentScore / score)*8.0, delay*4.0) );
+	} else {
+        return;
+    }
 }
