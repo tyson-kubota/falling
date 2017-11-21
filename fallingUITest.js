@@ -16,7 +16,6 @@ var lifeBarOutline : UIProgressBar;
 var lifeBar : UIProgressBar;
 var lifeBarThreat : UIProgressBar;
 var rightArrow : UIButton;
-var leftArrow : UIButton;
 var loadNewLevelButton : UIButton;
 var loadLevelOne : UIButton;
 var loadLevelTwo : UIButton;
@@ -186,12 +185,7 @@ function SetupLevelUI() {
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
 	rightArrow.onTouchUpInside += PauseGameCheck;
 
-	leftArrow = UIButton.create("restart.png","restart.png", 0, 0);
-	leftArrow.positionFromBottomLeft(.05f, .05f);
-	leftArrow.onTouchUpInside += RestartLevel;
-
 	rightArrow.hidden = true;
-	leftArrow.hidden = true;
 
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
 	BackToPauseMenuButton.positionFromBottomLeft ( .05f, (.05f * screenAspectRatio) );
@@ -559,16 +553,13 @@ function PauseGame() {
 	    AudioListener.pause = true;
 
    		rightArrow.hidden = false;
-		//leftArrow.hidden = false;
 		if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 		BackToHomeMenuButton.hidden = false;
 		optionsButton.hidden = false;
 		bgSprite.hidden = false;
 
-		//DisplayTiltOnPause();
-
-		//clear any unused stuff in pause menu.
-		//audio and video should be stopped, so any hiccuping won't be as obvious.
+		// Clear any unused stuff in pause menu.
+		// Audio and video should be stopped, so any hiccuping won't be as obvious.
 		Resources.UnloadUnusedAssets();
 
 		initialRespawn.SaveCheckpoint();
@@ -590,7 +581,7 @@ function UnPauseGame(resume : boolean) {
 
 	bgSprite.hidden = true;
 	rightArrow.hidden = true;
-	leftArrow.hidden = true;
+
 	loadNewLevelButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
 	HideOptionsButton();
@@ -753,7 +744,6 @@ function LevelSelect() {
 
 function HidePauseMenuElements() {
 	rightArrow.hidden = true;
-	leftArrow.hidden = true;
 	pauseButton.hidden = true;
 	optionsButton.hidden = true;
 	loadNewLevelButton.hidden = true;
@@ -765,7 +755,6 @@ function ShowBackButton() {
 }
 
 function BackToPauseMenu() {
-	//leftArrow.hidden = false;
 	rightArrow.hidden = false;
 	pauseButton.hidden = false;
 
@@ -1088,23 +1077,10 @@ function PauseGameNow() {
     AudioListener.pause = true;
 
 	rightArrow.hidden = false;
-	//leftArrow.hidden = false;
 	if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 	bgSprite.hidden = false;
 	optionsButton.hidden = false;
-	//DisplayTiltOnPause();
 }
-
-// function PauseGameBackgroundCheck() {
-// 	if (FallingPlayer.isPausable == true) {
-// 		if (Time.timeScale == 0) {
-// 			UnPauseGame(true);
-// 		}
-// 		else {
-// 			PauseGameNow();
-// 		}
-// 	}
-// }
 
 function setHoldingPauseButtonTrue() {
 	holdingPauseButton = true;
@@ -1150,17 +1126,4 @@ function SaveCheckpointVR () {
     );
 
 	initialRespawn.SaveCheckpoint();
-}
-
-function DisplayTiltOnPause () {
-
-		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-			angledTiltLabel.hidden = false;
-		}
-		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
-			verticalTiltLabel.hidden = false;
-		}
-		else {
-			flatTiltLabel.hidden = false;
-		}
 }

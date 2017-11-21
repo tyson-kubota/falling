@@ -148,15 +148,6 @@ function OnApplicationPause(pauseStatus: boolean) {
 	}
 }
 
-function OnLevelWasLoaded (level : int) {
-	//loadedLevel = Application.loadedLevelName;
-//	var loadedLevel : GALevel = new GALevel();
-//	GoogleAnalytics.instance.Add(loadedLevel);
-//	GoogleAnalytics.instance.Dispatch();
-
-	//Debug.Log("my loaded level is... " + Application.loadedLevelName);
-}
-
 function EnableVRMode () {
 	isVRMode = true;
 	vrModeAnalyticsString = "isVRMode:";

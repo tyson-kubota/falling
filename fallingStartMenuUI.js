@@ -233,14 +233,16 @@ function Start () {
     // HACK: reusing existing button sprite as a transparent background
     // for the "VR Mode" text label (which is not clickable):
 	vrModeButton = UIButton.create("newgame.png", "newgame.png", 0,0);
-	vrModeButton.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
+	// vrModeButton.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
+	vrModeButton.positionFromBottom(.05);
 	vrModeButton.normalTouchOffsets = new UIEdgeOffsets( 40 );
 	vrModeButton.highlightedTouchOffsets = new UIEdgeOffsets( 40 );
 	vrModeButton.onTouchUpInside += OpenVRModeMenu;
 	vrModeButton.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
 
-	vrModeLabel = boldText.addTextInstance( "VR MODE", 0, 0 );
-	vrModeLabel.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
+	vrModeLabel = boldText.addTextInstance( "TRY VR MODE", 0, 0 );
+	// vrModeLabel.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
+	vrModeLabel.positionFromBottom(.05);
 
 	vrModeLaunchButton = UIButton.create("startDown.png","startDown.png", 0, 0);
 	vrModeLaunchButton.positionFromCenter(.1, 0);
