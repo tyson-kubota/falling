@@ -139,12 +139,18 @@ function LifeFlashCheck (delay : float, score : int) {
 
 	if (ScoreController.currentScore < score && inOutro == false) {
 
+        var lowLifeRatio = ScoreController.currentScore / score;
+
         if (lifeFlashAudio) {
-            var deathPromixityScore = 1.0 - (ScoreController.currentScore / score);
-            // Clamp to a min volume of 0.2, max volume of .75;
-            lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore, 0.2, 0.9);
-            // lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore, 0.2, 0.75);
-            // lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore / 1.5, 0.15, 0.75);
+            // if speeding up, use a louder ping volume for audibility, plus a shorter
+            // yield wait since the health drain is 4x higher:
+            if (MoveController.Slowdown > maxSlowdownThreshold) {
+               lifeFlashAudio.volume = 0.9;
+            } else {
+                var deathPromixityScore = 1.0 - lowLifeRatio;
+                // Clamp to a min volume of 0.2, max volume of .9;
+                lifeFlashAudio.volume = Mathf.Clamp(deathPromixityScore, 0.2, 0.9);
+            }
         }
 
 	   	if (FallingLaunch.isVRMode) {
@@ -160,7 +166,12 @@ function LifeFlashCheck (delay : float, score : int) {
 		}
 
         // increase the flash frequency as death draws near (compare w/ `delay` above):
-		yield WaitForSeconds(Mathf.Max(delay*(ScoreController.currentScore / score)*8.0, delay*4.0) );
+        if (MoveController.Slowdown > maxSlowdownThreshold) {
+            // 4x delay when speeding up due to increased health drain:
+            yield WaitForSeconds( Mathf.Max(delay*lowLifeRatio*2.0, delay) );
+        } else {
+            yield WaitForSeconds( Mathf.Max(delay*lowLifeRatio*8.0, delay*4.0) );
+        }
 	} else {
         return;
     }
