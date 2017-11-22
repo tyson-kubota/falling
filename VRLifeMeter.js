@@ -1,6 +1,9 @@
 #pragma strict
 
 var thisImage : UnityEngine.UI.Image;
+var loadingCircleVR : UnityEngine.UI.Image;
+var loadingCircleVRObj : GameObject;
+
 // private var thisImageMatl : Material;
 var fullColor: Color = Color32(255, 255, 255, 165);
 var emptyColor: Color = Color.red; // Color32(156, 24, 24, 255);
@@ -12,6 +15,22 @@ private var isVisible : boolean = false;
 
 function Awake() {
     peakOpacity = fullColor.a;
+}
+
+function Start() {
+    if ( FallingLaunch.isVRMode && (!loadingCircleVR || !loadingCircleVRObj) ) {
+        loadingCircleVRObj = GameObject.Find("loading-bar");
+
+        var loadingObjTransform : Transform =
+            loadingCircleVRObj ? loadingCircleVRObj.transform : null;
+
+        loadingCircleVR = // loadingCircleVR ||
+            loadingObjTransform ? loadingObjTransform.GetComponent.<UnityEngine.UI.Image>() : null;
+    }
+
+    if (FallingLaunch.isVRMode && loadingCircleVR) {
+        HideLoadingCircle();
+    }
 }
 
 function FadeReticle(timer : float, fadeType : FadeDir) {
@@ -43,13 +62,31 @@ function FadeReticleOut (timer : float) {
     isVisible = false;
 }
 
+function UpdateLoadingCircle (value : float) {
+    if (loadingCircleVRObj && loadingCircleVR) {
+        if (!loadingCircleVRObj.activeInHierarchy) {
+            loadingCircleVRObj.SetActive(true);
+        }
+
+        loadingCircleVR.color.a = 1.0;
+        loadingCircleVR.fillAmount = value;
+    }
+}
+
+function HideLoadingCircle () {
+    if (loadingCircleVRObj && loadingCircleVR) {
+        loadingCircleVR.color.a = 0;
+        loadingCircleVRObj.SetActive(false);
+    }
+}
+
 function Update () {
     // Deactivate the VR reticle and early return if we're not in VR mode.
     if (!FallingLaunch.isVRMode) {
         gameObject.SetActive(false);
         return;
     }
-    
+
     if (FallingPlayer.isAlive == 1 && isVisible) {
         lifePercentage = parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore);
         thisImage.fillAmount = lifePercentage;
@@ -59,5 +96,6 @@ function Update () {
         thisImage.color = Color.Lerp(emptyColor, fullColor, Mathf.Clamp(lifePercentage*2 - .2, 0.0, 1.0) );
     } else {
         thisImage.color.a = 0;
+        // loadingCircleVR.color.a = 0;
     }
 }

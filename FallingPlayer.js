@@ -48,6 +48,8 @@ var tiltAroundX : float;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
+private var homeLevel : String = "Falling-scene-menu";
+
 static var isAlive : int = 1;
 
 static var lifeStartTime : float = 0;
@@ -124,6 +126,10 @@ private var myBackdropRenderer : Renderer;
 private var BackdropMist : GameObject;
 
 private var myVRViewer : GameObject;
+
+private var holdTime : float = 2.0; // continuous hold time needed to trigger a return-to-menu
+private var holdAccumTime : float = 0.0;
+private var holdThresholdForShowingLoadingBar : float = 0.5;
 
 var rb : Rigidbody;
 
@@ -225,7 +231,7 @@ function Start() {
     rb.isKinematic = false;
   }
 
-  // introComponent's existence is a proxy for level 1, 
+  // introComponent's existence is a proxy for level 1,
   // where we don't want the reticle to be visible yet
   // (resuming from a level 1 post-intro checkpoint
   // is handled in Respawn.js (mainRespawnScript):
@@ -259,7 +265,7 @@ function introFade() {
 	whiteFader.enabled = false;
 }
 
-function introNow() {  
+function introNow() {
 	LatestCheckpointRespawn();
 	yield WaitForSeconds (3);
 	FallingLaunch.LoadedLatestLevel = false;
@@ -283,6 +289,66 @@ function FadeAudio(timer : float, fadeType : FadeDir) {
   }
 }
 
+function ShowDeathInterstitialVR() {
+  rb.isKinematic = true;
+  isAlive = 0;
+
+  deathPauseUIVR.SetActive(true);
+
+  yield DeathFadeVR(1.0, FadeDir.In);
+  // yield UIscriptComponent.fadeIn(false);
+
+  // Managing isExitableFromVR gives finer control over the exit UI,
+  // preventing the player from tapping mid-respawn fadeout.
+  isExitableFromVR = true;
+  // yield WaitForSeconds(4);
+
+  while (true && FallingLaunch.isVRMode && isAlive == 0 && Input.touchCount == 0 &&
+    deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
+      yield WaitForSeconds(4);
+      if (isAlive == 0 && Input.touchCount == 0 && deathPauseUIVR.activeInHierarchy &&
+        isExitableFromVR) {
+        // Debug.Log("it's been enough time; auto-respawning");
+        RespawnAfterDeathInterstitialVR();
+      }
+  }
+
+  // // Only execute this if it's been four seconds and a respawn is not already underway:
+  // if (isAlive == 0 && deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
+  //   RespawnAfterDeathInterstitialVR();
+  // }
+}
+
+function RespawnAfterDeathInterstitialVR() {
+  Debug.Log('called RespawnAfterDeathInterstitialVR');
+  isExitableFromVR = false;
+
+  yield DeathFadeVR(0.5, FadeDir.Out);
+
+  rb.isKinematic = false;
+
+  // TODO: Fade out material here instead of toggling the whole object outright?
+  deathPauseUIVR.SetActive(false);
+
+  // resetting score to max here for VR, to avoid the score
+  // ticking away over the preceding ~4 WaitForSeconds.
+  script.ResetScore();
+
+  // In VR mode, we ignore fadeTime in favor of a longer fade-in
+  // matched to the longer waiting interval below:
+  FadeAudio(2.0, FadeDir.In);
+
+  DeathFadeVR(1.0, FadeDir.In);
+  isPausable = true;
+
+  // setting isAlive is order-dependent with lerpControlIn below
+  // (isAlive = 0 will break its loop):
+  isAlive = 1;
+  lerpControlIn(3.0);
+
+  yield WaitForSeconds(1);
+  reticleVRUIScript.FadeReticleIn(1.5);
+}
 
 function DeathRespawn () {
 	isPausable = false;
@@ -328,47 +394,7 @@ function DeathRespawn () {
 	MoveController.controlMultiplier = 1.0;
 
   if (FallingLaunch.isVRMode && deathPauseUIVR && deathFadeUIVR) {
-
-    rb.isKinematic = true;
-    isAlive = 0;
-
-    deathPauseUIVR.SetActive(true);
-
-    DeathFadeVR(1.0, FadeDir.In);
-    // yield UIscriptComponent.fadeIn(false);
-
-    // Managing isExitableFromVR gives finer control over the exit UI,
-    // preventing the player from tapping mid-respawn fadeout.
-    isExitableFromVR = true;
-    yield WaitForSeconds(4);
-    isExitableFromVR = false;
-
-    yield DeathFadeVR(0.5, FadeDir.Out);
-
-    rb.isKinematic = false;
-
-    // TODO: Fade out material here instead of toggling the whole object outright?
-    deathPauseUIVR.SetActive(false);
-
-    // resetting score to max here for VR, to avoid the score
-    // ticking away over the preceding ~4 WaitForSeconds.
-    script.ResetScore();
-
-    // In VR mode, we ignore fadeTime in favor of a longer fade-in
-    // matched to the longer waiting interval below:
-    FadeAudio(2.0, FadeDir.In);
-
-    DeathFadeVR(1.0, FadeDir.In);
-    isPausable = true;
-     
-    // setting isAlive is order-dependent with lerpControlIn below 
-    // (isAlive = 0 will break its loop):
-    isAlive = 1;
-    lerpControlIn(3.0);
-
-    yield WaitForSeconds(1);
-    reticleVRUIScript.FadeReticleIn(1.5);
-
+    ShowDeathInterstitialVR();
   } else {
     FadeAudio(fadeTime, FadeDir.In);
     lerpControlIn(3.0);
@@ -401,7 +427,7 @@ function LatestCheckpointRespawn () {
 	myTransform.position = respawnPosition; // + Vector3.up;
 
   FadeAudio(fadeTime, FadeDir.In);
-	
+
   if (!FallingLaunch.isVRMode) {
     rb.isKinematic = false;
     lerpControlIn(3.0);
@@ -460,21 +486,60 @@ function Update () {
             // PlayerPrefs.DeleteKey("LatestCheckpoint");
             // PlayerPrefs.SetString("LatestLevel", "Falling-scene-tutorial");
             FallingLaunch.showingVREndGameUI = false;
-            Application.LoadLevel("Falling-scene-menu");
+            Application.LoadLevel(homeLevel);
           }
         }
       }
 
-      if (isAlive == 0 && deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
-        for (var i = 0; i < Input.touchCount; ++i) {
-          if (Input.GetTouch(i).phase != TouchPhase.Ended && Input.GetTouch(i).phase != TouchPhase.Canceled) {
-            isPausable = false;
-            
-            fallingLaunchComponent.DisableVRMode();
+      if (isAlive == 0 && deathPauseUIVR.activeInHierarchy) { //} && isExitableFromVR) {
 
-            UIscriptComponent.SaveCheckpointVR();
-            Application.LoadLevel("Falling-scene-menu");
-          }
+        if (Input.touchCount > 0) {
+            // as soon as any fingers are on screen, block the auto-respawning:
+            isExitableFromVR = false;
+
+            // if (holdAccumTime = 0.0) {reticleVRUIScript.FadeReticleIn(1.5);}
+            holdAccumTime += Input.GetTouch(0).deltaTime;
+
+            var adjustedHoldAccumTime : float =
+              Mathf.Max(holdAccumTime - holdThresholdForShowingLoadingBar, 0.0);
+
+            if (adjustedHoldAccumTime > 0.0) {
+              reticleVRUIScript.UpdateLoadingCircle(
+                adjustedHoldAccumTime / holdTime
+              );
+            }
+
+            // Long tap (3+ secs):
+            if (adjustedHoldAccumTime >= holdTime) {
+                // Debug.Log("long tap with holdAccumTime " + holdAccumTime);
+                reticleVRUIScript.HideLoadingCircle();
+                isPausable = false;
+                fallingLaunchComponent.DisableVRMode();
+                UIscriptComponent.SaveCheckpointVR();
+                Application.LoadLevel(homeLevel);
+            }
+
+            if (Input.GetTouch(0).phase == TouchPhase.Ended) {
+                reticleVRUIScript.HideLoadingCircle();
+
+                // Short-ish tap (in practice, under 1.5 seconds):
+                if (adjustedHoldAccumTime <= holdTime / 4.0) {
+                  // Debug.Log(
+                  //   "With adjustedHoldAccumTime " + adjustedHoldAccumTime +
+                  //   ", that counts as a short tap; time to respawn!"
+                  // );
+                  RespawnAfterDeathInterstitialVR();
+                }
+                // else {
+                //   Debug.Log("mid-length tap, so not respawning yet");
+                // }
+
+                holdAccumTime = 0;
+            }
+        } else {
+            // Once no fingers are touching, restting this boolean will let the loop
+            // in ShowDeathInterstitialVR respawn the player after a 4-second delay.
+            isExitableFromVR = true;
         }
       }
 
@@ -485,7 +550,7 @@ function Update () {
           }
         }
       }
-      
+
     }
 
 	//Debug.Log("slowdown is: " + MoveController.Slowdown + " and myVol is: " + myVol);
@@ -504,7 +569,7 @@ function playerTilt() {
 
 	    var target = Quaternion.Euler (tiltAroundX, 0, tiltAroundZ);
       // Dampen towards the target rotation
-      // Rotating the camera transform, not the Player transform itself, so the 3D clouds 
+      // Rotating the camera transform, not the Player transform itself, so the 3D clouds
       // (which are the child of the Player object) have correct tilt context.
 	    myMainCameraTransform.rotation = Quaternion.Lerp(myMainCameraTransform.rotation, target,
 	                                   Time.deltaTime * smooth);
@@ -661,7 +726,7 @@ function WhiteFadeVREndGame (timer : float) {
     var end = 0.66;
     var i = 0.0;
     var step = 1.0/timer;
-    
+
     if (endGameUIObjVR) {
       endGameUIObjVR.SetActive(true);
       endGameUIVRRenderer = endGameUIObjVR.GetComponent.<Renderer>();
@@ -797,8 +862,8 @@ function OnTriggerEnter (other : Collider) {
     if (FallingLaunch.isVRMode) {
       WhiteFadeVR(3.0, FadeDir.Out);
     }
-    // Handles 2D (non-VR) UI logic in its own conditional, 
-    // plus saves progress, loads the next level, etc. 
+    // Handles 2D (non-VR) UI logic in its own conditional,
+    // plus saves progress, loads the next level, etc.
     UIscriptComponent.LevelComplete(3.0, 1.5);
   }
 }

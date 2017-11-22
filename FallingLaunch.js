@@ -139,15 +139,6 @@ function Start () {
 	//the device around and the accelerometer readings haven't settled yet.
 }
 
-function OnApplicationPause(pauseStatus: boolean) {
-    //paused = pauseStatus;
-	if (pauseStatus) {
-//    	myTimer.Stop();
-//    	GoogleAnalytics.instance.Add(myTimer);
-//		GoogleAnalytics.instance.Dispatch();
-	}
-}
-
 function EnableVRMode () {
 	isVRMode = true;
 	vrModeAnalyticsString = "isVRMode:";
@@ -196,7 +187,7 @@ function ChangeTilt (toFlat : int) {
 	Calibrate();
 }
 
-// Only relevant in non-VR mode. 
+// Only relevant in non-VR mode.
 // In VR mode, we simply set landscapeLeft in all cases to meet the Google Cardboard SDK's expectations.
 function LockDeviceOrientation (waitTime: float) {
 	cachedScreenOrientation = Screen.orientation;
@@ -238,7 +229,7 @@ function LockDeviceOrientation (waitTime: float) {
 	// These are handled within each individual LockLandscapeLeft/Right function:
 	// Screen.autorotateToLandscapeLeft = false;
 	// Screen.autorotateToLandscapeRight = false;
-	
+
 	Calibrate();
 
 	if (Debug.isDebugBuild) {
@@ -270,7 +261,7 @@ function HandleDeviceOrientationMismatch() {
     		initialInputDeviceOrientation = Input.deviceOrientation;
 			LockLandscapeRightOrientation();
     	} else {
-			DefaultToLandscapeLeftOrientation();		
+			DefaultToLandscapeLeftOrientation();
     	}
 
 	} else {
@@ -298,14 +289,14 @@ function DefaultToLandscapeLeftOrientation() {
 			Debug.Log("Defaulting to LandscapeLeft, since Screen.orientation / Input.deviceOrientation were not LandscapeRight");
 		}
 		LockLandscapeLeftOrientation(isVRMode);
-	}	
+	}
 }
 
 function LockLandscapeLeftOrientation (isVR : boolean) {
 	if (Debug.isDebugBuild) {Debug.Log("Locking LandscapeLeft orientation with isVR " + isVR);}
 
 	// if the device is held in landscapeRight already,
-	// the autorotateToLandscapeRight = false below is not enough 
+	// the autorotateToLandscapeRight = false below is not enough
 	// to force the left-hand orientation needed for VR mode.
 	if (isVR) {
 		// We disable all autorotation before forcing the new orientation, to prevent
@@ -319,8 +310,8 @@ function LockLandscapeLeftOrientation (isVR : boolean) {
 
 	cachedScreenOrientation = Screen.orientation;
 
-	// Further interaction with Screen.autorotate... values will crash 
-	// the app if we've already forced a given Screen.orientation 
+	// Further interaction with Screen.autorotate... values will crash
+	// the app if we've already forced a given Screen.orientation
 	// (see UnityViewControllerBaseiOS.mm assert note above), so the below
 	// is for non-VR mode only:
 	if (!isVR) {
