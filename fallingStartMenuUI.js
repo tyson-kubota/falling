@@ -623,9 +623,15 @@ function Update () {
 	if ((canShowStart == true) && (Mathf.Abs(Input.acceleration.x) < .7) && (Mathf.Abs(Input.acceleration.y) < .7)) {
 		CheckTiltAngle();
 		bgCamera.backgroundColor = bgColor1;
-	}
-	else if (canShowStart == true) {
-		ShowTiltWarning();
+	} else if (canShowStart) {
+
+		// Only show tilt warning if it's presumed to be the player's first-ish session
+		// (Application.loadedLevel == 2 connotes the tutorial level,
+		// so levelAchieved < 3 means they haven't completed that level):
+		// TODO: Would it be less annoying to only show this on the first-ever app launch?
+		if (FallingLaunch.levelAchieved < 3) {
+			ShowTiltWarning();
+		}
 
     	var duration = 1.0;
 
@@ -982,8 +988,8 @@ function OpenAbout() {
 function OpenVRModeMenu() {
 
     FallingLaunch.Analytics.Event(
-        "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString + 
-        Screen.orientation, 
+        "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString +
+        Screen.orientation,
         FallingLaunch.levelAchieved
     );
 
@@ -1000,8 +1006,8 @@ function LaunchVRMode() {
 	fallingLaunchComponent.EnableVRMode();
 
     FallingLaunch.Analytics.Event(
-        "EnteringVRMode:" + FallingLaunch.vrModeAnalyticsString + 
-        Screen.orientation, 
+        "EnteringVRMode:" + FallingLaunch.vrModeAnalyticsString +
+        Screen.orientation,
         FallingLaunch.levelAchieved
     );
 
@@ -1010,9 +1016,9 @@ function LaunchVRMode() {
 	// in the Z direction (e.g. 90 vs -90 (aka 270) degrees). May need to apply an inverse
 	// quaternion in some cases based on Head gaze direction/ gameObj position,
 	// or in the menu UI, ensure the phone orientation is not flat before
-	// letting the user load the scene. 
+	// letting the user load the scene.
 
-	// HACK: But as a temporary workaround, force landscape left orientation 
+	// HACK: But as a temporary workaround, force landscape left orientation
 	// in VR for Cardboard compatibility (Google's SDK also enforces this mode
 	// with 'tilt your phone' UI when device is in landscape right):
 	fallingLaunchComponent.LockLandscapeLeftOrientation(FallingLaunch.isVRMode);
