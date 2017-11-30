@@ -555,8 +555,11 @@ function ShowStart() {
 	rightArrow.hidden = false;
 	aboutButtonStart.hidden = false;
 	howToButton.hidden = false;
-	vrModeButton.hidden = false;
-	vrModeLabel.hidden = false;
+	
+	if (!FallingLaunch.isTablet) {
+		vrModeButton.hidden = false;
+		vrModeLabel.hidden = false;
+	}
 
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
@@ -732,10 +735,12 @@ function BackToPauseMenu() {
 	text3.hidden = true;
 	openSiteButtonText.hidden = true;
 
-	vrModeLaunchButton.hidden = true;
-	vrExplanatoryText.hidden = true;
-	vrModeButton.hidden = false;
-	vrModeLabel.hidden = false;
+	if (!FallingLaunch.isTablet) {
+		vrModeLaunchButton.hidden = true;
+		vrExplanatoryText.hidden = true;
+		vrModeButton.hidden = false;
+		vrModeLabel.hidden = false;
+	}
 
 	HideOptions();
 
@@ -986,20 +991,25 @@ function OpenAbout() {
 }
 
 function OpenVRModeMenu() {
+	// This user shouldn't be able to trigger this OpenVRModeMenu
+	// function on a tablet, but just to be safe...
+	if (!FallingLaunch.isTablet) {
+	    FallingLaunch.Analytics.Event(
+	        "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString +
+	        Screen.orientation,
+	        FallingLaunch.levelAchieved
+	    );
 
-    FallingLaunch.Analytics.Event(
-        "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString +
-        Screen.orientation,
-        FallingLaunch.levelAchieved
-    );
+		HideStartMenuElements();
+		ShowBackButton();
 
-	HideStartMenuElements();
-	ShowBackButton();
-
-	vrExplanatoryText.hidden = false;
-	vrModeLaunchButton.hidden = false;
-	vrExplanatoryText.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	vrModeLaunchButton.alphaFromTo( 1.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
+		vrExplanatoryText.hidden = false;
+		vrModeLaunchButton.hidden = false;
+		vrExplanatoryText.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
+		vrModeLaunchButton.alphaFromTo( 1.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
+	} else {
+		return;
+	}
 }
 
 function LaunchVRMode() {

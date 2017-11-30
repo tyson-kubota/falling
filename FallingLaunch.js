@@ -100,16 +100,17 @@ function Start () {
 		var screenWidthInInches: float = (Screen.width / screenDPI);
 		var screenHeightInInches: float = (Screen.height / screenDPI);
 
-		var hasLargeScreen: boolean = screenDPI > 0 && (screenWidthInInches > 8 && screenHeightInInches > 5);
 		// Debug.Log("Screen DPI: " + screenDPI);
 		// Debug.Log("Screen width in inches: " + screenWidthInInches);
 		// Debug.Log("Screen height in inches: " + screenHeightInInches);
 
-		if (iOSGen.ToString().Contains("iPad") || hasLargeScreen) {
+		// DPI/screen size no longer a good heuristic for tablet vs. phone, so just use the iPad string regex:
+		// var hasLargeScreen: boolean = screenDPI > 0 && (screenWidthInInches > 8 && screenHeightInInches > 5);
+		if (iOSGen.ToString().Contains("iPad")) {
 			// Debug.Log("Looks like a tablet!");
 			isTablet = true;
 		} else {
-			// Debug.Log("Based on reported screen size, not a tablet...");
+			// Debug.Log("Based on device generation name string, not a tablet...");
 			isTablet = false;
 		}
 
