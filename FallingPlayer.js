@@ -127,9 +127,11 @@ private var BackdropMist : GameObject;
 
 private var myVRViewer : GameObject;
 
-private var holdTime : float = 2.0; // continuous hold time needed to trigger a return-to-menu
+private var holdTime : float = 1.5; // continuous hold time needed to trigger a return-to-menu
 private var holdAccumTime : float = 0.0;
 private var holdThresholdForShowingLoadingBar : float = 0.5;
+private var touchHoldStartTime : float = 0.0;
+private var isTouchingResetUI : boolean = false;
 
 var rb : Rigidbody;
 
@@ -304,10 +306,10 @@ function ShowDeathInterstitialVR() {
   // yield WaitForSeconds(4);
 
   while (true && FallingLaunch.isVRMode && isAlive == 0 && Input.touchCount == 0 &&
-    deathPauseUIVR.activeInHierarchy && isExitableFromVR) {
+    deathPauseUIVR.activeInHierarchy && isExitableFromVR && !isTouchingResetUI) {
       yield WaitForSeconds(4);
       if (isAlive == 0 && Input.touchCount == 0 && deathPauseUIVR.activeInHierarchy &&
-        isExitableFromVR) {
+        isExitableFromVR && !isTouchingResetUI) {
         // Debug.Log("it's been enough time; auto-respawning");
         RespawnAfterDeathInterstitialVR();
       }
@@ -494,24 +496,38 @@ function Update () {
       if (isAlive == 0 && deathPauseUIVR.activeInHierarchy) { //} && isExitableFromVR) {
 
         if (Input.touchCount > 0) {
+            // Debug.Log("Starting touchHoldStartTime " + touchHoldStartTime);
+            // Debug.Log("Time.time " + Time.time);
+
             // as soon as any fingers are on screen, block the auto-respawning:
             isExitableFromVR = false;
 
-            // if (holdAccumTime = 0.0) {reticleVRUIScript.FadeReticleIn(1.5);}
-            holdAccumTime += Input.GetTouch(0).deltaTime;
+            if (Input.GetTouch(0).phase == TouchPhase.Began) {
+              touchHoldStartTime = Time.time;
+              isTouchingResetUI = true;
+            }
 
-            var adjustedHoldAccumTime : float =
-              Mathf.Max(holdAccumTime - holdThresholdForShowingLoadingBar, 0.0);
+            // var adjustedHoldAccumTime : float = (touchHoldStartTime < Time.time) ? 0.0 :
+            var adjustedHoldAccumTime : float = !isTouchingResetUI ? 0.0 :
+              Mathf.Max(Time.time - touchHoldStartTime - holdThresholdForShowingLoadingBar, 0.0);
+
+              // holdAccumTime += Input.GetTouch(0).deltaTime;
+              
+            // Old way, using accumulated touch time instead of subtractive via Time.time:
+            // var adjustedHoldAccumTime : float = (touchHoldStartTime < Time.time) ? 0.0 :
+            //   Mathf.Max(holdAccumTime - holdThresholdForShowingLoadingBar, 0.0);
 
             if (adjustedHoldAccumTime > 0.0) {
+              // Debug.Log("Updating loading circle with adjustedHoldAccumTime " + adjustedHoldAccumTime);
+              // takes care of showing and updating filled 'loading' sprite:
               reticleVRUIScript.UpdateLoadingCircle(
                 adjustedHoldAccumTime / holdTime
               );
             }
 
-            // Long tap (3+ secs):
+            // Long tap (~2+ secs):
             if (adjustedHoldAccumTime >= holdTime) {
-                // Debug.Log("long tap with holdAccumTime " + holdAccumTime);
+                // Debug.Log("long tap with adjustedHoldAccumTime " + adjustedHoldAccumTime);
                 reticleVRUIScript.HideLoadingCircle();
                 isPausable = false;
                 fallingLaunchComponent.DisableVRMode();
@@ -522,25 +538,32 @@ function Update () {
             if (Input.GetTouch(0).phase == TouchPhase.Ended) {
                 reticleVRUIScript.HideLoadingCircle();
 
-                // Short-ish tap (in practice, under 1.5 seconds):
-                if (adjustedHoldAccumTime <= holdTime / 4.0) {
+                var actualTouchTime : float = !isTouchingResetUI ? 0.0 : Time.time - touchHoldStartTime;
+                // Short-ish tap (in practice, under ~.875 seconds):
+                if (actualTouchTime > 0.0 && adjustedHoldAccumTime <= holdTime / 4.0) {
                   // Debug.Log(
                   //   "With adjustedHoldAccumTime " + adjustedHoldAccumTime +
                   //   ", that counts as a short tap; time to respawn!"
                   // );
+                  // Debug.Log(
+                  //   "With actualTouchTime " + actualTouchTime +
+                  //   ", that counts as a short tap; time to respawn!"
+                  // );
                   RespawnAfterDeathInterstitialVR();
                 }
-                // else {
-                //   Debug.Log("mid-length tap, so not respawning yet");
-                // }
 
                 holdAccumTime = 0;
             }
         } else {
-            // Once no fingers are touching, restting this boolean will let the loop
+            // holdAccumTime = 0;
+            isTouchingResetUI = false;
+
+            // Once no fingers are touching, resetting this boolean will let the loop
             // in ShowDeathInterstitialVR respawn the player after a 4-second delay.
             isExitableFromVR = true;
         }
+      } else {
+        isTouchingResetUI = false;
       }
 
       if (levelStartUIVR.activeInHierarchy && FallingLaunch.shouldShowVRIntroUI) {
