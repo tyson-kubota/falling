@@ -628,22 +628,22 @@ function Update () {
 		bgCamera.backgroundColor = bgColor1;
 	} else if (canShowStart) {
 
-		// Only show tilt warning if it's presumed to be the player's first-ish session
-		// (Application.loadedLevel == 2 connotes the tutorial level,
+		// Only show tilt warning and lerp to red if it's presumed to be the player's
+		// first-ish session (Application.loadedLevel == 2 connotes the tutorial level,
 		// so levelAchieved < 3 means they haven't completed that level):
 		// TODO: Would it be less annoying to only show this on the first-ever app launch?
 		if (FallingLaunch.levelAchieved < 3) {
 			ShowTiltWarning();
+	        bgCamera.backgroundColor = Color.Lerp (bgColor1, bgColor2, 1.0);
+		} else {
+			// just show the start menu immediately if the player has made enough progress:
+			ShowStart();
 		}
 
-    	var duration = 1.0;
-
-        bgCamera.backgroundColor = Color.Lerp (bgColor1, bgColor2, 1.0);
-
-    	//var t : float = Mathf.Repeat (Time.time, duration) / duration;
-
-        //var t : float = Mathf.PingPong (Time.time, duration) / duration;
-        //bgCamera.backgroundColor = Color.Lerp (bgColor1, bgColor2, t);
+		// var duration = 1.0;
+		// var t : float = Mathf.Repeat (Time.time, duration) / duration;
+		// var t : float = Mathf.PingPong (Time.time, duration) / duration;
+		// bgCamera.backgroundColor = Color.Lerp (bgColor1, bgColor2, t);
 
 	}
 //	Debug.Log ("your input accel y is " + Input.acceleration.y + " and input accel x is " + Input.acceleration.x);
