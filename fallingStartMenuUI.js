@@ -56,6 +56,10 @@ var thinText : UIText;
 var text1 : UITextInstance;
 var text2 : UITextInstance;
 var text3 : UITextInstance;
+
+var appStoreButtonText : UITextInstance;
+var appStoreButtonBg : UIButton;
+
 var tiltText1 : UITextInstance;
 var tiltText2 : UITextInstance;
 var invertHorizAxisText : UITextInstance;
@@ -224,6 +228,28 @@ function Start () {
 	text3 = thinText.addTextInstance( "MUSIC BY EVAN KUBOTA\n\nSOUND EFFECTS: freesound.org", 0, 0);
     text3.pixelsFromCenter( 45, 0 );
 
+	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
+	openSiteButtonText.positionFromCenter(0,0);
+	openSiteButtonText.onTouchUpInside += OpenFallingSite;
+	openSiteButtonText.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
+	openSiteButtonText.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+
+	appStoreButtonText = boldText.addTextInstance( "WRITE A REVIEW...", 0, 0);
+    appStoreButtonText.positionFromBottom(.05);
+
+    // A transparent tappable background; chosen for its width:
+	appStoreButtonBg = UIButton.create("spheresText.png", "spheresText.png", 0,0);
+	appStoreButtonBg.positionFromBottom(.05);
+	appStoreButtonBg.onTouchUpInside += OpenAppStorePage;
+	appStoreButtonBg.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+
+	text1.hidden = true;
+	text2.hidden = true;
+	text3.hidden = true;
+	openSiteButtonText.hidden = true;
+	appStoreButtonText.hidden = true;
+	appStoreButtonBg.hidden = true;
+	
     // TODO: Use real VR Mode icon and button sprite here.
     // HACK: reusing existing button sprite as a transparent background
     // for the "VR Mode" text label (which is not clickable):
@@ -251,7 +277,7 @@ function Start () {
 	vrModeLaunchButton.onTouchUp += fadeOutVRLaunchButton;
 
 	var vrExplanatoryString : String =
-		"VR MODE REQUIRES GOOGLE CARDBOARD.\n\nPRESS PLAY BELOW, THEN PUT ON HEADSET.";
+		"VR MODE REQUIRES GOOGLE CARDBOARD.\n\nPRESS PLAY BELOW, THEN PLACE IN HEADSET.";
 
 	vrExplanatoryText =
 		thinText.addTextInstance( vrExplanatoryString, 0, 0);
@@ -378,18 +404,6 @@ function Start () {
 	verticalTiltChooser.positionFromLeft( -.16f, .52f );
 	verticalTiltChooser.onTouchUpInside += ToggleTiltNeutral;
 	verticalTiltChooser.hidden = true;
-
-
-	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
-	openSiteButtonText.positionFromCenter(0,0);
-	openSiteButtonText.hidden = true;
-	openSiteButtonText.onTouchUpInside += OpenFallingSite;
-	openSiteButtonText.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
-	openSiteButtonText.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
-
-	text1.hidden = true;
-	text2.hidden = true;
-	text3.hidden = true;
 
 	tiltWarning = UIButton.create("tiltwarning.png","tiltwarning.png", 0, 0);
 	tiltWarning.positionFromTop(buttonScaleFactor);
@@ -736,6 +750,9 @@ function BackToPauseMenu() {
 	text3.hidden = true;
 	openSiteButtonText.hidden = true;
 
+	appStoreButtonBg.hidden = true;
+	appStoreButtonText.hidden = true;
+
 	HideOptions();
 
 	// if (PlayerPrefs.HasKey("LatestLevel")) {
@@ -978,14 +995,18 @@ function OpenAbout() {
 
 	HideStartMenuElements();
 	ShowBackButton();
+	
+	appStoreButtonBg.hidden = false;
+	appStoreButtonText.hidden = false;
 
 	openSiteButtonText.hidden = false;
 	text1.hidden = false;
 	text2.hidden = false;
 	text3.hidden = false;
-	text1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	text2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
+	text1.alphaFromTo(1.0, 0.0, 0.8, Easing.Sinusoidal.easeOut);
+	text2.alphaFromTo(1.0, 0.0, 1.0, Easing.Sinusoidal.easeOut);
+	text3.alphaFromTo(1.5, 0.0, 0.6, Easing.Sinusoidal.easeInOut);
+	appStoreButtonText.alphaFromTo(3.5, 0.0, 1.0, Easing.Sinusoidal.easeInOut);
 }
 
 function OpenVRModeMenu() {
@@ -993,7 +1014,7 @@ function OpenVRModeMenu() {
 	// function on a tablet, but just to be safe...
 	if (!FallingLaunch.isTablet) {
 	    FallingLaunch.Analytics.Event(
-	        "OpeningVRModeMenu:" + FallingLaunch.vrModeAnalyticsString +
+	        "VRModeMenuOpen:" + FallingLaunch.vrModeAnalyticsString +
 	        Screen.orientation,
 	        FallingLaunch.levelAchieved
 	    );
@@ -1014,7 +1035,7 @@ function LaunchVRMode() {
 	fallingLaunchComponent.EnableVRMode();
 
     FallingLaunch.Analytics.Event(
-        "EnteringVRMode:" + FallingLaunch.vrModeAnalyticsString +
+        "VRModeEnter:" + FallingLaunch.vrModeAnalyticsString +
         Screen.orientation,
         FallingLaunch.levelAchieved
     );
@@ -1183,7 +1204,17 @@ function LoadLevel4ViaStart() {
 }
 
 function OpenFallingSite() {
-	Application.OpenURL ("http://tysonkubota.net/skydrift?utm_source=skydrift-game&utm_medium=ios&utm_campaign=skydrift-gui");
+	var urlToOpen : String = "http://tysonkubota.net/skydrift?utm_source=skydrift-game&utm_medium=ios&utm_campaign=skydrift-gui";
+	// use a float instead of an int, as required by the GameAnalytics SDK:
+	FallingLaunch.Analytics.Event("OpenURL:FallingSite", FallingLaunch.levelAchieved*1.0);
+	Application.OpenURL(urlToOpen);
+}
+
+function OpenAppStorePage() {
+	var urlToOpen : String = "https://itunes.apple.com/us/app/skydrift/id728636851?action=write-review&mt=8";
+	// use a float instead of an int, as required by the GameAnalytics SDK:
+	FallingLaunch.Analytics.Event("OpenURL:AppStorePage", FallingLaunch.levelAchieved*1.0);
+	Application.OpenURL(urlToOpen);
 }
 
 function HideGUI() {
