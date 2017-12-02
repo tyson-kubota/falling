@@ -60,6 +60,9 @@ var text3 : UITextInstance;
 var appStoreButtonText : UITextInstance;
 var appStoreButtonBg : UIButton;
 
+var appStoreButtonHomeText : UITextInstance;
+var appStoreButtonHomeBg : UIButton;
+
 var tiltText1 : UITextInstance;
 var tiltText2 : UITextInstance;
 var invertHorizAxisText : UITextInstance;
@@ -243,12 +246,24 @@ function Start () {
 	appStoreButtonBg.onTouchUpInside += OpenAppStorePage;
 	appStoreButtonBg.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
 
+	appStoreButtonHomeText = boldText.addTextInstance( "WRITE A REVIEW...", 0, 0);
+    appStoreButtonHomeText.positionFromTop(.05);
+
+    // A transparent tappable background; chosen for its width:
+	appStoreButtonHomeBg = UIButton.create("spheresText.png", "spheresText.png", 0,0);
+	appStoreButtonHomeBg.positionFromTop(.05);
+	appStoreButtonHomeBg.onTouchUpInside += OpenAppStorePage;
+	appStoreButtonHomeBg.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+
+
 	text1.hidden = true;
 	text2.hidden = true;
 	text3.hidden = true;
 	openSiteButtonText.hidden = true;
 	appStoreButtonText.hidden = true;
+	appStoreButtonHomeText.hidden	= true;
 	appStoreButtonBg.hidden = true;
+	appStoreButtonHomeBg.hidden	= true;
 	
     // TODO: Use real VR Mode icon and button sprite here.
     // HACK: reusing existing button sprite as a transparent background
@@ -573,6 +588,12 @@ function ShowStart() {
 		vrModeButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	}
 
+	if (FallingLaunch.NewGamePlus) {
+		appStoreButtonHomeBg.hidden = false;
+		appStoreButtonHomeText.hidden = false;
+		appStoreButtonHomeText.alphaFromTo( 3.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	}
+
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	leftArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
@@ -752,6 +773,11 @@ function BackToPauseMenu() {
 
 	appStoreButtonBg.hidden = true;
 	appStoreButtonText.hidden = true;
+
+	if (FallingLaunch.NewGamePlus) {
+		appStoreButtonHomeBg.hidden = false;
+		appStoreButtonHomeText.hidden = false;
+	}
 
 	HideOptions();
 
@@ -968,6 +994,10 @@ function FadeOutAllStartMenuElements(timer: float) {
 	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	optionsButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 
+	if (FallingLaunch.NewGamePlus) {
+		appStoreButtonHomeText.alphaTo(timer, 0.0, Easing.Sinusoidal.easeOut);
+	}
+
 	if (!FallingLaunch.isTablet) {
 		vrModeButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 		vrModeLaunchButton.alphaTo(timer, 0.0, Easing.Sinusoidal.easeOut);
@@ -1174,6 +1204,9 @@ function HideStartMenuElements() {
 	optionsButton.hidden = true;
 
 	vrModeButton.hidden = true;
+
+	appStoreButtonHomeBg.hidden = true;
+	appStoreButtonHomeText.hidden = true;
 	//angledTiltChooser.hidden = true;
 	//flatTiltChooser.hidden = true;
 }
@@ -1264,13 +1297,17 @@ function fadeInLoadNewLevels() {
 }
 
 function fadeInPauseMenu() {
-	rightArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
-	leftArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
-	aboutButtonStart.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
-	howToButton.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	rightArrow.alphaFromTo( 0.5, 0.0, 0.4, Easing.Sinusoidal.easeInOut);
+	leftArrow.alphaFromTo( 0.5, 0.0, 0.4, Easing.Sinusoidal.easeInOut);
+	aboutButtonStart.alphaFromTo( 0.5, 0.0, 1.0, Easing.Sinusoidal.easeIn);
+	howToButton.alphaFromTo( 0.5, 0.0, 1.0, Easing.Sinusoidal.easeIn);
 	
 	if (!FallingLaunch.isTablet) {
-		vrModeButton.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+		vrModeButton.alphaFromTo( 0.5, 0.0, 1.0, Easing.Sinusoidal.easeIn);
+	}
+
+	if (FallingLaunch.NewGamePlus) {
+		appStoreButtonHomeText.alphaFromTo( 1.0, 0.0, 1.0, Easing.Sinusoidal.easeIn);
 	}
 }
 
