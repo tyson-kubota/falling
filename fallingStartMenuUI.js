@@ -216,17 +216,13 @@ function Start () {
     thinText.wrapMode = UITextLineWrapMode.None;
 
 	text1 = thinText.addTextInstance( "CREATED BY TYSON KUBOTA", 0, 0 );
-    //text1.positionFromTop(.3f);
-    //text1.positionFromCenter(-.1f,0f);
-    text1.pixelsFromCenter( -25, 0 );
+    text1.pixelsFromCenter( -55, 0 );
 
 	text2 = boldText.addTextInstance( "tysonkubota.net/skydrift", 0, 0);
-    text2.positionCenter();
+    text2.pixelsFromCenter( -30, 0 );
 
-	//text3 = thinText.addTextInstance( "Music by Evan Kubota\nTextures: nobiax\nSound effects: freesound.org", 0, 0 );
-    text3 = thinText.addTextInstance( "MUSIC BY EVAN KUBOTA\n\nSOUND EFFECTS: freesound.org",
-	0, 0, 0.8f, 1, Color.white, UITextAlignMode.Center, UITextVerticalAlignMode.Bottom );
-    text3.positionFromBottom(.3f);
+	text3 = thinText.addTextInstance( "MUSIC BY EVAN KUBOTA\n\nSOUND EFFECTS: freesound.org", 0, 0);
+    text3.pixelsFromCenter( 45, 0 );
 
     // TODO: Use real VR Mode icon and button sprite here.
     // HACK: reusing existing button sprite as a transparent background
