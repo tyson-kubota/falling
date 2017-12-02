@@ -20,6 +20,9 @@ var text3 : UITextInstance;
 var openSiteButtonText : UIButton;
 var BackToEndMenuButton : UIButton;
 
+var appStoreButtonText : UITextInstance;
+var appStoreButtonBg : UIButton;
+
 function Start () {
 
 	textHeight = (UIT.isHD == true) ? 18 : 18;
@@ -87,16 +90,28 @@ function Start () {
 	text3 = thinText.addTextInstance( "MUSIC BY EVAN KUBOTA\n\nSOUND EFFECTS: freesound.org", 0, 0);
     text3.pixelsFromCenter( 45, 0 );
 
-	text1.hidden = true;
-	text2.hidden = true;
-	text3.hidden = true;
-
 	openSiteButtonText = UIButton.create("tutorialBackground.png","tutorialBackground.png", 40, 40);
 	openSiteButtonText.positionFromCenter(0,0);
 	openSiteButtonText.onTouchUpInside += OpenFallingSite;	
 	openSiteButtonText.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
 	openSiteButtonText.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+
+	appStoreButtonText = boldText.addTextInstance( "WRITE A REVIEW...", 0, 0);
+    appStoreButtonText.positionFromBottom(.05);
+
+    // A transparent tappable background; chosen for its width:
+	appStoreButtonBg = UIButton.create("spheresText.png", "spheresText.png", 0,0);
+	appStoreButtonBg.positionFromBottom(.05);
+	appStoreButtonBg.onTouchUpInside += OpenAppStorePage;
+	appStoreButtonBg.alphaFromTo(0.1f, 0.0f, 0.0f, Easing.Sinusoidal.easeOut);
+
+	text1.hidden = true;
+	text2.hidden = true;
+	text3.hidden = true;
+
 	openSiteButtonText.hidden = true;
+	appStoreButtonText.hidden = true;
+	appStoreButtonBg.hidden = true;
 
 }
 
@@ -182,6 +197,8 @@ function OpenAbout() {
 	
 	EndMenuLogoCamera.GetComponent(Camera).enabled = false;
 
+	appStoreButtonBg.hidden = false;
+	appStoreButtonText.hidden = false;
 	openSiteButtonText.hidden = false;
 	text1.hidden = false;
 	text2.hidden = false;
@@ -189,10 +206,12 @@ function OpenAbout() {
 	text1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
 	text2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
 	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
-
+	appStoreButtonText.alphaFromTo(2.5, 0.0, 1.0, Easing.Sinusoidal.easeInOut);
 }
 
 function BackToEndMenu() {
+	appStoreButtonBg.hidden = true;
+	appStoreButtonText.hidden = true;
 
 	BackToEndMenuButton.hidden = true;
 
@@ -227,9 +246,18 @@ function fadeOutContinue() {
 }
 
 function OpenFallingSite() {
-	Application.OpenURL ("http://tysonkubota.net/skydrift?utm_source=skydrift-game&utm_medium=ios&utm_campaign=skydrift-gui");
+	var urlToOpen : String = "http://tysonkubota.net/skydrift?utm_source=skydrift-game&utm_medium=ios&utm_campaign=skydrift-gui";
+	// use a float instead of an int, as required by the GameAnalytics SDK:
+	FallingLaunch.Analytics.Event("OpenURL:FallingSite", FallingLaunch.levelAchieved*1.0);
+	Application.OpenURL(urlToOpen);
 }
 
+function OpenAppStorePage() {
+	var urlToOpen : String = "https://itunes.apple.com/us/app/skydrift/id728636851?action=write-review&mt=8";
+	// use a float instead of an int, as required by the GameAnalytics SDK:
+	FallingLaunch.Analytics.Event("OpenURL:AppStorePage", FallingLaunch.levelAchieved*1.0);
+	Application.OpenURL(urlToOpen);
+}
 
 function ShowLevel1Logo() {
 	fallingUITest.nextLevelLabel.hidden = false;
