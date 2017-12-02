@@ -71,7 +71,6 @@ var isSaving : boolean = false;
 var openSiteButtonText : UIButton;
 
 var vrModeButton : UIButton;
-var vrModeLabel : UITextInstance;
 
 var vrModeLaunchButton : UIButton;
 var vrExplanatoryText : UITextInstance;
@@ -232,21 +231,25 @@ function Start () {
     // TODO: Use real VR Mode icon and button sprite here.
     // HACK: reusing existing button sprite as a transparent background
     // for the "VR Mode" text label (which is not clickable):
-	vrModeButton = UIButton.create("newgame.png", "newgame.png", 0,0);
+
+    // When this toggle is based on rendered pixels, only the larger iPhones should pass,
+    // e.g. the "Plus" lineup (6/7/8+) and iPhone X (https://developer.apple.com/library/content/documentation/DeviceInformation/Reference/iOSDeviceCompatibility/Displays/Displays.html):
+	var vrModeButtonSpriteString : String = Screen.width > 1700 ? "vrModeLarge.png" : "vrMode.png";
+	vrModeButton = UIButton.create(vrModeButtonSpriteString, vrModeButtonSpriteString, 0,0);
+	
+	// bottom-left corner:
 	// vrModeButton.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
+	
+	// to center:
 	vrModeButton.positionFromBottom(.05);
+	
 	vrModeButton.normalTouchOffsets = new UIEdgeOffsets( 40 );
 	vrModeButton.highlightedTouchOffsets = new UIEdgeOffsets( 40 );
 	vrModeButton.onTouchUpInside += OpenVRModeMenu;
-	vrModeButton.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
-
-	vrModeLabel = boldText.addTextInstance( "TRY VR MODE", 0, 0 );
-	// vrModeLabel.positionFromBottomLeft ( .05, (.05 * screenAspectRatio) );
-	vrModeLabel.positionFromBottom(.05);
 
 	vrModeLaunchButton = UIButton.create("startDown.png","startDown.png", 0, 0);
 	vrModeLaunchButton.positionFromCenter(.1, 0);
-	// vrModeLaunchButton.positionFromTopRight(buttonScaleFactor,0.2f);
+
 	vrModeLaunchButton.onTouchUpInside += LaunchVRMode;
 	vrModeLaunchButton.onTouchDown += fadeInVRLaunchButton;
 	vrModeLaunchButton.onTouchUp += fadeOutVRLaunchButton;
@@ -259,7 +262,6 @@ function Start () {
     vrExplanatoryText.positionFromCenter(-.2, 0);
 
 	vrModeButton.hidden = true;
-	vrModeLabel.hidden = true;
 	vrModeLaunchButton.hidden = true;
 	vrExplanatoryText.hidden = true;
 
@@ -558,7 +560,7 @@ function ShowStart() {
 	
 	if (!FallingLaunch.isTablet) {
 		vrModeButton.hidden = false;
-		vrModeLabel.hidden = false;
+		vrModeButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	}
 
 	rightArrow.alphaFromTo( 2.0f, 0.0f, 0.4f, Easing.Sinusoidal.easeIn);
@@ -566,9 +568,6 @@ function ShowStart() {
 	aboutButtonStart.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 
-	// fake button remains transparent:
-	// vrModeButton.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
-	vrModeLabel.alphaFromTo( 2.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	canShowStart = false;
 	//yield FixWrongInitialScreenOrientation();
 }
@@ -719,6 +718,12 @@ function BackToPauseMenu() {
 	aboutButtonStart.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 
+	if (!FallingLaunch.isTablet) {
+		vrModeLaunchButton.hidden = true;
+		vrExplanatoryText.hidden = true;
+		vrModeButton.hidden = false;
+	}
+
 	fadeInPauseMenu();
 
 	loadLevelOne.hidden = true;
@@ -734,13 +739,6 @@ function BackToPauseMenu() {
 	text2.hidden = true;
 	text3.hidden = true;
 	openSiteButtonText.hidden = true;
-
-	if (!FallingLaunch.isTablet) {
-		vrModeLaunchButton.hidden = true;
-		vrExplanatoryText.hidden = true;
-		vrModeButton.hidden = false;
-		vrModeLabel.hidden = false;
-	}
 
 	HideOptions();
 
@@ -957,8 +955,12 @@ function FadeOutAllStartMenuElements(timer: float) {
 	howToButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 	optionsButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
 
-	vrModeLaunchButton.alphaTo(timer, 0.0, Easing.Sinusoidal.easeOut);
-	vrExplanatoryText.alphaTo(timer, 0.0, Easing.Sinusoidal.easeOut);
+	if (!FallingLaunch.isTablet) {
+		vrModeButton.alphaTo(timer, 0.0f, Easing.Sinusoidal.easeOut);
+		vrModeLaunchButton.alphaTo(timer, 0.0, Easing.Sinusoidal.easeOut);
+		vrExplanatoryText.alphaTo(timer, 0.0, Easing.Sinusoidal.easeOut);
+	}
+
 	yield;
 }
 
@@ -1155,7 +1157,6 @@ function HideStartMenuElements() {
 	optionsButton.hidden = true;
 
 	vrModeButton.hidden = true;
-	vrModeLabel.hidden = true;
 	//angledTiltChooser.hidden = true;
 	//flatTiltChooser.hidden = true;
 }
@@ -1240,6 +1241,10 @@ function fadeInPauseMenu() {
 	leftArrow.alphaFromTo( 0.5f, 0.0f, 0.4f, Easing.Sinusoidal.easeInOut);
 	aboutButtonStart.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
 	howToButton.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	
+	if (!FallingLaunch.isTablet) {
+		vrModeButton.alphaFromTo( 0.5f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	}
 }
 
 function downLevel1() {
