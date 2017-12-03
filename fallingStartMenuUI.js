@@ -1036,7 +1036,7 @@ function OpenAbout() {
 	text1.alphaFromTo(1.0, 0.0, 0.8, Easing.Sinusoidal.easeOut);
 	text2.alphaFromTo(1.0, 0.0, 1.0, Easing.Sinusoidal.easeOut);
 	text3.alphaFromTo(1.5, 0.0, 0.6, Easing.Sinusoidal.easeInOut);
-	appStoreButtonText.alphaFromTo(3.5, 0.0, 1.0, Easing.Sinusoidal.easeInOut);
+	appStoreButtonText.alphaFromTo(2.5, 0.0, 1.0, Easing.Sinusoidal.easeIn);
 }
 
 function OpenVRModeMenu() {

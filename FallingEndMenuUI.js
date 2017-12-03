@@ -193,7 +193,7 @@ function OpenAbout() {
 	endGameSprite.hidden = true;
 
 	BackToEndMenuButton.hidden = false;
-	BackToEndMenuButton.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	BackToEndMenuButton.alphaFromTo(1.0, 0.0, 1.0, Easing.Sinusoidal.easeIn);
 	
 	EndMenuLogoCamera.GetComponent(Camera).enabled = false;
 
@@ -203,10 +203,10 @@ function OpenAbout() {
 	text1.hidden = false;
 	text2.hidden = false;
 	text3.hidden = false;
-	text1.alphaFromTo(1.0f, 0.0f, 0.8f, Easing.Sinusoidal.easeOut);
-	text2.alphaFromTo(1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeOut);
-	text3.alphaFromTo(1.5f, 0.0f, 0.6f, Easing.Sinusoidal.easeInOut);
-	appStoreButtonText.alphaFromTo(2.5, 0.0, 1.0, Easing.Sinusoidal.easeInOut);
+	text1.alphaFromTo(1.0, 0.0, 0.8, Easing.Sinusoidal.easeOut);
+	text2.alphaFromTo(1.0, 0.0, 1.0, Easing.Sinusoidal.easeOut);
+	text3.alphaFromTo(1.5, 0.0, 0.6, Easing.Sinusoidal.easeInOut);
+	appStoreButtonText.alphaFromTo(2.5, 0.0, 1.0, Easing.Sinusoidal.easeIn);
 }
 
 function BackToEndMenu() {
