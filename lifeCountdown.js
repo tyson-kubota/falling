@@ -112,6 +112,13 @@ function TickingAway (delay : float) {
 		   		FallingLaunch.secondsAlive
 	   		);
 
+            // In VR mode, DeathRespawn is now decoupled from the actual respawning time: 
+            // e.g. the player has a several-second time interval to decide whether 
+            // to exit or respawn. If they take more time than showIconVR's timer,
+            // the tutorial UI hint will already be transparent by the time they respawn. 
+            // That's probably not a huge deal since it's non-critical UI, just a help hint.
+            // TODO: Pass optional args to DeathRespawn in VR mode, so we can show specific UI 
+            // after user-initiated respawn or via a callback.
 		   	yield GetComponent(FallingPlayer).DeathRespawn();
 
 		   	if (!FallingLaunch.isVRMode) {

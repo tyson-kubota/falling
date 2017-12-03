@@ -322,7 +322,6 @@ function ShowDeathInterstitialVR() {
 }
 
 function RespawnAfterDeathInterstitialVR() {
-  Debug.Log('called RespawnAfterDeathInterstitialVR');
   isExitableFromVR = false;
 
   yield DeathFadeVR(0.5, FadeDir.Out);
@@ -353,10 +352,10 @@ function RespawnAfterDeathInterstitialVR() {
 }
 
 function DeathRespawn () {
-	isPausable = false;
-	rb.isKinematic = true;
-	lifeStartTime = Time.time;
- 	var respawnPosition = Respawn.currentRespawn.transform.position;
+  isPausable = false;
+  rb.isKinematic = true;
+  lifeStartTime = Time.time;
+  var respawnPosition = Respawn.currentRespawn.transform.position;
 
   if (FallingLaunch.isVRMode) {
     reticleVRUIScript.FadeReticleOut(0.5);
@@ -378,22 +377,22 @@ function DeathRespawn () {
   }
 
   // If you want to clear destroyed projectiles (set per-level)...
-	if (clearDestroyedObjects) {
-  		Resources.UnloadUnusedAssets();
-	}
+  if (clearDestroyedObjects) {
+    Resources.UnloadUnusedAssets();
+  }
 
-	isAlive = 1;
-	RenderSettings.fogEndDistance = startingFogEndDistance;
-    RenderSettings.fogStartDistance = startingFogStartDistance;
+  isAlive = 1;
+  RenderSettings.fogEndDistance = startingFogEndDistance;
+  RenderSettings.fogStartDistance = startingFogStartDistance;
 
-//	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
-	GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
-	// Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
-	myTransform.position = respawnPosition; // + Vector3.up;
+  //	Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
+  GetComponent.<Collider>().attachedRigidbody.transform.Translate(respawnPosition);
+  // Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
+  myTransform.position = respawnPosition; // + Vector3.up;
 
-	rb.isKinematic = false;
+  rb.isKinematic = false;
 
-	MoveController.controlMultiplier = 1.0;
+  MoveController.controlMultiplier = 1.0;
 
   if (FallingLaunch.isVRMode && deathPauseUIVR && deathFadeUIVR) {
     ShowDeathInterstitialVR();
@@ -801,8 +800,6 @@ function OnCollisionEnter (collision : Collision) {
   		//Debug.Log("You died in a fatal collision with " + collision.gameObject);
 
     	yield DeathRespawn ();
-		//isPausable = true;
-		//UIscriptComponent.UnhideGUI();
 	}
   }
 
