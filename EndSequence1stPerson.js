@@ -172,12 +172,21 @@ function RotateTowardsDiamond (timer : float) {
     var step = 1.0/timer;
 	var startRotation = transform.rotation;
 	var endRotation = Quaternion.Euler(-54,96,-2.3);
-	 		
+
+    var myCameraParent = transform.Find("Player-cameras");
+    var parentRotation = myCameraParent ? myCameraParent.localRotation : Quaternion.identity;
+
     while (i <= 1.0) {
         i += step * Time.deltaTime;
         var t : float = i*i * (3f - 2f*i); // smoothstep lerp
  		transform.rotation = Quaternion.Slerp(startRotation, endRotation, t);
-
+        // myCameraParent needs rotating too, because otherwise the local container object 
+        // (tilted via FallingPlayer.playerTilt) will not be aligned to 0,0,0 local rotation,
+        // so the diamond target won't be centered in view. VR mode is unaffected by this, 
+        // since the VR eye cameras aren't children of myCameraParent.
+        if (myCameraParent) {
+            myCameraParent.localRotation = Quaternion.Slerp(parentRotation, Quaternion.identity, t);
+        }
         yield;
     }
 }
