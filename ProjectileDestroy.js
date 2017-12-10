@@ -13,10 +13,16 @@ function Start () {
 // this is so fireballs that hit the player don't interfere with newly-spawned ones in the scene.
 function OnCollisionEnter (collision : Collision) {
   if (collision.gameObject.CompareTag ("Player")) {
-// throw an analytics event!
-  	// GA.API.Design.NewEvent("Projectile:Collision:" + ProjectileName, FallingLaunch.secondsAlive, transform.position);
-	gameObject.GetComponent.<Rigidbody>().isKinematic = true;
-	Destroy(gameObject, 1);
+    
+    // throw an analytics event!
+    FallingLaunch.Analytics.Event(
+        "Projectile:Collision:" + FallingLaunch.vrModeAnalyticsString + ProjectileName,
+        FallingLaunch.secondsAlive
+    );
+
+  	gameObject.GetComponent.<Rigidbody>().isKinematic = true;
+  	
+    Destroy(gameObject, 1);
   }
   
 // but if one fireball hits another, destroy immediately.

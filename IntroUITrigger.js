@@ -7,13 +7,14 @@ var fallingUI : GameObject;
 static var fallingUIComponent : fallingUITest;
 
 enum Triggers {
-trigger1,
-trigger2,
-trigger3
+	trigger1,
+	trigger2,
+	trigger3
 };
 
 var helpIcon: UISprite;
 var thisIcon : String;
+var iconNameVR : String;
 var thisTimer : float = 8;
 var thisTrigger : Triggers;
 var tutorialSprite : UISprite;
@@ -61,7 +62,7 @@ function Start () {
 
 	helpIcon.pixelsFromBottom(textHeight);
 	helpIcon.hidden = true;
-
+		
 	audioSource = GetComponent.<AudioSource>();
 				
 }
@@ -69,8 +70,12 @@ function Start () {
 function OnTriggerEnter (other : Collider) {
   if (other.gameObject.CompareTag ("Player") && activeIntro == false && FallingLaunch.NewGamePlus == false) {
 		activeIntro = true;
-		fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer, tutorialSprite);
-		tutorialSpritePosition(thisTimer);
+		if (FallingLaunch.isVRMode) {
+			fallingIntroUIComponent.ShowIconVR(iconNameVR, thisTimer);	
+		} else {
+			fallingIntroUIComponent.ShowIcon(helpIcon, thisTimer, tutorialSprite);
+			tutorialSpritePosition(thisTimer);
+		}
 		if (audioSource) {audioSource.Play();}
 	}
 }
@@ -93,6 +98,8 @@ function tutorialSpritePosition(timer : float) {
 }
 
 function ShowHelpAfterDeath() {
+	if (!FallingLaunch.isVRMode) {
 		fallingIntroUIComponent.ShowIcon(helpIcon, 2, tutorialSprite);
 		tutorialSpritePosition(2);
+	}
 }

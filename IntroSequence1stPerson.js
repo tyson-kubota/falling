@@ -15,38 +15,47 @@ function Start () {
     if (!FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = false;
 		ScoreController.enabled = false;
-		FallingPlayer.UIscriptComponent.HideGUI();
-	   	
-	   	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
-	    	destructible = shard.GetComponent(ProjectileDestroy);
-	    	var shardRenderer : Renderer = shard.GetComponent.<Renderer>();
-	    	shardRenderer.enabled = false;
-	    	shard.GetComponent.<Rigidbody>().isKinematic = true;
-	    	destructible.enabled = false;
-	    	shardColor = shardRenderer.material.color;
-	    }
-    }
-    else if (FallingLaunch.NewGamePlus) {
+
+        if (!FallingLaunch.isVRMode) {
+		  FallingPlayer.UIscriptComponent.HideGUI();
+        }
+
+    } else if (FallingLaunch.NewGamePlus) {
 		PlayerController.enabled = true;
 		ScoreController.enabled = true;
 		LifeController.enabled = true;
-		//FallingPlayer.UIscriptComponent.HideGUI();
-		FallingPlayer.UIscriptComponent.UnhideGUI();
+
+        if (!FallingLaunch.isVRMode) {
+    		FallingPlayer.UIscriptComponent.UnhideGUI();
+        }
     }
 
-    
+    // Disable all shards' self-destruction scripts so they don't vanish 
+    // before the player triggers their fall:
+    for (var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
+        destructible = shard.GetComponent(ProjectileDestroy);
+        var shardRenderer : Renderer = shard.GetComponent.<Renderer>();
+        shardRenderer.enabled = false;
+        shard.GetComponent.<Rigidbody>().isKinematic = true;
+        destructible.enabled = false;
+        shardColor = shardRenderer.material.color;
+    }
 }
 
 function EndIntro (playAudio : boolean) {
 	PlayerController.enabled = true;
 	ScoreController.enabled = true;
 	LifeController.enabled = true;
-	
+
 	if (!FallingLaunch.NewGamePlus) {
 		FallingPlayer.UIscriptComponent.UnhideGUI();
 	}
-	
-    for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
+
+    if (FallingLaunch.isVRMode) {
+        FallingPlayer.reticleVRUIScript.FadeReticleIn(1.5);
+    }
+
+    for (var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard")) {
         destructible = shard.GetComponent(ProjectileDestroy);
     	shard.GetComponent.<Rigidbody>().isKinematic = false;
     	//yield WaitForSeconds(.25);
@@ -56,18 +65,18 @@ function EndIntro (playAudio : boolean) {
     	shard.GetComponent.<Renderer>().enabled = true;
     	destructible.enabled = true;
     }
-    
+
 	var start = shardColor;
     var end = Color.black;
     var i = 0.0;
     var step = 1.0/5;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
         shard.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
-    	}
+	}
 }
 
 function DeathHelp() {

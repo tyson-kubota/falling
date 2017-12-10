@@ -45,8 +45,7 @@ private var mainCamera: Camera;
 var script : ScoreController;
 script = GetComponent("ScoreController");
 
-static var isAlive : int = 0;
-isAlive = lifeCountdown.isAlive;
+var isAlive : int = 1;
 
 static var isPausable : boolean = true;
 
@@ -71,7 +70,6 @@ function Start() {
   	isAlive = 1;
   	UIscriptComponent = UIscriptName.GetComponent(fallingStartMenuUI);  	
 	AudioListener.pause = false;
-//	fadeInAudio ();
   	FadeAudio (0.1, FadeDir.In);
 	isPausable = true;  
 
@@ -107,8 +105,7 @@ function DeathRespawn () {
 		changeLevelBackdrop ();
 	}
 	
-//	fadeOutAudio ();
-  	FadeAudio ((fadeTime/2), FadeDir.Out);
+  	FadeAudio (fadeTime/2, FadeDir.Out);
   	      
     gameObject.SendMessage ("ResetScore", 0);
   	yield WaitForSeconds(1);
@@ -127,8 +124,6 @@ function DeathRespawn () {
 function changeLevelBackdrop () {
   	changeBackdrop.oceanCamera.GetComponent(Camera).enabled = false;
 	changeBackdrop.oceanRenderer.enabled = false;
-	changeBackdrop.cloudRenderer.enabled = false;
-	changeBackdrop.endSphereRenderer.enabled = false;
 
 // the Fade argument below this breaks unpredictably if player gameobject lacks a Fade script component
 //	Fade.use.Colors(guiTexture, (RenderSettings.fogColor * 2), startingFogColor, 2.0);	

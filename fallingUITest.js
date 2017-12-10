@@ -8,7 +8,7 @@ var fallingLaunchComponent : FallingLaunch;
 var value : float = 0.5f;
 var bgSprite : UISprite;
 //static var tutorialSprite : UISprite;
-static var tutorialSpriteExtraTimer : float = 0; 
+static var tutorialSpriteExtraTimer : float = 0;
 var fadeSprite : UISprite;
 var pauseButton : UIButton;
 var circleReticle: UIButton;
@@ -16,7 +16,6 @@ var lifeBarOutline : UIProgressBar;
 var lifeBar : UIProgressBar;
 var lifeBarThreat : UIProgressBar;
 var rightArrow : UIButton;
-var leftArrow : UIButton;
 var loadNewLevelButton : UIButton;
 var loadLevelOne : UIButton;
 var loadLevelTwo : UIButton;
@@ -74,31 +73,49 @@ var level4Unlocked : boolean = false;
 static var holdingPauseButton : boolean = false;
 static var origPauseButtonArea : Rect;
 
-private var savedTimeScale:float;
+private var savedTimeScale : float;
 //var x:float;
 //var y:float;
 // private var lifeBar = UIProgressBar.create( "lifeBarRedTest.png", 0, 0 );
 
 function Awake () {
+	ScreenH = Screen.height;
+	ScreenW = Screen.width;
 	screenAspectRatio = (ScreenH / ScreenW);
 }
 
 function Start () {
 //  yield WaitForSeconds(0.5f);
 
-//	  Testing to see if disabling this hard coded screen.orientation will allow auto detection of landscape 
+//	  Testing to see if disabling this hard coded screen.orientation will allow auto detection of landscape
 //	  right or left mode on startup.
 //    Screen.orientation = ScreenOrientation.LandscapeLeft;
 
 //    if (iPhoneInput.orientation == iPhoneOrientation.LandscapeRight) {
 //	Screen.orientation = ScreenOrientation.LandscapeRight;}
 //	else {Screen.orientation = ScreenOrientation.LandscapeLeft;}
-	
+
 	fallingPlayerComponent = player.GetComponent("FallingPlayer");
 	//moveControllerComponent = player.GetComponent("MoveController");
 	fallingLaunch = GameObject.Find("LaunchGameObject");
 	fallingLaunchComponent = fallingLaunch.GetComponent("FallingLaunch");
-	
+
+	// VR mode is incompatible with orthographic cameras, and thus doesn't use UI Toolkit.
+	if (!FallingLaunch.isVRMode) {
+		SetupLevelUI();
+	} else {
+	    FallingLaunch.Analytics.Event(
+	        "LevelBegin:" + 
+        	FallingLaunch.vrModeAnalyticsString + 
+        	SceneManagement.SceneManager.GetActiveScene().name + ":" + 
+        	FallingLaunch.thisLevelArea,
+	        	FallingLaunch.secondsInLevel
+	    );
+		return;
+	}
+}
+
+function SetupLevelUI() {
     bgSprite = UIT.firstToolkit.addSprite( "menuBackground.png", 0, 0, 2 );
 	bgSprite.positionCenter();
 	bgSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
@@ -106,8 +123,7 @@ function Start () {
 	bgSprite.hidden = true;
 	//Debug.Log("your highest level achieved is " + FallingLaunch.levelAchieved);
 
-	if (FallingLaunch.levelAchieved == 5) {
-		//loadLevelTwo.alphaTo(0.01f, 0.0f, Easing.Sinusoidal.easeOut);
+	if (FallingLaunch.debugMode || FallingLaunch.levelAchieved == 5) {
 		level2Unlocked = true;
 		level3Unlocked = true;
 		level4Unlocked = true;
@@ -115,15 +131,9 @@ function Start () {
 	else if (FallingLaunch.levelAchieved == 4) {
 		level2Unlocked = true;
 		level3Unlocked = true;
-	}		
+	}
 	else if (FallingLaunch.levelAchieved == 3) {
 		level2Unlocked = true;
-	}
-
-	if (FallingLaunch.debugMode) {
-		level2Unlocked = true;
-		level3Unlocked = true;
-		level4Unlocked = true;
 	}
 
 	var tiltPlacementRatio : float;
@@ -141,7 +151,7 @@ function Start () {
 
 	boldText = new UIText( "font-bold", "font-bold.png" );
 	thinText = new UIText( "font-thin", "font-thin.png" );
-		
+
 	boldText.alignMode = UITextAlignMode.Center;
 	boldText.verticalAlignMode = UITextVerticalAlignMode.Middle;
     boldText.wrapMode = UITextLineWrapMode.MinimumLength;
@@ -150,12 +160,12 @@ function Start () {
 	thinText.verticalAlignMode = UITextVerticalAlignMode.Middle;
     thinText.wrapMode = UITextLineWrapMode.None;
 
-		
+
 //	var tutorialHeight = 1.25 * spriteEdgeSize;
 //	tutorialSprite = UIT.firstToolkit.addSprite( "tutorialBackground.png", 0, 0, 4 );
 //	tutorialSprite.hidden = true;
 //	tutorialSprite.scaleTo( 0.1f, new Vector3( (Screen.width), 3, 1 ), Easing.Sinusoidal.easeOut);
-	
+
 	fadeSprite = UIT.firstToolkit.addSprite( "menuBackgroundBlack.png", 0, 0, -1 );
 	fadeSprite.positionCenter();
 	fadeSprite.scaleTo( 0.01f, new Vector3( (Screen.width * 6), (Screen.height * 6), 1 ), Easing.Linear.easeIn);
@@ -175,19 +185,14 @@ function Start () {
 	rightArrow.positionFromTopRight(buttonScaleFactor,0.2f);
 	rightArrow.onTouchUpInside += PauseGameCheck;
 
-	leftArrow = UIButton.create("restart.png","restart.png", 0, 0);
-	leftArrow.positionFromBottomLeft(.05f, .05f);
-	leftArrow.onTouchUpInside += RestartLevel;
-
 	rightArrow.hidden = true;
-	leftArrow.hidden = true;
-	
+
 	BackToPauseMenuButton = UIButton.create("back.png","back.png", 40, 40);
 	BackToPauseMenuButton.positionFromBottomLeft ( .05f, (.05f * screenAspectRatio) );
 	//BackToPauseMenuButton.pixelsFromBottomLeft ( 14, 14 );
 	BackToPauseMenuButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
-	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );	
-	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;	
+	BackToPauseMenuButton.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
+	BackToPauseMenuButton.onTouchUpInside += BackToPauseMenu;
 	BackToPauseMenuButton.hidden = true;
 
 	BackToHomeMenuButton = UIButton.create("homeArrows.png","homeArrows.png", 40, 40);
@@ -202,36 +207,52 @@ function Start () {
 		nextLevelLabel = UIT.firstToolkit.addSprite( "level2.png", 0, 0, 0 );
 	}
 	else if (level2 == SceneManagement.SceneManager.GetActiveScene().name) {
-		nextLevelLabel = UIT.firstToolkit.addSprite( "level3.png", 0, 0, 0 );	
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level3.png", 0, 0, 0 );
 	}
 	else if (level3 == SceneManagement.SceneManager.GetActiveScene().name) {
-		nextLevelLabel = UIT.firstToolkit.addSprite( "level4.png", 0, 0, 0 );	
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level4.png", 0, 0, 0 );
 	}
 	else if (level4 == SceneManagement.SceneManager.GetActiveScene().name) {
-		nextLevelLabel = UIT.firstToolkit.addSprite( "level1.png", 0, 0, 0 );	
+		nextLevelLabel = UIT.firstToolkit.addSprite( "level1.png", 0, 0, 0 );
 	}
 
 	//nextLevelLabel.positionFromCenter(.0f);
 	nextLevelLabel.positionCenter();
 	nextLevelLabel.hidden = true;
 
+	var calculatedMiddleIconRatio : float = 0.0f;
+
+	if (ScreenW > 2200) {
+		calculatedMiddleIconRatio = 0.36f;
+	} else if (ScreenW > 1600) {
+		calculatedMiddleIconRatio = 0.33f;
+	} else if (ScreenW > 1200) {
+		calculatedMiddleIconRatio = 0.32f;
+	} else if (ScreenW > 1000) {
+		calculatedMiddleIconRatio = 0.31f;
+	} else {
+		calculatedMiddleIconRatio = 0.3f;
+	}
+
+	var middleIconAdjustRatio : float = UIT.isHD ? calculatedMiddleIconRatio : 0.3f;
+
 	if (level1 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
 		loadLevelOne.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 	}
-	else {				
+	else {
 		loadLevelOne = UIButton.create("level1.png","level1.png", 0, 0);
 		loadLevelOne.alphaTo( 0.01f, 0.4f, Easing.Sinusoidal.easeOut);
 	}
 	loadLevelOne.positionFromTopLeft(buttonScaleFactor,0.05f);
 	loadLevelOne.onTouchUpInside += LoadLevel1ViaMenu;
-	
+
 	if (level2 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
 		loadLevelTwo.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 		loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
 	}
-	else {				
+	else {
 		loadLevelTwo = UIButton.create("level2.png","level2.png", 0, 0);
 			if (level2Unlocked == false) {
 				loadLevelTwo.alphaTo( 0.01f, 0.05f, Easing.Sinusoidal.easeOut);
@@ -241,14 +262,14 @@ function Start () {
 				loadLevelTwo.onTouchUpInside += LoadLevel2ViaMenu;
 			}
 	}
-	loadLevelTwo.positionFromTopLeft(buttonScaleFactor,0.3f);
-	
+	loadLevelTwo.positionFromTopLeft(buttonScaleFactor, middleIconAdjustRatio);
+
 	if (level3 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 		loadLevelThree.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 		loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
 	}
-	else {				
+	else {
 		loadLevelThree = UIButton.create("level3.png","level3.png", 0, 0);
 			if (level3Unlocked == false) {
 				loadLevelThree.alphaTo( 0.01f, 0.05f, Easing.Sinusoidal.easeOut);
@@ -258,14 +279,14 @@ function Start () {
 				loadLevelThree.onTouchUpInside += LoadLevel3ViaMenu;
 			}
 	}
-	loadLevelThree.positionFromTopRight(buttonScaleFactor,0.3f);
-	
+	loadLevelThree.positionFromTopRight(buttonScaleFactor, middleIconAdjustRatio);
+
 	if (level4 == SceneManagement.SceneManager.GetActiveScene().name) {
 		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
 		loadLevelFour.alphaTo( 0.01f, 0.75f, Easing.Sinusoidal.easeOut);
 		loadLevelFour.onTouchUpInside += LoadLevel4ViaMenu;
 	}
-	else {				
+	else {
 		loadLevelFour = UIButton.create("level4.png","level4.png", 0, 0);
 			if (level4Unlocked == false) {
 				loadLevelFour.alphaTo( 0.01f, 0.05f, Easing.Sinusoidal.easeOut);
@@ -281,11 +302,11 @@ function Start () {
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
-	
+
 	loadingLabel = UIButton.create("loading.png","loading.png", 20, 20);
 	loadingLabel.positionCenter();
 	loadingLabel.hidden = true;
-	
+
 	loadNewLevelButton = UIButton.create("chooselevel.png","chooselevelDown.png", 40, 40);
 	loadNewLevelButton.positionFromTopLeft(buttonScaleFactor,0.2f);
 	loadNewLevelButton.normalTouchOffsets = new UIEdgeOffsets( 30 );
@@ -311,8 +332,8 @@ function Start () {
     tiltText2.verticalAlignMode = UITextVerticalAlignMode.Bottom;
     tiltText2.positionFromRight( -.16f, .52f );
 	tiltText2.hidden = true;
-	//public UITextInstance addTextInstance( string text, float xPos, float yPos, 
-	//float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )	
+	//public UITextInstance addTextInstance( string text, float xPos, float yPos,
+	//float scale, int depth, Color color, UITextAlignMode alignMode, UITextVerticalAlignMode verticalAlignMode )
 	invertHorizAxisText = thinText.addTextInstance( "HORIZONTAL AXIS", 0, 0 );
 	invertHorizAxisText.verticalAlignMode = UITextVerticalAlignMode.Bottom;
     invertHorizAxisText.positionFromRight( .00f, .52f );
@@ -363,7 +384,7 @@ function Start () {
 	angledTiltLabel = UIButton.create("neutralAngle45.png","neutralAngle45.png", 0, 0 );
 	angledTiltLabel.normalTouchOffsets = new UIEdgeOffsets( 30 );
 	angledTiltLabel.highlightedTouchOffsets = new UIEdgeOffsets( 30 );
-	angledTiltLabel.positionFromLeft( -.16f, .52f );	
+	angledTiltLabel.positionFromLeft( -.16f, .52f );
 	angledTiltLabel.onTouchUpInside += ToggleTiltNeutral;
 	angledTiltLabel.hidden = true;
 
@@ -384,7 +405,7 @@ function Start () {
 
 	circleReticle = UIButton.create("circle-reticle.png","circle-reticle.png", 0, 0);
 	circleReticle.positionCenter();
-	
+
 	lifeBarOutline = UIProgressBar.create( "lifeBarOutline.png", 0, 0 );
 	lifeBarOutline.pixelsFromTopLeft ( 8, 8 );
 	lifeBarOutline.value = 1f;
@@ -398,39 +419,64 @@ function Start () {
 //	animateThreatBar (lifeBarThreat);
 	lifeBarThreat.hidden = true;
 	lifeBarThreat.alphaFromTo( 0.01f, 0f, 0f, Easing.Sinusoidal.easeOut);
-					
+
 	lifeBar = UIProgressBar.create( "lifeBarWhite.png", 0, 0 );
 	lifeBar.pixelsFromTopLeft ( 10, 10 );
 	lifeBar.resizeTextureOnChange = true;
-	lifeBar.value = 0.67f;	
+	lifeBar.value = 0.67f;
 	animateProgressBar (lifeBar);
 //	Loop ();
 
-	// GA.API.Design.NewEvent("LevelBegin:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+    FallingLaunch.Analytics.Event(
+        "LevelBegin:" + FallingLaunch.vrModeAnalyticsString + 
+    	SceneManagement.SceneManager.GetActiveScene().name + ":" + 
+    	FallingLaunch.thisLevelArea,
+        	FallingLaunch.secondsInLevel
+    );
 
+    // Analytics reporting for tilt prefs, and horizontal/vertical axis prefs, respectively:
 	if (FallingLaunch.restPosition == FallingLaunch.neutralPosFlat) {
-		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 0.0f, transform.parent.position);
+	    FallingLaunch.Analytics.Event(
+	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        0.0
+	    );
+	} else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
+	    FallingLaunch.Analytics.Event(
+	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        90.0f
+	    );
+	} else {
+	    FallingLaunch.Analytics.Event(
+	       	"TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        45.0f
+	    );
 	}
-	else if (FallingLaunch.restPosition == FallingLaunch.neutralPosVertical) {
-		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 90.0f, transform.parent.position);
-	}
-	else {
-		// GA.API.Design.NewEvent("TiltPreference:" + SceneManagement.SceneManager.GetActiveScene().name, 45.0f, transform.parent.position);
-	}
-	if (FallingLaunch.invertHorizAxisVal == 1) {
-		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name, 1.0f, transform.parent.position);
-	}
-	else if (FallingLaunch.invertHorizAxisVal == -1) {
-		// GA.API.Design.NewEvent("AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name, -1.0f, transform.parent.position);
-	}
-	if (FallingLaunch.invertVertAxisVal == -1) {
-		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name, -1.0f, transform.parent.position);
-	}	
-	else if (FallingLaunch.invertVertAxisVal == 1) {
-		// GA.API.Design.NewEvent("AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name, 1.0f, transform.parent.position);
-	}	
 
+	if (FallingLaunch.invertHorizAxisVal == 1) {
+	    FallingLaunch.Analytics.Event(
+	       	"AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        1.0f
+	    );
+	} else if (FallingLaunch.invertHorizAxisVal == -1) {
+	    FallingLaunch.Analytics.Event(
+	       	"AxesPreference:Horizontal:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        -1.0f
+	    );
 	}
+
+	if (FallingLaunch.invertVertAxisVal == -1) {
+	    FallingLaunch.Analytics.Event(
+	       	"AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        -1.0f
+	    );
+	} else if (FallingLaunch.invertVertAxisVal == 1) {
+	    FallingLaunch.Analytics.Event(
+	       	"AxesPreference:Vertical:" + SceneManagement.SceneManager.GetActiveScene().name,
+	        1.0f
+	    );
+	}
+
+}
 
 function animateProgressBar(lifeBar : UIProgressBar) {
 	while (true)
@@ -443,49 +489,60 @@ function animateProgressBar(lifeBar : UIProgressBar) {
 	}
 }
 
-function animateThreatBar(lifeBar : UIProgressBar) {
-	while (true)
-	{
-	lifeBar.value = (1 - (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore)));
-	yield 0;
+// function animateThreatBar(lifeBar : UIProgressBar) {
+// 	while (true)
+// 	{
+// 	lifeBar.value = (1 - (parseFloat(ScoreController.visibleScore)/parseFloat(ScoreController.maxScore)));
+// 	yield 0;
+// 	}
+// }
+
+function flashProgressBar(delay : float) {
+	if (!FallingLaunch.isVRMode) {
+		lifeBar.alphaTo( 0.01f, 1.0f, Easing.Sinusoidal.easeOut);
+		yield WaitForSeconds(.25);
+		lifeBar.alphaTo( delay, 0.5f, Easing.Sinusoidal.easeInOut);
 	}
 }
 
-function flashProgressBar(delay : float) {
-	lifeBar.alphaTo( 0.01f, 1.0f, Easing.Sinusoidal.easeOut);
-	yield WaitForSeconds(.25);
-	lifeBar.alphaTo( delay, 0.5f, Easing.Sinusoidal.easeInOut);
-}
-
 function showThreatBar(delay : float) {
-	lifeBarThreat.hidden = false;
-	lifeBarThreat.alphaTo( delay, 0.25f, Easing.Sinusoidal.easeInOut);
+	if (!FallingLaunch.isVRMode) {
+		lifeBarThreat.hidden = false;
+		lifeBarThreat.alphaTo( delay, 0.25f, Easing.Sinusoidal.easeInOut);
+	}
 }
 
 function hideThreatBar(delay : float) {
-	lifeBarThreat.alphaTo( delay, 0.0f, Easing.Sinusoidal.easeInOut);
+	if (!FallingLaunch.isVRMode) {
+		lifeBarThreat.alphaTo( delay, 0.0f, Easing.Sinusoidal.easeInOut);
+	}
 }
 
 function flashThreatBar(delay : float) {
-	lifeBarThreat.hidden = false;
-	lifeBarThreat.alphaFromTo( delay, 1.0f, 0.0f, Easing.Sinusoidal.easeInOut);
-	yield WaitForSeconds(delay);
-//	lifeBarThreat.hidden = true;
+	if (!FallingLaunch.isVRMode) {
+		lifeBarThreat.hidden = false;
+		lifeBarThreat.alphaFromTo( delay, 1.0f, 0.0f, Easing.Sinusoidal.easeInOut);
+		yield WaitForSeconds(delay);
+	}
 }
 
 function PauseGame() {
-	if (FallingPlayer.isPausable == true) {
+	if (FallingPlayer.isPausable) {
 		FallingPlayer.isPausable = false;
-		
+
 		FallingLaunch.secondsInLevel = (Time.time - FallingPlayer.levelStartTime);
-		// GA.API.Design.NewEvent("GUI:PauseGame:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
+
+	    FallingLaunch.Analytics.Event(
+	       	"GUI:PauseGame:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
+	        FallingLaunch.secondsInLevel
+	    );
 		//Debug.Log("you paused at " + transform.parent.position);
-		
+
 		circleReticle.hidden = true;
 		lifeBar.hidden = true;
 		lifeBarOutline.hidden = true;
 	    lifeBarThreat.hidden = true;
-	    
+
 	    origPauseButtonArea = MoveController.pauseButtonArea;
 	    MoveController.pauseButtonArea = Rect(0, 0, Screen.width, Screen.height);
 
@@ -496,21 +553,19 @@ function PauseGame() {
 	    AudioListener.pause = true;
 
    		rightArrow.hidden = false;
-		//leftArrow.hidden = false;
 		if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 		BackToHomeMenuButton.hidden = false;
 		optionsButton.hidden = false;
 		bgSprite.hidden = false;
 
-		//DisplayTiltOnPause();
-
-		//clear any unused stuff in pause menu. 
-		//audio and video should be stopped, so any hiccuping won't be as obvious.
+		// Clear any unused stuff in pause menu.
+		// Audio and video should be stopped, so any hiccuping won't be as obvious.
 		Resources.UnloadUnusedAssets();
 
 		initialRespawn.SaveCheckpoint();
 
 	    FallingPlayer.isPausable = true;
+	    return;
     }
 }
 
@@ -523,10 +578,10 @@ function UnPauseGame(resume : boolean) {
 	lifeBar.hidden = false;
 	lifeBarOutline.hidden = false;
 	lifeBarThreat.hidden = false;
-	
+
 	bgSprite.hidden = true;
 	rightArrow.hidden = true;
-	leftArrow.hidden = true;
+
 	loadNewLevelButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
 	HideOptionsButton();
@@ -535,107 +590,117 @@ function UnPauseGame(resume : boolean) {
 	flatTiltLabel.hidden = true;
 	verticalTiltLabel.hidden = true;
 
-	FallingPlayer.isPausable = resume;	
+	FallingPlayer.isPausable = resume;
 	holdingPauseButton = false;
 	MoveController.pauseButtonArea = origPauseButtonArea;
-    }
-    
+}
+
 function IsGamePaused() {
     return Time.timeScale==0;
 }
 
 function PauseGameCheck() {
+	if (!FallingLaunch.isVRMode) {
+		holdingPauseButton = true;
 
-	holdingPauseButton = true;
-	
-	if (FallingPlayer.isPausable == true) {
-		if (Time.timeScale == 0) {
-	//	if (AudioListener.pause == true) {
-			UnPauseGame(true);
-		}
-		else {
-			PauseGame();
+		if (FallingPlayer.isPausable == true) {
+			if (Time.timeScale == 0) {
+		//	if (AudioListener.pause == true) {
+				UnPauseGame(true);
+			}
+			else {
+				PauseGame();
+			}
 		}
 	}
 }
 
 function RestartLevel() {
-	FallingPlayer.isPausable = false;	
+	FallingPlayer.isPausable = false;
 //	Camera.main.SendMessage("fadeOut");
 	//fadeOut();
-	
-	// GA.API.Design.NewEvent("GUI:RestartLevel:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea, FallingLaunch.secondsInLevel, transform.parent.position);
-	
+
+    FallingLaunch.Analytics.Event(
+       	"GUI:RestartLevel:" + SceneManagement.SceneManager.GetActiveScene().name + ":" + FallingLaunch.thisLevelArea,
+        FallingLaunch.secondsInLevel
+    );
+
 	Respawn.currentRespawn = initialRespawn;
 	HideGUI();
 	fallingPlayerComponent.DeathRespawn ();
 	UnPauseGame(false);
 }
 
-function LevelComplete() {
-	HideGUI();
+function LevelComplete(timer1 : float, timer2 : float) {
+	if (!FallingLaunch.isVRMode) {
+		HideGUI();
+	}
 	FallingPlayer.isPausable = false;
 	MoveController.Slowdown = 0;
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 3.0f, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
-	FallingLaunch.levelEndSlowdown = MoveController.Slowdown;
-	
-	yield WaitForSeconds (3);
-// fade in congrats menu / buttons here 
 
+	if (!FallingLaunch.isVRMode && bgSprite) {
+		bgSprite.hidden = false;
+		bgSprite.alphaFromTo( timer1, 0.0f, 0.97f, Easing.Sinusoidal.easeIn);
+	}
+	FallingLaunch.levelEndSlowdown = MoveController.Slowdown;
+
+	yield WaitForSeconds(timer1);
+
+	// fade in congrats menu / buttons here
     savedTimeScale = Time.timeScale;
 	//loadingLabel.hidden = false;
-	//loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
-	nextLevelLabel.hidden = false;
-	nextLevelLabel.alphaFromTo( 1.0f, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);    
-    fallingPlayerComponent.FadeAudio (.9, FadeDir.Out);
-    yield WaitForSeconds (1);
-//  Time.timeScale = 0;
+	//loadingLabel.alphaFromTo( 0.75f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+	if (!FallingLaunch.isVRMode && nextLevelLabel) {
+		nextLevelLabel.hidden = false;
+		nextLevelLabel.alphaFromTo( timer2, 0.0f, 0.75f, Easing.Sinusoidal.easeIn);
+	}
+
+    fallingPlayerComponent.FadeAudio (.9 * timer2, FadeDir.Out);
+
+    yield WaitForSeconds (timer2);
+
+	//  Time.timeScale = 0;
 	player.GetComponent.<Rigidbody>().isKinematic = true;
     AudioListener.pause = true;
-	Application.LoadLevel(levelToLoad);
-//  not necessary because Respawn.js resets the latest checkpoint in its Start	
-//	PlayerPrefs.SetString("LatestLevel", levelToLoad);
-	FallingLaunch.levelAchieved = (Application.loadedLevel + 1);
- 	PlayerPrefs.SetInt("HighestLevel", (Application.loadedLevel + 1));
+
+	// Only increment `HighestLevel` pref if it's higher than the current `levelAchieved` value
+	// (fixes bug where beaten levels reset on beating level one of New Game Plus):
+	if ((Application.loadedLevel + 1) > FallingLaunch.levelAchieved) {
+		FallingLaunch.levelAchieved = (Application.loadedLevel + 1);
+ 		PlayerPrefs.SetInt("HighestLevel", (Application.loadedLevel + 1));
+ 	}
+
 	Time.timeScale = savedTimeScale;
+	Application.LoadLevel(levelToLoad);
+
+	// Calling Save right after loadLevel, since saving to disk can cause a potential FPS hiccup:
 	PlayerPrefs.Save();
 }
 
 function BeginOutroUI() {
 	FadeOutGUI();
-	FallingPlayer.isPausable = false;
-	player.GetComponent.<Rigidbody>().isKinematic = true;
 }
 
-function OldGameCompleteUI() {
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 4.5f, 0.0f, 0.99f, Easing.Sinusoidal.easeInOut);
-	fallingPlayerComponent.FadeAudio (2.0, FadeDir.Out);
-	yield WaitForSeconds (1.0);
-	yield WaitForSeconds (2.0);
-}
-
-function GameComplete() {
-	bgSprite.hidden = false;
-	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeIn);
-	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
-	yield WaitForSeconds (.5);
-    savedTimeScale = Time.timeScale;
-//	loadingLabel.hidden = false;
-//	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);    
-    yield WaitForSeconds (1);
-    AudioListener.pause = true;
-	FallingPlayer.isTiltable = true;
-	Application.LoadLevel(levelToLoad);
-	Time.timeScale = savedTimeScale;
-}
+// function GameComplete() {
+// 	bgSprite.hidden = false;
+// 	bgSprite.alphaFromTo( 1.5f, 0.0f, 0.90f, Easing.Sinusoidal.easeIn);
+// 	fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
+// 	yield WaitForSeconds (.5);
+//     savedTimeScale = Time.timeScale;
+// //	loadingLabel.hidden = false;
+// //	loadingLabel.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Sinusoidal.easeIn);
+//     yield WaitForSeconds (1);
+//     AudioListener.pause = true;
+// 	FallingPlayer.isTiltable = true;
+// 	Application.LoadLevel(levelToLoad);
+// 	Time.timeScale = savedTimeScale;
+// }
 
 function GameCompleteUI() {
 	bgSprite.hidden = false;
 	bgSprite.alphaFromTo( 2f, 0.0f, 0.8f, Easing.Sinusoidal.easeIn);
 	// fallingPlayerComponent.FadeAudio (1.5, FadeDir.Out);
-	
+
 	// add anything else that requires main uitoolkit instance
 }
 
@@ -653,7 +718,7 @@ function LoadNewLevelViaMenu() {
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
 	loadingLabel.hidden = false;
-	
+
 	FallingLaunch.levelEndSlowdown = 0;
 
 	Application.LoadLevel(levelToLoad);
@@ -666,24 +731,23 @@ function LevelSelect() {
 	loadLevelTwo.hidden = false;
 	loadLevelThree.hidden = false;
 	loadLevelFour.hidden = false;
-	
+
 	BackToHomeMenuButton.hidden = false;
-	
+
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
 	verticalTiltLabel.hidden = true;
 
-	loadNewLevelButton.hidden = true;	
+	loadNewLevelButton.hidden = true;
 	ShowBackButton();
 }
 
 function HidePauseMenuElements() {
 	rightArrow.hidden = true;
-	leftArrow.hidden = true;
 	pauseButton.hidden = true;
 	optionsButton.hidden = true;
 	loadNewLevelButton.hidden = true;
-	
+
 }
 
 function ShowBackButton() {
@@ -691,16 +755,15 @@ function ShowBackButton() {
 }
 
 function BackToPauseMenu() {
-	//leftArrow.hidden = false;
 	rightArrow.hidden = false;
 	pauseButton.hidden = false;
-	
+
 	loadLevelOne.hidden = true;
 	loadLevelTwo.hidden = true;
 	loadLevelThree.hidden = true;
 	loadLevelFour.hidden = true;
 	HideOptions();
-	
+
 	ShowOptionsButton();
 
 	//BackToHomeMenuButton.hidden = true;
@@ -723,16 +786,16 @@ function HideOptions() {
 	tiltText2.hidden = true;
 	invertHorizAxisText.hidden = true;
 	invertVertAxisText.hidden = true;
-		
+
 	invertVertAxisTextYes.hidden = true;
 	invertVertAxisTextNo.hidden = true;
 	invertHorizAxisTextYes.hidden = true;
 	invertHorizAxisTextNo.hidden = true;
-	
+
 	angledTiltLabel.hidden = true;
 	flatTiltLabel.hidden = true;
 	verticalTiltLabel.hidden = true;
-	
+
 }
 
 function ShowOptionsButton () {
@@ -748,7 +811,7 @@ function fadeInOptions() {
 	tiltText2.hidden = false;
 	invertHorizAxisText.hidden = false;
 	invertVertAxisText.hidden = false;
-	
+
 	if (FallingLaunch.invertVertAxisVal == -1) {
 		invertVertAxisTextNo.hidden = true;
 		invertVertAxisTextYes.hidden = false;
@@ -766,7 +829,7 @@ function fadeInOptions() {
 		invertHorizAxisTextNo.hidden = false;
 		invertHorizAxisTextYes.hidden = true;
 	}
-	
+
 }
 
 function DisplayTiltChooser () {
@@ -850,7 +913,7 @@ function LoadLevel1ViaMenu() {
 	BackToPauseMenuButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
-	
+
 	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level1);
 	Time.timeScale = savedTimeScale;
@@ -863,8 +926,8 @@ function LoadLevel2ViaMenu() {
 	loadLevelFour.hidden = true;
 	BackToPauseMenuButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
-	loadingLabel.hidden = false;	
-	
+	loadingLabel.hidden = false;
+
 	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level2);
 	Time.timeScale = savedTimeScale;
@@ -878,7 +941,7 @@ function LoadLevel3ViaMenu() {
 	BackToPauseMenuButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
-	
+
 	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level3);
 	Time.timeScale = savedTimeScale;
@@ -892,7 +955,7 @@ function LoadLevel4ViaMenu() {
 	BackToPauseMenuButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
-	
+
 	FallingLaunch.hasSetAccel = false;
 	Application.LoadLevel(level4);
 	Time.timeScale = savedTimeScale;
@@ -906,7 +969,7 @@ function LoadHomeViaMenu() {
 	BackToPauseMenuButton.hidden = true;
 	BackToHomeMenuButton.hidden = true;
 	loadingLabel.hidden = false;
-	
+
 	HidePauseMenuElements();
 	HideOptions();
 
@@ -916,22 +979,25 @@ function LoadHomeViaMenu() {
 	flatTiltLabel.hidden = true;
 	verticalTiltLabel.hidden = true;
 
-	FallingLaunch.hasSetAccel = false;
-	Application.LoadLevel(homeLevel);
+	LoadHomeNow();
 	Time.timeScale = savedTimeScale;
 }
 
+function LoadHomeNow() {
+	FallingLaunch.hasSetAccel = false;
+	Application.LoadLevel(homeLevel);
+}
 
 function OpenSite() {
 	Application.OpenURL ("http://tysonkubota.net/");
 }
 
 function HideGUI() {
-		pauseButton.hidden = true;
-		circleReticle.hidden = true;
-		lifeBar.hidden = true;
-		lifeBarOutline.hidden = true;
-		lifeBarThreat.hidden = true;
+	pauseButton.hidden = true;
+	circleReticle.hidden = true;
+	lifeBar.hidden = true;
+	lifeBarOutline.hidden = true;
+	lifeBarThreat.hidden = true;
 }
 
 function FadeOutGUI() {
@@ -941,7 +1007,7 @@ function FadeOutGUI() {
 	circleReticle.alphaTo( 0.5f, 0.0f, Easing.Quartic.easeIn);
 	lifeBarThreat.hidden = true;
 	yield WaitForSeconds (1.0);
-	
+
 	pauseButton.hidden = true;
 	circleReticle.hidden = true;
 	lifeBar.hidden = true;
@@ -950,78 +1016,70 @@ function FadeOutGUI() {
 
 
 function UnhideGUI() {
+	if (!FallingLaunch.isVRMode) {
 		pauseButton.hidden = false;
 		circleReticle.hidden = false;
 		lifeBar.hidden = false;
 		lifeBarOutline.hidden = false;
 		lifeBarThreat.hidden = true;
-		
-//		lifeBarThreat.alphaFrom( 1.0f, 0.0f, Easing.Quartic.easeIn);
+
+	//		lifeBarThreat.alphaFrom( 1.0f, 0.0f, Easing.Quartic.easeIn);
 		pauseButton.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		lifeBar.alphaFromTo( 1.0f, 0.0f, 0.5f, Easing.Quartic.easeIn);
 		lifeBarOutline.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		circleReticle.alphaFromTo( 1.0f, 0.0f, 1.0f, Easing.Quartic.easeIn);
 		yield WaitForSeconds (1.0);
-		FallingPlayer.isPausable = true;
-//		lifeBarThreat.hidden = false;
+	}
+	FallingPlayer.isPausable = true;
 }
 
 function fadeIn( shouldUnhideGUI : boolean ) {
-		fadeSprite.hidden = false;
-		fadeSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
-		yield WaitForSeconds(.5);
-		if (shouldUnhideGUI == true) {UnhideGUI();}
-		yield WaitForSeconds(.5);
-		fadeSprite.hidden = true;
+	fadeSprite.hidden = false;
+	fadeSprite.alphaTo( 1.0f, 0.0f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds(.5);
+	if (shouldUnhideGUI == true) {UnhideGUI();}
+	yield WaitForSeconds(.5);
+	fadeSprite.hidden = true;
 }
 
 function fadeOut() {
-		fadeSprite.hidden = false;
-		fadeSprite.alphaTo( 1.0f, 1.0f, Easing.Sinusoidal.easeOut);
-		yield WaitForSeconds(1);
-		fadeSprite.hidden = true;
+	fadeSprite.hidden = false;
+	fadeSprite.alphaTo( 1.0f, 1.0f, Easing.Sinusoidal.easeOut);
+	yield WaitForSeconds(1);
+	fadeSprite.hidden = true;
 }
 
 
 function OnApplicationPause(pauseStatus: boolean) {
-    if (pauseStatus && Time.timeScale != 0 && FallingPlayer.isPausable == true) {setSavedTimeScale(); PauseGameNow();}
+    if (pauseStatus && FallingPlayer.isPausable && !FallingLaunch.isVRMode &&
+    	Time.timeScale != 0) {
+    		setSavedTimeScale();
+    		PauseGameNow();
+    }
 }
 
 function setSavedTimeScale() {
 	savedTimeScale = Time.timeScale;
 }
-	
-function PauseGameNow() {		
+
+function PauseGameNow() {
 	circleReticle.hidden = true;
 	lifeBar.hidden = true;
 	lifeBarOutline.hidden = true;
 	lifeBarThreat.hidden = true;
-	
+
     origPauseButtonArea = MoveController.pauseButtonArea;
     MoveController.pauseButtonArea = Rect(0, 0, Screen.width, Screen.height);
-    
+
 //	savedTimeScale = Time.timeScale;
     Time.timeScale = 0;
     AudioListener.volume = 0;
     AudioListener.pause = true;
 
 	rightArrow.hidden = false;
-	//leftArrow.hidden = false;
 	if (level2Unlocked) {loadNewLevelButton.hidden = false;}
 	bgSprite.hidden = false;
 	optionsButton.hidden = false;
-	//DisplayTiltOnPause();
-}
-
-function PauseGameBackgroundCheck() {
-	if (FallingPlayer.isPausable == true) {
-		if (Time.timeScale == 0) {
-			UnPauseGame(true);
-		}
-		else {
-			PauseGameNow();
-		}
-	}
 }
 
 function setHoldingPauseButtonTrue() {
@@ -1034,9 +1092,9 @@ function setHoldingPauseButtonFalse() {
 
 function ToggleTiltNeutral () {
 	if (TogglingTiltNeutral == false) {
-		
+
 		TogglingTiltNeutral = true;
-		
+
 		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
 			fallingLaunchComponent.ChangeTilt(2);
 			flatTiltLabel.hidden = true;
@@ -1048,7 +1106,7 @@ function ToggleTiltNeutral () {
 			flatTiltLabel.hidden = false;
 			angledTiltLabel.hidden = true;
 			verticalTiltLabel.hidden = true;
-		}		
+		}
 		else {
 			fallingLaunchComponent.ChangeTilt(1);
 			flatTiltLabel.hidden = true;
@@ -1061,33 +1119,11 @@ function ToggleTiltNeutral () {
 	}
 }
 
-// function DisplayTilt () {
-// 	if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-// 		flatTiltLabel.hidden = true;
-// 		angledTiltLabel.hidden = false;
-// 		verticalTiltLabel.hidden = true;
-// 	}
-// 	else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
-// 		flatTiltLabel.hidden = true;
-// 		angledTiltLabel.hidden = true;
-// 		verticalTiltLabel.hidden = false;
-// 	}
-// 	else {
-// 		flatTiltLabel.hidden = false;
-// 		angledTiltLabel.hidden = true;
-// 		verticalTiltLabel.hidden = true;
-// 	}
-// }
+function SaveCheckpointVR () {
+    FallingLaunch.Analytics.Event(
+       	"ExitVRMode:" + SceneManagement.SceneManager.GetActiveScene().name,
+        FallingLaunch.secondsInLevel
+    );
 
-function DisplayTiltOnPause () {
-
-		if (PlayerPrefs.GetInt("TiltNeutral", 0) == 1) {
-			angledTiltLabel.hidden = false;
-		}
-		else if (PlayerPrefs.GetInt("TiltNeutral", 0) == 2) {
-			verticalTiltLabel.hidden = false;
-		}		
-		else {
-			flatTiltLabel.hidden = false;
-		}
+	initialRespawn.SaveCheckpoint();
 }

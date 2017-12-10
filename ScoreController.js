@@ -1,14 +1,14 @@
 #pragma strict
 
 // Keep track of the player's main score
-static var currentScore : float = 20f;
-static var maxScore = 25f;
+static var currentScore : float = 20.0;
+static var maxScore : float = 25.0;
 
 // Keep track of the currently visible score
-static var visibleScore : float = 20f;
+static var visibleScore : float = 20.0;
 
 function Start() {
-	ResetScore (25);
+	ResetScore ();
 }
 
 function LerpVisibleScore (start : float, end : float, timer : float) {
@@ -43,4 +43,6 @@ function ScoreUpdate ( timer : float) {
 //	Debug.Log("Your visibleScore is: " + visibleScore + " and your currentScore is: " + currentScore);
 }
 
-function ResetScore ( i : float ) {currentScore = maxScore;}
+function ResetScore () {
+    currentScore = maxScore;
+}

@@ -14,7 +14,7 @@ function Start () {
 	aSource = GetComponent(AudioSource);
 	aSource.volume = 0f;
 //	findPlayer();
-	player = GameObject.Find("Player/Camera").transform;
+	player = Camera.main.transform;
 }
 
 function OnTriggerEnter (other : Collider) {

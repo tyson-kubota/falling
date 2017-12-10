@@ -29,7 +29,11 @@ function SetMaxVelocity(maxVelocity : float){
 	sqrMaxVelocity = maxVelocity * maxVelocity;
 }
 
-// FixedUpdate is a built-in unity function that is called every fixed framerate frame.
+function GetMaxVelocity() {
+	return maxVelocity;
+}
+
+// FixedUpdate is a built-in Unity function that is called every fixed framerate frame.
 // We use FixedUpdate instead of Update here because the docs recommend doing so when
 // dealing with rigidbodies.
 // For more info, see:

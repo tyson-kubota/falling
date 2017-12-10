@@ -1,6 +1,7 @@
 #pragma strict
 
 var Player : GameObject;
+var FallingPlayerScript : FallingPlayer;
 var EndScriptComponent : EndSequence1stPerson;
 
 var shards : Array;
@@ -18,26 +19,27 @@ function Awake () {
 
 function Start () {
 	audioSource = GetComponent.<AudioSource>();
+    FallingPlayerScript = Player.GetComponent("FallingPlayer");
 }
 
 function OnTriggerEnter (other : Collider) {
 	if (other.gameObject.CompareTag ("Player") && lifeCountdown.inOutro == false) {
 		lifeCountdown.inOutro = true;
-		
+
 		MoveController.SpeedLinesMeshScript.LinesLerpOut(3);
-		
+
 		if (EndScriptComponent) {
-		EndScriptComponent.PlayOutro();
+		  EndScriptComponent.PlayOutro();
 		}
-		
-		for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
+
+		for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
 			shard.GetComponent.<Animation>().Play();
-	
+
 		if (audioSource) {audioSource.Play();}
 
-		FallingPlayer.ScoreFlashTextureScript.FadeFlash (12.0, FadeDir.In);
+		FallingPlayer.ScoreFlashTextureScript.FadeFlash(12.0, FadeDir.In);
 		//yield WaitForSeconds (1.0);
-		//FallingPlayer.ScoreFlashTextureScript.FadeFlash (0.5, FadeDir.Out);
+		//FallingPlayer.ScoreFlashTextureScript.FadeFlash(0.5, FadeDir.Out);
 	}
 }
 
@@ -50,29 +52,37 @@ function GetChildren(obj : GameObject) : Array{
     return children;
 }
 
+function getDiamondCenter() {
+    return diamondCore.transform.position;
+}
+
 function SwapDiamonds(timer : float){
-	FallingPlayer.ScoreFlashTextureScript.FadeFlash (3.0, FadeDir.Out);
-	FallingPlayer.UIscriptComponent.OutroDiamondFlash(2);
-	//yield WaitForSeconds (.2);
-	endDiamond.active = true;
+    if (!FallingLaunch.isVRMode) {
+        FallingPlayer.ScoreFlashTextureScript.FadeFlash(3.0, FadeDir.Out);
+        FallingPlayer.UIscriptComponent.OutroDiamondFlash(2);
+    } else {
+        FallingPlayerScript.ScoreFlashVR(3.0, FadeDir.Out);
+    }
 	
+	endDiamond.active = true;
+
 	var start = shardColor.color;
     var end = Color.black;
     var i = 0.0;
     var step = 1.0/timer;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
-        
-        for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
+
+        for (var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
         shard.transform.Find("sky-rock-angled-segment").GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
-        
+
         yield;
     	}
-    	
+
     yield WaitForSeconds (1);
-    	
-	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))	
+
+	for(var shard : GameObject in GameObject.FindGameObjectsWithTag("Shard"))
     	Destroy (shard);
 }
 
@@ -83,13 +93,13 @@ function AddDiamondCore(timer : float){
     var end = .9;
     var i = 0.0;
     var step = 1.0/timer;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         diamondCore.GetComponent.<Renderer>().material.color.a = Mathf.Lerp(start, end, i);
         yield;
     	}
-    	
+
     yield WaitForSeconds (timer);
 
 }
@@ -100,13 +110,13 @@ function FadeDiamond(timer : float){
     var end = Color.black;
     var i = 0.0;
     var step = 1.0/timer;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         endDiamond.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
     	}
-    	
+
     yield WaitForSeconds (timer);
 
 }
@@ -120,14 +130,14 @@ function AddDiamond3DCore(timer : float){
     var end = diamond3DCore1.GetComponent.<Renderer>().material.color;
     var i = 0.0;
     var step = 1.0/timer;
- 
-    while (i <= 1.0) { 
+
+    while (i <= 1.0) {
         i += step * Time.deltaTime;
         diamond3DCore1.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         diamond3DCore2.GetComponent.<Renderer>().material.color = Color.Lerp(start, end, i);
         yield;
     	}
-    	
+
     yield WaitForSeconds (timer);
 
 }
